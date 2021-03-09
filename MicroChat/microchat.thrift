@@ -1,6 +1,6 @@
 namespace cpp microchat
 
-typedef i32 int;
+typedef i32 int
 
 enum ErrorCode {
   SE_CONNPOOL_TIMEOUT,
@@ -47,7 +47,7 @@ struct Message {
 service UserService{
 
   void ping(),
-  User Login(1: string usernmae, 2: string password) throws(1: ServiceException se),
+  User Login(1: string usernmae, 2: string password)throws(1: ServiceException se),
   User CreateUser(1: string username, 2: string name, 3: string password),
 
 }
