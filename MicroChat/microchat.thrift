@@ -26,7 +26,7 @@ struct User {
   1: i32 userID,
   2: string username,
   3: string name,
-  4: UserService userStatus,
+  4: UserStatus userStatus,
 }
 
 struct Emoji {
