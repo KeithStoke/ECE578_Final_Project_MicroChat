@@ -20,35 +20,35 @@ enum UserStatus{
 }
 
 exception ServiceException {
-    1: ErrorCode errorCode;
-    2: string message;
+    1: ErrorCode errorCode,
+    2: string message,
 }
 
 struct User {
-  1: int userID;
-  2: string username;
-  3: string name;
-  4: UserService userStatus;
+  1: int userID,
+  2: string username,
+  3: string name,
+  4: UserService userStatus,
 }
 
 struct Emoji {
-  1: int emojiID;
-  2: string emojiname;
+  1: int emojiID,
+  2: string emojiname,
 }
 
 struct Message {
-  1: int messageID;
-  2: string text;
-  3: User sender;
-  4: list<User> recipients;
-  5: list<Emoji> reactions;
+  1: int messageID,
+  2: string text,
+  3: User sender,
+  4: list<User> recipients,
+  5: list<Emoji> reactions,
 }
 
 service UserService{
 
   void ping(),
-  User Login(1: string usernmae, 2: string password)throws(1: ServiceException se),
-  User CreateUser(1: string username, 2: string name, 3: string password),
+  User Login(1:string usernmae, 2:string password)throws(1: ServiceException se),
+  User CreateUser(1:string username, 2:string name, 3:string password),
 
 }
 
@@ -60,20 +60,19 @@ service MessageService{
 service FriendRecommendationService{
 
   void ping(),
-  list<User> GetFriendRecommendations(1: User user),
+  list<User> GetFriendRecommendations(1:User user),
 
 }
 
 service EmojiPredictionService{
   void ping(),
-  Emoji GetEmoji(1: string text),
+  Emoji GetEmoji(1:string text),
 
 }
 
 service DatabaseService{
-  //idk what to put here yet...
   void ping(),
-  string WriteToDatabase(1: string query),
-  string ReadFromDatabase(1: string query),
+  string WriteToDatabase(1:string query),
+  string ReadFromDatabase(1:string query),
 }
 
