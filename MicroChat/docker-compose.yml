@@ -1,0 +1,37 @@
+version: "3"
+services:
+  user-service:
+    image: ekuntz11/microchat:version_1
+    hostname: user-service
+    restart: always
+    entrypoint: UserService
+  message-service:
+    image: ekuntz11/microchat:version_1
+    hostname: message-service
+    restart: always
+    entrypoint: MessageService
+  emoji-prediction-service:
+    image: ekuntz11/microchat:version_1
+    hostname: emoji-prediction-service
+    restart: always
+    entrypoint: EmojiPredictionService
+  friend-recommendation-service:
+    image: ekuntz11/microchat:version_1
+    hostname: friend-recommendation-service
+    restart: always
+    entrypoint: FriendRecommendationService
+  database-service:
+    image: ekuntz11/microchat:version_1
+    hostname: databaes-service
+    restart: always
+    entrypoint: DatabaseService 
+  nginx-thrift:
+    image: yg397/openresty-thrift:xenial
+    hostname: nginx-thrift
+    ports:
+      - 8080:8080
+    restart: always
+    volumes:
+      - ./nginx_reverse_proxy/lua-scripts:/usr/local/openresty/nginx/lua-scripts
+      - ./nginx_reverse_proxy/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./gen-lua:/gen-lua
