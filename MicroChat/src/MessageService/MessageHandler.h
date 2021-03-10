@@ -1,7 +1,6 @@
 #ifndef MICROCHAT_MESSAGEHANDLER_H
 #define MICROCHAT_MESSAGEHANDLER_H
 
-
 #include <iostream>
 #include <string>
 #include <regex>
@@ -13,22 +12,24 @@
 #include "../ThriftClient.h"
 #include "../logger.h"
 
-namespace microchat{
+namespace microchat
+{
 
-    class MessageServiceHandler : virtual public MessageServiceIf {
+    class MessageServiceHandler : virtual public MessageServiceIf
+    {
     public:
         MessageServiceHandler();
-        ~MessageServiceHandler() override=default;
+        ~MessageServiceHandler() override = default;
 
-    void ping() override;
-};
-// constructor
-MessageServiceHandler::MessageServiceHandler(){}
+        void ping() override;
+    };
+    // constructor
+    MessageServiceHandler::MessageServiceHandler() {}
 
-void ping(){
-    printf("pong!\n");
-}
-
+    void ping()
+    {
+        printf("pong!\n");
+    }
 
 }
 
