@@ -15,11 +15,11 @@
 namespace microchat
 {
 
-  class UserServiceHandler : virtual public UserServiceIf
+  class UserServiceHandler : public UserServiceIf
   {
   public:
     UserServiceHandler();
-    ~UserServiceHandler() override = default;
+    ~UserServiceHandler() override=default;
 
     void ping() override;
     void Login(User &_return, const std::string &usernmae, const std::string &password) override;
