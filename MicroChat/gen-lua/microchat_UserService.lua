@@ -4,12 +4,21 @@
 -- DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 -- @generated
 --
+local microchat__ttype = require 'microchat_ttypes'
+
+local Thrift = require 'Thrift'
+local TType = Thrift.TType
+local TMessageType = Thrift.TMessageType
+local __TObject = Thrift.__TObject
+local TApplicationException = Thrift.TApplicationException
+local __TClient = Thrift.__TClient
+local __TProcessor = Thrift.__TProcessor
+local ttype = Thrift.ttype
+local ttable_size = Thrift.ttable_size
+local TException = Thrift.TException
 
 
-require 'Thrift'
-require 'microchat_ttypes'
-
-UserServiceClient = __TObject.new(__TClient, {
+local UserServiceClient = __TObject.new(__TClient, {
   __type = 'UserServiceClient'
 })
 
@@ -105,12 +114,13 @@ function UserServiceClient:recv_CreateUser(username, name, password)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
-UserServiceIface = __TObject:new{
+
+local UserServiceIface = __TObject:new{
   __type = 'UserServiceIface'
 }
 
 
-UserServiceProcessor = __TObject.new(__TProcessor
+local UserServiceProcessor = __TObject.new(__TProcessor
 , {
  __type = 'UserServiceProcessor'
 })

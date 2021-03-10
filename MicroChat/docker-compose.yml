@@ -15,7 +15,7 @@ services:
     hostname: emoji-prediction-service
     restart: always
     entrypoint: EmojiPredictionService
-   friend-recommendation-service:
+  friend-recommendation-service:
     image: ekuntz11/microchat:version_1
     hostname: friend-recommendation-service
     restart: always

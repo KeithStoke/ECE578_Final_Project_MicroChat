@@ -6,10 +6,11 @@
 --
 
 
-require 'Thrift'
-require 'microchat_constants'
+local Thrift = require 'Thrift'
+local __TObject = Thrift.__TObject
+local TException = Thrift.TException
 
-ErrorCode = {
+local ErrorCode = {
   SE_CONNPOOL_TIMEOUT = 0,
   SE_THRIFT_CONN_ERROR = 1,
   SE_UNAUTHORIZED = 2,
@@ -20,13 +21,13 @@ ErrorCode = {
   SE_RABBITMQ_CONN_ERROR = 7
 }
 
-UserStatus = {
+local UserStatus = {
   ONLINE = 0,
   OFFLINE = 1,
   AWAY = 2
 }
 
-ServiceException = TException:new{
+local ServiceException = TException:new{
   __type = 'ServiceException',
   errorCode,
   message
@@ -74,7 +75,7 @@ function ServiceException:write(oprot)
   oprot:writeStructEnd()
 end
 
-User = __TObject:new{
+local User = __TObject:new{
   userID,
   username,
   name,
@@ -145,7 +146,7 @@ function User:write(oprot)
   oprot:writeStructEnd()
 end
 
-Emoji = __TObject:new{
+local Emoji = __TObject:new{
   emojiID,
   emojiname
 }
@@ -192,7 +193,7 @@ function Emoji:write(oprot)
   oprot:writeStructEnd()
 end
 
-Message = __TObject:new{
+local Message = __TObject:new{
   messageID,
   text,
   sender,
