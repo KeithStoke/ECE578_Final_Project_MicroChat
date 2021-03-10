@@ -28,7 +28,6 @@ namespace microchat{
 // constructor
 UserServiceHandler::UserServiceHandler(){}
 
-} //namespace microchat
 
 void ping() {
     // Your implementation goes here
@@ -44,5 +43,7 @@ void ping() {
     // Your implementation goes here
     printf("CreateUser\n");
   }
+  
+  } //namespace microchat
 
 #endif

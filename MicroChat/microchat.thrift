@@ -52,6 +52,7 @@ service UserService{
 
 service MessageService{
   void ping(),
+  Message CreateMessage(1:User creator),
 
 }
 
