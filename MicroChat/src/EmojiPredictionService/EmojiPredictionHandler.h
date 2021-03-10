@@ -12,28 +12,30 @@
 #include "../ThriftClient.h"
 #include "../logger.h"
 
-namespace microchat{
+namespace microchat
+{
 
-class EmojiPredictionServiceHandler : virtual public EmojiPredictionServiceIf {
- public:
-  EmojiPredictionServiceHandler();
-  ~EmojiPredictionServiceHandler() override=default;
+  class EmojiPredictionServiceHandler : virtual public EmojiPredictionServiceIf
+  {
+  public:
+    EmojiPredictionServiceHandler();
+    ~EmojiPredictionServiceHandler() override = default;
 
-  void ping() override;
-  void GetEmoji(Emoji& _return, const std::string& text) override;
+    void ping() override;
+    void GetEmoji(Emoji &_return, const std::string &text) override;
+  };
 
-};
-
-void ping() {
+  void ping()
+  {
     // Your implementation goes here
     printf("ping\n");
   }
 
-  void GetEmoji(Emoji& _return, const std::string& text) {
+  void GetEmoji(Emoji &_return, const std::string &text)
+  {
     // Your implementation goes here
     printf("GetEmoji\n");
   }
-
 
 } //namespace microchat
 

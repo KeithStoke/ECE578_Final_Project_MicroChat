@@ -24,7 +24,7 @@ namespace microchat
         void ping() override;
     };
 
-    DatabaseServiceHandler::DatabaseServiceHandler();
+    DatabaseServiceHandler::DatabaseServiceHandler() {};
 
     void ping()
     {

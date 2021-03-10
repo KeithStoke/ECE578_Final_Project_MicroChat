@@ -1,7 +1,6 @@
 #ifndef MICROCHAT_USERHANDLER_H
 #define MICROCHAT_USERHANDLER_H
 
-
 #include <iostream>
 #include <string>
 #include <regex>
@@ -13,37 +12,41 @@
 #include "../ThriftClient.h"
 #include "../logger.h"
 
-namespace microchat{
+namespace microchat
+{
 
-    class UserServiceHandler : virtual public UserServiceIf {
-    public:
+  class UserServiceHandler : virtual public UserServiceIf
+  {
+  public:
     UserServiceHandler();
-    ~UserServiceHandler() override=default;
+    ~UserServiceHandler() override = default;
 
     void ping() override;
-    void Login(User& _return, const std::string& usernmae, const std::string& password) override;
-    void CreateUser(User& _return, const std::string& username, const std::string& name, const std::string& password) override;
-};
+    void Login(User &_return, const std::string &usernmae, const std::string &password) override;
+    void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password) override;
+  };
 
-// constructor
-UserServiceHandler::UserServiceHandler(){}
+  // constructor
+  UserServiceHandler::UserServiceHandler() {}
 
-
-void ping() {
+  void ping()
+  {
     // Your implementation goes here
     printf("ping\n");
   }
 
-  void Login(User& _return, const std::string& usernmae, const std::string& password) {
+  void Login(User &_return, const std::string &usernmae, const std::string &password)
+  {
     // Your implementation goes here
     printf("Login\n");
   }
 
-  void CreateUser(User& _return, const std::string& username, const std::string& name, const std::string& password) {
+  void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password)
+  {
     // Your implementation goes here
     printf("CreateUser\n");
   }
-  
-  } //namespace microchat
+
+} //namespace microchat
 
 #endif
