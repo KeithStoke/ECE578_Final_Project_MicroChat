@@ -28,6 +28,7 @@ namespace microchat
 
   // constructor
   UserServiceHandler::UserServiceHandler() {}
+  UserServiceHandler::~UserServiceHandler() {}
 
   void ping()
   {
