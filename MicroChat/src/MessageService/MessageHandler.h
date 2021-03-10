@@ -19,9 +19,9 @@ namespace microchat
     {
     public:
         MessageServiceHandler();
-        ~MessageServiceHandler() override = default;
+        ~MessageServiceHandler() override=default;
 
-        void ping() override;
+        void ping();
     };
     // constructor
     MessageServiceHandler::MessageServiceHandler() {}
