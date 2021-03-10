@@ -15,4 +15,8 @@ endif()
 
 set(THRIFT_GEN_CPP_DIR ../../gen-cpp)
 
-#add_subdirectory(OrderBeverageService)
+add_subdirectory(UserService)
+add_subdirectory(MessageService)
+add_subdirectory(FriendRecommendationService)
+add_subdirectory(EmojiPredictionService)
+add_subdirectory(DatabaseService)
