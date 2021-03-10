@@ -13,7 +13,7 @@ using apache::thrift::transport::TServerSocket;
 using apache::thrift::transport::TFramedTransportFactory;
 using apache::thrift::protocol::TBinaryProtocolFactory;
 
-using namespace microchat{
+using namespace microchat;
 // signal handler code
 void sigintHandler(int sig) {
 	exit(EXIT_SUCCESS);

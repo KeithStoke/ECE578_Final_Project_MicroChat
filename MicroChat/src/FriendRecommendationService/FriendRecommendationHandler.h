@@ -16,7 +16,7 @@ namespace microchat{
 
     class FriendRecommendationServiceHandler : public FriendRecommendationServiceIf {
  public:
-  FriendRecommendationServiceHandler() override;
+  FriendRecommendationServiceHandler();
   ~FriendRecommendationServiceHandler() override=default;
 
   void ping() override;
@@ -24,14 +24,14 @@ namespace microchat{
 
 };
 
-FriendRecommendationServiceHandler::FriendRecommendationServiceHandler();
+FriendRecommendationServiceHandler::FriendRecommendationServiceHandler() {};
 
-void ping(){
+void FriendRecommendationServiceHandler::ping(){
     printf("PONG!\n");
 }
 
-void GetFriendRecommendations(std::vector<User> & _return, const User& user){
-    printf("EVA TODO");
+void FriendRecommendationServiceHandler::GetFriendRecommendations(std::vector<User> & _return, const User& user){
+    printf("get friend recommendations RPC");
 }
 
 } //namespace microchat

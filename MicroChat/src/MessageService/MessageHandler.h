@@ -26,7 +26,7 @@ namespace microchat
     // constructor
     MessageServiceHandler::MessageServiceHandler() {}
 
-    void ping()
+    void MessageServiceHandler::ping()
     {
         printf("pong!\n");
     }

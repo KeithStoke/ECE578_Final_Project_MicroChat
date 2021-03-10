@@ -25,13 +25,15 @@ namespace microchat
     void GetEmoji(Emoji &_return, const std::string &text) override;
   };
 
-  void ping()
+  EmojiPredictionServiceHandler::EmojiPredictionServiceHandler() {};
+
+  void EmojiPredictionServiceHandler::ping()
   {
     // Your implementation goes here
     printf("ping\n");
   }
 
-  void GetEmoji(Emoji &_return, const std::string &text)
+  void EmojiPredictionServiceHandler::GetEmoji(Emoji &_return, const std::string &text)
   {
     // Your implementation goes here
     printf("GetEmoji\n");

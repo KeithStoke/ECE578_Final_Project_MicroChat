@@ -22,15 +22,28 @@ namespace microchat
         ~DatabaseServiceHandler() override=default;
 
         void ping() override;
+        void WriteToDatabase(std::string& _return, const std::string& query) override;
+        void ReadFromDatabase(std::string& _return, const std::string& query) override;
     };
 
     DatabaseServiceHandler::DatabaseServiceHandler() {};
+    
 
-    void ping()
+    void DatabaseServiceHandler::ping()
     {
         // Your implementation goes here
         printf("ping\n");
     }
+
+    void DatabaseServiceHandler::WriteToDatabase(std::string& _return, const std::string& query) {
+    // Your implementation goes here
+    printf("WriteToDatabase\n");
+  }
+
+  void DatabaseServiceHandler::ReadFromDatabase(std::string& _return, const std::string& query) {
+    // Your implementation goes here
+    printf("ReadFromDatabase\n");
+  }
 
 } //namespace microchat
 

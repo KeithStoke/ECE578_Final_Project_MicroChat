@@ -51,3 +51,4 @@ int main(int argc, char **argv) {
   std::cout << "Starting the friend recommendation server ..." << std::endl;
   server.serve();
   return 0;
+}

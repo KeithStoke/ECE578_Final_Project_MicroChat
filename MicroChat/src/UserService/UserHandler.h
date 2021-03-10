@@ -19,7 +19,7 @@ namespace microchat
   {
   public:
     UserServiceHandler();
-    ~UserServiceHandler() override=default;
+    ~UserServiceHandler()override=default;
 
     void ping() override;
     void Login(User &_return, const std::string &usernmae, const std::string &password) override;
@@ -28,21 +28,20 @@ namespace microchat
 
   // constructor
   UserServiceHandler::UserServiceHandler() {}
-  UserServiceHandler::~UserServiceHandler() {}
 
-  void ping()
+  void UserServiceHandler::ping()
   {
     // Your implementation goes here
     printf("ping\n");
   }
 
-  void Login(User &_return, const std::string &usernmae, const std::string &password)
+  void UserServiceHandler::Login(User &_return, const std::string &usernmae, const std::string &password)
   {
     // Your implementation goes here
     printf("Login\n");
   }
 
-  void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password)
+  void UserServiceHandler::CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password)
   {
     // Your implementation goes here
     printf("CreateUser\n");
