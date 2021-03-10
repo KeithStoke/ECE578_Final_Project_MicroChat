@@ -1,4 +1,5 @@
 namespace cpp microchat
+namespace lua microchat
 
 enum ErrorCode {
   SE_CONNPOOL_TIMEOUT,
@@ -52,8 +53,6 @@ service UserService{
 
 service MessageService{
   void ping(),
-  Message CreateMessage(1:User creator),
-
 }
 
 service FriendRecommendationService{
