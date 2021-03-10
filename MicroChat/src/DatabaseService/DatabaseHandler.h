@@ -15,7 +15,7 @@
 namespace microchat
 {
 
-    class DatabaseServiceHandler : virtual public DatabaseServiceIf
+    class DatabaseServiceHandler : public DatabaseServiceIf
     {
     public:
         DatabaseServiceHandler();

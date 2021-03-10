@@ -15,7 +15,7 @@
 namespace microchat
 {
 
-  class EmojiPredictionServiceHandler : virtual public EmojiPredictionServiceIf
+  class EmojiPredictionServiceHandler : public EmojiPredictionServiceIf
   {
   public:
     EmojiPredictionServiceHandler();

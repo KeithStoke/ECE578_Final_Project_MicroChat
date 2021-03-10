@@ -14,10 +14,10 @@
 
 namespace microchat{
 
-    class FriendRecommendationServiceHandler : virtual public FriendRecommendationServiceIf {
+    class FriendRecommendationServiceHandler : public FriendRecommendationServiceIf {
  public:
   FriendRecommendationServiceHandler() override;
-  ~FriendRecommendationServiceHandler() override = default;
+  ~FriendRecommendationServiceHandler() override=default;
 
   void ping() override;
   void GetFriendRecommendations(std::vector<User> & _return, const User& user) override;

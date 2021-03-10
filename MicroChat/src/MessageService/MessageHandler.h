@@ -15,7 +15,7 @@
 namespace microchat
 {
 
-    class MessageServiceHandler : virtual public MessageServiceIf
+    class MessageServiceHandler : public MessageServiceIf
     {
     public:
         MessageServiceHandler();
