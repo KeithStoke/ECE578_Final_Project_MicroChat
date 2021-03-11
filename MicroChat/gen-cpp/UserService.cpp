@@ -223,8 +223,8 @@ uint32_t UserService_Login_args::read(::apache::thrift::protocol::TProtocol* ipr
     {
       case 1:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->usernmae);
-          this->__isset.usernmae = true;
+          xfer += iprot->readString(this->username);
+          this->__isset.username = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -254,8 +254,8 @@ uint32_t UserService_Login_args::write(::apache::thrift::protocol::TProtocol* op
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("UserService_Login_args");
 
-  xfer += oprot->writeFieldBegin("usernmae", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString(this->usernmae);
+  xfer += oprot->writeFieldBegin("username", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->username);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("password", ::apache::thrift::protocol::T_STRING, 2);
@@ -277,8 +277,8 @@ uint32_t UserService_Login_pargs::write(::apache::thrift::protocol::TProtocol* o
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("UserService_Login_pargs");
 
-  xfer += oprot->writeFieldBegin("usernmae", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString((*(this->usernmae)));
+  xfer += oprot->writeFieldBegin("username", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->username)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("password", ::apache::thrift::protocol::T_STRING, 2);
@@ -695,19 +695,19 @@ void UserServiceClient::recv_Ping(std::string& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "Ping failed: unknown result");
 }
 
-void UserServiceClient::Login(User& _return, const std::string& usernmae, const std::string& password)
+void UserServiceClient::Login(User& _return, const std::string& username, const std::string& password)
 {
-  send_Login(usernmae, password);
+  send_Login(username, password);
   recv_Login(_return);
 }
 
-void UserServiceClient::send_Login(const std::string& usernmae, const std::string& password)
+void UserServiceClient::send_Login(const std::string& username, const std::string& password)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("Login", ::apache::thrift::protocol::T_CALL, cseqid);
 
   UserService_Login_pargs args;
-  args.usernmae = &usernmae;
+  args.username = &username;
   args.password = &password;
   args.write(oprot_);
 
@@ -913,7 +913,7 @@ void UserServiceProcessor::process_Login(int32_t seqid, ::apache::thrift::protoc
 
   UserService_Login_result result;
   try {
-    iface_->Login(result.success, args.usernmae, args.password);
+    iface_->Login(result.success, args.username, args.password);
     result.__isset.success = true;
   } catch (ServiceException &se) {
     result.se = se;
@@ -1092,20 +1092,20 @@ void UserServiceConcurrentClient::recv_Ping(std::string& _return, const int32_t 
   } // end while(true)
 }
 
-void UserServiceConcurrentClient::Login(User& _return, const std::string& usernmae, const std::string& password)
+void UserServiceConcurrentClient::Login(User& _return, const std::string& username, const std::string& password)
 {
-  int32_t seqid = send_Login(usernmae, password);
+  int32_t seqid = send_Login(username, password);
   recv_Login(_return, seqid);
 }
 
-int32_t UserServiceConcurrentClient::send_Login(const std::string& usernmae, const std::string& password)
+int32_t UserServiceConcurrentClient::send_Login(const std::string& username, const std::string& password)
 {
   int32_t cseqid = this->sync_->generateSeqId();
   ::apache::thrift::async::TConcurrentSendSentry sentry(this->sync_.get());
   oprot_->writeMessageBegin("Login", ::apache::thrift::protocol::T_CALL, cseqid);
 
   UserService_Login_pargs args;
-  args.usernmae = &usernmae;
+  args.username = &username;
   args.password = &password;
   args.write(oprot_);
 

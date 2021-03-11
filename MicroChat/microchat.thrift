@@ -46,7 +46,7 @@ struct Message {
 service UserService{
 
   string Ping(1:i32 id),
-  User Login(1:string usernmae, 2:string password)throws(1: ServiceException se),
+  User Login(1:string username, 2:string password)throws(1: ServiceException se),
   User CreateUser(1:string username, 2:string name, 3:string password),
 
 }

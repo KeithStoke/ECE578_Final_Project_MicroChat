@@ -25,7 +25,7 @@ class UserServiceHandler : virtual public UserServiceIf {
     printf("Ping\n");
   }
 
-  void Login(User& _return, const std::string& usernmae, const std::string& password) {
+  void Login(User& _return, const std::string& username, const std::string& password) {
     // Your implementation goes here
     printf("Login\n");
   }

@@ -8,45 +8,51 @@
 #include "UserHandler.h"
 
 using json = nlohmann::json;
-using apache::thrift::server::TThreadedServer;
-using apache::thrift::transport::TServerSocket;
-using apache::thrift::transport::TFramedTransportFactory;
 using apache::thrift::protocol::TBinaryProtocolFactory;
+using apache::thrift::server::TThreadedServer;
+using apache::thrift::transport::TFramedTransportFactory;
+using apache::thrift::transport::TServerSocket;
 
 using namespace microchat;
 
-
 // signal handler code
-void sigintHandler(int sig) {
-	exit(EXIT_SUCCESS);
+void sigintHandler(int sig)
+{
+  exit(EXIT_SUCCESS);
 }
 
 // entry of this service
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
   // 1: notify the singal handler if interrupted
   signal(SIGINT, sigintHandler);
   // 1.1: Initialize logging
   init_logger();
 
-
   // 2: read the config file for ports and addresses
   json config_json;
-  if (load_config_file("config/service-config.json", &config_json) != 0) {
+  if (load_config_file("config/service-config.json", &config_json) != 0)
+  {
     exit(EXIT_FAILURE);
   }
 
   // 3: get my port
   int my_port = config_json["user-service"]["port"];
 
-  // 4: configure this server
+  // get database service port
+  int database_service_port = config_json["database-service"]["port"];
+  std::string database_service_addr = config_json["database-service"]["addr"];
+
+ // ClientPool<ThriftClient<DatabaseServiceClient>> database_client_pool(
+   //   "database-service", database_service_addr, database_service_port, 0, 128, 1000);
+
   TThreadedServer server(
       std::make_shared<UserServiceProcessor>(
           std::make_shared<UserServiceHandler>()),
       std::make_shared<TServerSocket>("0.0.0.0", my_port),
       std::make_shared<TFramedTransportFactory>(),
-      std::make_shared<TBinaryProtocolFactory>()
-  );
-  
+      std::make_shared<TBinaryProtocolFactory>());
+
   // 5: start the server
   std::cout << "Starting the user server ..." << std::endl;
   server.serve();

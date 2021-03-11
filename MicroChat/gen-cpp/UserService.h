@@ -23,7 +23,7 @@ class UserServiceIf {
  public:
   virtual ~UserServiceIf() {}
   virtual void Ping(std::string& _return, const int32_t id) = 0;
-  virtual void Login(User& _return, const std::string& usernmae, const std::string& password) = 0;
+  virtual void Login(User& _return, const std::string& username, const std::string& password) = 0;
   virtual void CreateUser(User& _return, const std::string& username, const std::string& name, const std::string& password) = 0;
 };
 
@@ -57,7 +57,7 @@ class UserServiceNull : virtual public UserServiceIf {
   void Ping(std::string& /* _return */, const int32_t /* id */) {
     return;
   }
-  void Login(User& /* _return */, const std::string& /* usernmae */, const std::string& /* password */) {
+  void Login(User& /* _return */, const std::string& /* username */, const std::string& /* password */) {
     return;
   }
   void CreateUser(User& /* _return */, const std::string& /* username */, const std::string& /* name */, const std::string& /* password */) {
@@ -170,8 +170,8 @@ class UserService_Ping_presult {
 };
 
 typedef struct _UserService_Login_args__isset {
-  _UserService_Login_args__isset() : usernmae(false), password(false) {}
-  bool usernmae :1;
+  _UserService_Login_args__isset() : username(false), password(false) {}
+  bool username :1;
   bool password :1;
 } _UserService_Login_args__isset;
 
@@ -180,22 +180,22 @@ class UserService_Login_args {
 
   UserService_Login_args(const UserService_Login_args&);
   UserService_Login_args& operator=(const UserService_Login_args&);
-  UserService_Login_args() : usernmae(), password() {
+  UserService_Login_args() : username(), password() {
   }
 
   virtual ~UserService_Login_args() noexcept;
-  std::string usernmae;
+  std::string username;
   std::string password;
 
   _UserService_Login_args__isset __isset;
 
-  void __set_usernmae(const std::string& val);
+  void __set_username(const std::string& val);
 
   void __set_password(const std::string& val);
 
   bool operator == (const UserService_Login_args & rhs) const
   {
-    if (!(usernmae == rhs.usernmae))
+    if (!(username == rhs.username))
       return false;
     if (!(password == rhs.password))
       return false;
@@ -218,7 +218,7 @@ class UserService_Login_pargs {
 
 
   virtual ~UserService_Login_pargs() noexcept;
-  const std::string* usernmae;
+  const std::string* username;
   const std::string* password;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
@@ -434,8 +434,8 @@ class UserServiceClient : virtual public UserServiceIf {
   void Ping(std::string& _return, const int32_t id);
   void send_Ping(const int32_t id);
   void recv_Ping(std::string& _return);
-  void Login(User& _return, const std::string& usernmae, const std::string& password);
-  void send_Login(const std::string& usernmae, const std::string& password);
+  void Login(User& _return, const std::string& username, const std::string& password);
+  void send_Login(const std::string& username, const std::string& password);
   void recv_Login(User& _return);
   void CreateUser(User& _return, const std::string& username, const std::string& name, const std::string& password);
   void send_CreateUser(const std::string& username, const std::string& name, const std::string& password);
@@ -502,13 +502,13 @@ class UserServiceMultiface : virtual public UserServiceIf {
     return;
   }
 
-  void Login(User& _return, const std::string& usernmae, const std::string& password) {
+  void Login(User& _return, const std::string& username, const std::string& password) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->Login(_return, usernmae, password);
+      ifaces_[i]->Login(_return, username, password);
     }
-    ifaces_[i]->Login(_return, usernmae, password);
+    ifaces_[i]->Login(_return, username, password);
     return;
   }
 
@@ -557,8 +557,8 @@ class UserServiceConcurrentClient : virtual public UserServiceIf {
   void Ping(std::string& _return, const int32_t id);
   int32_t send_Ping(const int32_t id);
   void recv_Ping(std::string& _return, const int32_t seqid);
-  void Login(User& _return, const std::string& usernmae, const std::string& password);
-  int32_t send_Login(const std::string& usernmae, const std::string& password);
+  void Login(User& _return, const std::string& username, const std::string& password);
+  int32_t send_Login(const std::string& username, const std::string& password);
   void recv_Login(User& _return, const int32_t seqid);
   void CreateUser(User& _return, const std::string& username, const std::string& name, const std::string& password);
   int32_t send_CreateUser(const std::string& username, const std::string& name, const std::string& password);

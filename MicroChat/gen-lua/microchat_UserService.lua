@@ -58,22 +58,22 @@ function UserServiceClient:recv_Ping(id)
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
-function UserServiceClient:Login(usernmae, password)
-  self:send_Login(usernmae, password)
-  return self:recv_Login(usernmae, password)
+function UserServiceClient:Login(username, password)
+  self:send_Login(username, password)
+  return self:recv_Login(username, password)
 end
 
-function UserServiceClient:send_Login(usernmae, password)
+function UserServiceClient:send_Login(username, password)
   self.oprot:writeMessageBegin('Login', TMessageType.CALL, self._seqid)
   local args = Login_args:new{}
-  args.usernmae = usernmae
+  args.username = username
   args.password = password
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function UserServiceClient:recv_Login(usernmae, password)
+function UserServiceClient:recv_Login(username, password)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -177,7 +177,7 @@ function UserServiceProcessor:process_Login(seqid, iprot, oprot, server_ctx)
   args:read(iprot)
   iprot:readMessageEnd()
   local result = Login_result:new{}
-  local status, res = pcall(self.handler.Login, self.handler, args.usernmae, args.password)
+  local status, res = pcall(self.handler.Login, self.handler, args.username, args.password)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
@@ -280,7 +280,7 @@ function Ping_result:write(oprot)
 end
 
 local Login_args = __TObject:new{
-  usernmae,
+  username,
   password
 }
 
@@ -292,7 +292,7 @@ function Login_args:read(iprot)
       break
     elseif fid == 1 then
       if ftype == TType.STRING then
-        self.usernmae = iprot:readString()
+        self.username = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -312,9 +312,9 @@ end
 
 function Login_args:write(oprot)
   oprot:writeStructBegin('Login_args')
-  if self.usernmae ~= nil then
-    oprot:writeFieldBegin('usernmae', TType.STRING, 1)
-    oprot:writeString(self.usernmae)
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
     oprot:writeFieldEnd()
   end
   if self.password ~= nil then
