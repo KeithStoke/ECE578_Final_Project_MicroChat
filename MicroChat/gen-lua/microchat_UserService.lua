@@ -23,6 +23,10 @@ local UserServiceClient = __TObject.new(__TClient, {
   __type = 'UserServiceClient'
 })
 
+local ping_args = __TObject:new{
+  text
+}
+
 function UserServiceClient:ping(text)
   self:send_ping(text)
   return self:recv_ping(text)
@@ -210,9 +214,6 @@ end
 
 -- HELPER FUNCTIONS AND STRUCTURES
 
-ping_args = __TObject:new{
-  text
-}
 
 function ping_args:read(iprot)
   iprot:readStructBegin()
@@ -246,7 +247,8 @@ function ping_args:write(oprot)
 end
 
 ping_result = __TObject:new{
-  success
+  success,
+  se
 }
 
 function ping_result:read(iprot)
@@ -261,6 +263,13 @@ function ping_result:read(iprot)
       else
         iprot:skip(ftype)
       end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
     else
       iprot:skip(ftype)
     end
@@ -270,10 +279,15 @@ function ping_result:read(iprot)
 end
 
 function ping_result:write(oprot)
-  oprot:writeStructBegin('ping_result')
+  oprot:writeStructBegin('PlaceOrder_result')
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()

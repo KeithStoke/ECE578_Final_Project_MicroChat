@@ -32,7 +32,8 @@ namespace microchat
   void UserServiceHandler::ping(std::string &_return, const std::string &text)
   {
     std::cout << "Ping says " << text << std::endl;
-    _return = "Pong from UserService";
+    std::string pong = "Pong from UserService";
+    _return = pong;
   }
 
   void UserServiceHandler::Login(User &_return, const std::string &usernmae, const std::string &password)

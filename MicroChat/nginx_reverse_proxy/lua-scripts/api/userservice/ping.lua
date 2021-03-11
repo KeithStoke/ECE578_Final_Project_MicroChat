@@ -20,7 +20,7 @@ function _M.Ping()
            ngx.exit(ngx.HTTP_BAD_REQUEST)
         end
 
-	ngx.say("Inside Nginx Lua script: Pinging UserService...")
+	ngx.say("Inside Nginx Lua script: Pinging UserService...", post.text)
 	
 	local client = GenericObjectPool:connection(UserServiceClient, "user-service", 9090)
 	local status, ret = pcall(client.Ping, client, post.text)
