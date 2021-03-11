@@ -23,25 +23,25 @@ local UserServiceClient = __TObject.new(__TClient, {
   __type = 'UserServiceClient'
 })
 
-local ping_args = __TObject:new{
-  text
+local Ping_args = __TObject:new{
+  id
 }
 
-function UserServiceClient:ping(text)
-  self:send_ping(text)
-  return self:recv_ping(text)
+function UserServiceClient:Ping(id)
+  self:send_Ping(id)
+  return self:recv_Ping(id)
 end
 
-function UserServiceClient:send_ping(text)
-  self.oprot:writeMessageBegin('ping', TMessageType.CALL, self._seqid)
-  local args = ping_args:new{}
-  args.text = text
+function UserServiceClient:send_Ping(id)
+  self.oprot:writeMessageBegin('Ping', TMessageType.CALL, self._seqid)
+  local args = Ping_args:new{}
+  args.id = id
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function UserServiceClient:recv_ping(text)
+function UserServiceClient:recv_Ping(id)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -49,7 +49,7 @@ function UserServiceClient:recv_ping(text)
     self.iprot:readMessageEnd()
     error(x)
   end
-  local result = ping_result:new{}
+  local result = Ping_result:new{}
   result:read(self.iprot)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
@@ -124,7 +124,6 @@ function UserServiceClient:recv_CreateUser(username, name, password)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
-
 local UserServiceIface = __TObject:new{
   __type = 'UserServiceIface'
 }
@@ -153,20 +152,20 @@ function UserServiceProcessor:process(iprot, oprot, server_ctx)
   end
 end
 
-function UserServiceProcessor:process_ping(seqid, iprot, oprot, server_ctx)
-  local args = ping_args:new{}
+function UserServiceProcessor:process_Ping(seqid, iprot, oprot, server_ctx)
+  local args = Ping_args:new{}
   local reply_type = TMessageType.REPLY
   args:read(iprot)
   iprot:readMessageEnd()
-  local result = ping_result:new{}
-  local status, res = pcall(self.handler.ping, self.handler, args.text)
+  local result = Ping_result:new{}
+  local status, res = pcall(self.handler.Ping, self.handler, args.id)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
   else
     result.success = res
   end
-  oprot:writeMessageBegin('ping', reply_type, seqid)
+  oprot:writeMessageBegin('Ping', reply_type, seqid)
   result:write(oprot)
   oprot:writeMessageEnd()
   oprot.trans:flush()
@@ -214,16 +213,15 @@ end
 
 -- HELPER FUNCTIONS AND STRUCTURES
 
-
-function ping_args:read(iprot)
+function Ping_args:read(iprot)
   iprot:readStructBegin()
   while true do
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
     elseif fid == 1 then
-      if ftype == TType.STRING then
-        self.text = iprot:readString()
+      if ftype == TType.I32 then
+        self.id = iprot:readI32()
       else
         iprot:skip(ftype)
       end
@@ -235,27 +233,33 @@ function ping_args:read(iprot)
   iprot:readStructEnd()
 end
 
-function ping_args:write(oprot)
-  oprot:writeStructBegin('ping_args')
-  if self.text ~= nil then
-    oprot:writeFieldBegin('text', TType.STRING, 1)
-    oprot:writeString(self.text)
+function Ping_args:write(oprot)
+  oprot:writeStructBegin('Ping_args')
+  if self.id ~= nil then
+    oprot:writeFieldBegin('id', TType.I32, 1)
+    oprot:writeI32(self.id)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
 
-ping_result = __TObject:new{
-  success,
+Ping_result = __TObject:new{
+  success
 }
 
-function ping_result:read(iprot)
+function Ping_result:read(iprot)
   iprot:readStructBegin()
   while true do
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
     else
       iprot:skip(ftype)
     end
@@ -264,13 +268,18 @@ function ping_result:read(iprot)
   iprot:readStructEnd()
 end
 
-function ping_result:write(oprot)
-  oprot:writeStructBegin('ping_result')
+function Ping_result:write(oprot)
+  oprot:writeStructBegin('Ping_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
 
-Login_args = __TObject:new{
+local Login_args = __TObject:new{
   usernmae,
   password
 }
@@ -366,7 +375,7 @@ function Login_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-CreateUser_args = __TObject:new{
+local CreateUser_args = __TObject:new{
   username,
   name,
   password
@@ -460,3 +469,5 @@ function CreateUser_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
+return UserServiceClient

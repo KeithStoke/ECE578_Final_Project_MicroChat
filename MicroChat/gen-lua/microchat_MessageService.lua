@@ -6,7 +6,6 @@
 --
 
 
-
 require 'Thrift'
 require 'microchat_ttypes'
 

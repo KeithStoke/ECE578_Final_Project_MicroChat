@@ -22,7 +22,7 @@ namespace microchat {
 class UserServiceIf {
  public:
   virtual ~UserServiceIf() {}
-  virtual void ping(std::string& _return, const std::string& text) = 0;
+  virtual void Ping(std::string& _return, const int32_t id) = 0;
   virtual void Login(User& _return, const std::string& usernmae, const std::string& password) = 0;
   virtual void CreateUser(User& _return, const std::string& username, const std::string& name, const std::string& password) = 0;
 };
@@ -54,7 +54,7 @@ class UserServiceIfSingletonFactory : virtual public UserServiceIfFactory {
 class UserServiceNull : virtual public UserServiceIf {
  public:
   virtual ~UserServiceNull() {}
-  void ping(std::string& /* _return */, const std::string& /* text */) {
+  void Ping(std::string& /* _return */, const int32_t /* id */) {
     return;
   }
   void Login(User& /* _return */, const std::string& /* usernmae */, const std::string& /* password */) {
@@ -65,37 +65,37 @@ class UserServiceNull : virtual public UserServiceIf {
   }
 };
 
-typedef struct _UserService_ping_args__isset {
-  _UserService_ping_args__isset() : text(false) {}
-  bool text :1;
-} _UserService_ping_args__isset;
+typedef struct _UserService_Ping_args__isset {
+  _UserService_Ping_args__isset() : id(false) {}
+  bool id :1;
+} _UserService_Ping_args__isset;
 
-class UserService_ping_args {
+class UserService_Ping_args {
  public:
 
-  UserService_ping_args(const UserService_ping_args&);
-  UserService_ping_args& operator=(const UserService_ping_args&);
-  UserService_ping_args() : text() {
+  UserService_Ping_args(const UserService_Ping_args&);
+  UserService_Ping_args& operator=(const UserService_Ping_args&);
+  UserService_Ping_args() : id(0) {
   }
 
-  virtual ~UserService_ping_args() noexcept;
-  std::string text;
+  virtual ~UserService_Ping_args() noexcept;
+  int32_t id;
 
-  _UserService_ping_args__isset __isset;
+  _UserService_Ping_args__isset __isset;
 
-  void __set_text(const std::string& val);
+  void __set_id(const int32_t val);
 
-  bool operator == (const UserService_ping_args & rhs) const
+  bool operator == (const UserService_Ping_args & rhs) const
   {
-    if (!(text == rhs.text))
+    if (!(id == rhs.id))
       return false;
     return true;
   }
-  bool operator != (const UserService_ping_args &rhs) const {
+  bool operator != (const UserService_Ping_args &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const UserService_ping_args & ) const;
+  bool operator < (const UserService_Ping_args & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
@@ -103,67 +103,67 @@ class UserService_ping_args {
 };
 
 
-class UserService_ping_pargs {
+class UserService_Ping_pargs {
  public:
 
 
-  virtual ~UserService_ping_pargs() noexcept;
-  const std::string* text;
+  virtual ~UserService_Ping_pargs() noexcept;
+  const int32_t* id;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
 };
 
-typedef struct _UserService_ping_result__isset {
-  _UserService_ping_result__isset() : success(false) {}
+typedef struct _UserService_Ping_result__isset {
+  _UserService_Ping_result__isset() : success(false) {}
   bool success :1;
-} _UserService_ping_result__isset;
+} _UserService_Ping_result__isset;
 
-class UserService_ping_result {
+class UserService_Ping_result {
  public:
 
-  UserService_ping_result(const UserService_ping_result&);
-  UserService_ping_result& operator=(const UserService_ping_result&);
-  UserService_ping_result() : success() {
+  UserService_Ping_result(const UserService_Ping_result&);
+  UserService_Ping_result& operator=(const UserService_Ping_result&);
+  UserService_Ping_result() : success() {
   }
 
-  virtual ~UserService_ping_result() noexcept;
+  virtual ~UserService_Ping_result() noexcept;
   std::string success;
 
-  _UserService_ping_result__isset __isset;
+  _UserService_Ping_result__isset __isset;
 
   void __set_success(const std::string& val);
 
-  bool operator == (const UserService_ping_result & rhs) const
+  bool operator == (const UserService_Ping_result & rhs) const
   {
     if (!(success == rhs.success))
       return false;
     return true;
   }
-  bool operator != (const UserService_ping_result &rhs) const {
+  bool operator != (const UserService_Ping_result &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const UserService_ping_result & ) const;
+  bool operator < (const UserService_Ping_result & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
 };
 
-typedef struct _UserService_ping_presult__isset {
-  _UserService_ping_presult__isset() : success(false) {}
+typedef struct _UserService_Ping_presult__isset {
+  _UserService_Ping_presult__isset() : success(false) {}
   bool success :1;
-} _UserService_ping_presult__isset;
+} _UserService_Ping_presult__isset;
 
-class UserService_ping_presult {
+class UserService_Ping_presult {
  public:
 
 
-  virtual ~UserService_ping_presult() noexcept;
+  virtual ~UserService_Ping_presult() noexcept;
   std::string* success;
 
-  _UserService_ping_presult__isset __isset;
+  _UserService_Ping_presult__isset __isset;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
 
@@ -431,9 +431,9 @@ class UserServiceClient : virtual public UserServiceIf {
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void ping(std::string& _return, const std::string& text);
-  void send_ping(const std::string& text);
-  void recv_ping(std::string& _return);
+  void Ping(std::string& _return, const int32_t id);
+  void send_Ping(const int32_t id);
+  void recv_Ping(std::string& _return);
   void Login(User& _return, const std::string& usernmae, const std::string& password);
   void send_Login(const std::string& usernmae, const std::string& password);
   void recv_Login(User& _return);
@@ -455,13 +455,13 @@ class UserServiceProcessor : public ::apache::thrift::TDispatchProcessor {
   typedef  void (UserServiceProcessor::*ProcessFunction)(int32_t, ::apache::thrift::protocol::TProtocol*, ::apache::thrift::protocol::TProtocol*, void*);
   typedef std::map<std::string, ProcessFunction> ProcessMap;
   ProcessMap processMap_;
-  void process_ping(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_Ping(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_Login(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_CreateUser(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   UserServiceProcessor(::std::shared_ptr<UserServiceIf> iface) :
     iface_(iface) {
-    processMap_["ping"] = &UserServiceProcessor::process_ping;
+    processMap_["Ping"] = &UserServiceProcessor::process_Ping;
     processMap_["Login"] = &UserServiceProcessor::process_Login;
     processMap_["CreateUser"] = &UserServiceProcessor::process_CreateUser;
   }
@@ -492,13 +492,13 @@ class UserServiceMultiface : virtual public UserServiceIf {
     ifaces_.push_back(iface);
   }
  public:
-  void ping(std::string& _return, const std::string& text) {
+  void Ping(std::string& _return, const int32_t id) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->ping(_return, text);
+      ifaces_[i]->Ping(_return, id);
     }
-    ifaces_[i]->ping(_return, text);
+    ifaces_[i]->Ping(_return, id);
     return;
   }
 
@@ -554,9 +554,9 @@ class UserServiceConcurrentClient : virtual public UserServiceIf {
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void ping(std::string& _return, const std::string& text);
-  int32_t send_ping(const std::string& text);
-  void recv_ping(std::string& _return, const int32_t seqid);
+  void Ping(std::string& _return, const int32_t id);
+  int32_t send_Ping(const int32_t id);
+  void recv_Ping(std::string& _return, const int32_t seqid);
   void Login(User& _return, const std::string& usernmae, const std::string& password);
   int32_t send_Login(const std::string& usernmae, const std::string& password);
   void recv_Login(User& _return, const int32_t seqid);
