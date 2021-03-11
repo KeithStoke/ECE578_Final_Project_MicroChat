@@ -257,19 +257,6 @@ function ping_result:read(iprot)
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
-    elseif fid == 0 then
-      if ftype == TType.STRING then
-        self.success = iprot:readString()
-      else
-        iprot:skip(ftype)
-      end
-    elseif fid == 1 then
-      if ftype == TType.STRUCT then
-        self.se = ServiceException:new{}
-        self.se:read(iprot)
-      else
-        iprot:skip(ftype)
-      end
     else
       iprot:skip(ftype)
     end
@@ -279,17 +266,7 @@ function ping_result:read(iprot)
 end
 
 function ping_result:write(oprot)
-  oprot:writeStructBegin('PlaceOrder_result')
-  if self.success ~= nil then
-    oprot:writeFieldBegin('success', TType.STRING, 0)
-    oprot:writeString(self.success)
-    oprot:writeFieldEnd()
-  end
-  if self.se ~= nil then
-    oprot:writeFieldBegin('se', TType.STRUCT, 1)
-    self.se:write(oprot)
-    oprot:writeFieldEnd()
-  end
+  oprot:writeStructBegin('ping_result')
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
