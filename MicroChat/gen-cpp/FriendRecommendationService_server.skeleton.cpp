@@ -20,7 +20,7 @@ class FriendRecommendationServiceHandler : virtual public FriendRecommendationSe
     // Your initialization goes here
   }
 
-  void ping() {
+  void ping(std::string& _return, const std::string& text) {
     // Your implementation goes here
     printf("ping\n");
   }

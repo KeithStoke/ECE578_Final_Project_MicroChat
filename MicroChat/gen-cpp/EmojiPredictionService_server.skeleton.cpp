@@ -20,7 +20,7 @@ class EmojiPredictionServiceHandler : virtual public EmojiPredictionServiceIf {
     // Your initialization goes here
   }
 
-  void ping() {
+  void ping(std::string& _return, const std::string& text) {
     // Your implementation goes here
     printf("ping\n");
   }

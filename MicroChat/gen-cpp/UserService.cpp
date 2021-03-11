@@ -32,7 +32,20 @@ uint32_t UserService_ping_args::read(::apache::thrift::protocol::TProtocol* ipro
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->text);
+          this->__isset.text = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -45,6 +58,10 @@ uint32_t UserService_ping_args::write(::apache::thrift::protocol::TProtocol* opr
   uint32_t xfer = 0;
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("UserService_ping_args");
+
+  xfer += oprot->writeFieldBegin("text", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->text);
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -60,6 +77,10 @@ uint32_t UserService_ping_pargs::write(::apache::thrift::protocol::TProtocol* op
   uint32_t xfer = 0;
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("UserService_ping_pargs");
+
+  xfer += oprot->writeFieldBegin("text", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->text)));
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -90,7 +111,20 @@ uint32_t UserService_ping_result::read(::apache::thrift::protocol::TProtocol* ip
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -105,6 +139,11 @@ uint32_t UserService_ping_result::write(::apache::thrift::protocol::TProtocol* o
 
   xfer += oprot->writeStructBegin("UserService_ping_result");
 
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
+    xfer += oprot->writeFieldEnd();
+  }
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -134,7 +173,20 @@ uint32_t UserService_ping_presult::read(::apache::thrift::protocol::TProtocol* i
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -585,18 +637,19 @@ uint32_t UserService_CreateUser_presult::read(::apache::thrift::protocol::TProto
   return xfer;
 }
 
-void UserServiceClient::ping()
+void UserServiceClient::ping(std::string& _return, const std::string& text)
 {
-  send_ping();
-  recv_ping();
+  send_ping(text);
+  recv_ping(_return);
 }
 
-void UserServiceClient::send_ping()
+void UserServiceClient::send_ping(const std::string& text)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("ping", ::apache::thrift::protocol::T_CALL, cseqid);
 
   UserService_ping_pargs args;
+  args.text = &text;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -604,7 +657,7 @@ void UserServiceClient::send_ping()
   oprot_->getTransport()->flush();
 }
 
-void UserServiceClient::recv_ping()
+void UserServiceClient::recv_ping(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -630,11 +683,16 @@ void UserServiceClient::recv_ping()
     iprot_->getTransport()->readEnd();
   }
   UserService_ping_presult result;
+  result.success = &_return;
   result.read(iprot_);
   iprot_->readMessageEnd();
   iprot_->getTransport()->readEnd();
 
-  return;
+  if (result.__isset.success) {
+    // _return pointer has now been filled
+    return;
+  }
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
 }
 
 void UserServiceClient::Login(User& _return, const std::string& usernmae, const std::string& password)
@@ -801,7 +859,8 @@ void UserServiceProcessor::process_ping(int32_t seqid, ::apache::thrift::protoco
 
   UserService_ping_result result;
   try {
-    iface_->ping();
+    iface_->ping(result.success, args.text);
+    result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
       this->eventHandler_->handlerError(ctx, "UserService.ping");
@@ -949,19 +1008,20 @@ void UserServiceProcessor::process_CreateUser(int32_t seqid, ::apache::thrift::p
   return processor;
 }
 
-void UserServiceConcurrentClient::ping()
+void UserServiceConcurrentClient::ping(std::string& _return, const std::string& text)
 {
-  int32_t seqid = send_ping();
-  recv_ping(seqid);
+  int32_t seqid = send_ping(text);
+  recv_ping(_return, seqid);
 }
 
-int32_t UserServiceConcurrentClient::send_ping()
+int32_t UserServiceConcurrentClient::send_ping(const std::string& text)
 {
   int32_t cseqid = this->sync_->generateSeqId();
   ::apache::thrift::async::TConcurrentSendSentry sentry(this->sync_.get());
   oprot_->writeMessageBegin("ping", ::apache::thrift::protocol::T_CALL, cseqid);
 
   UserService_ping_pargs args;
+  args.text = &text;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -972,7 +1032,7 @@ int32_t UserServiceConcurrentClient::send_ping()
   return cseqid;
 }
 
-void UserServiceConcurrentClient::recv_ping(const int32_t seqid)
+void UserServiceConcurrentClient::recv_ping(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -1011,12 +1071,18 @@ void UserServiceConcurrentClient::recv_ping(const int32_t seqid)
         throw TProtocolException(TProtocolException::INVALID_DATA);
       }
       UserService_ping_presult result;
+      result.success = &_return;
       result.read(iprot_);
       iprot_->readMessageEnd();
       iprot_->getTransport()->readEnd();
 
-      sentry.commit();
-      return;
+      if (result.__isset.success) {
+        // _return pointer has now been filled
+        sentry.commit();
+        return;
+      }
+      // in a bad state, don't commit
+      throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
     }
     // seqid != rseqid
     this->sync_->updatePending(fname, mtype, rseqid);

@@ -10,21 +10,21 @@ function _M.Ping()
 	local ngx = ngx
 	-- Read the parameters sent by the end user client
 	
---	ngx.req.read_body()
- --       local post = ngx.req.get_post_args()
+	ngx.req.read_body()
+        local post = ngx.req.get_post_args()
 
-  --      if (_StrIsEmpty(post.city_id) ) then
-  --         ngx.status = ngx.HTTP_BAD_REQUEST
-    --       ngx.say("Incomplete arguments")
-   --        ngx.log(ngx.ERR, "Incomplete arguments")
-    --       ngx.exit(ngx.HTTP_BAD_REQUEST)
-    --    end --/
+        if (_StrIsEmpty(post.text) ) then
+           ngx.status = ngx.HTTP_BAD_REQUEST
+           ngx.say("Incomplete arguments")
+           ngx.log(ngx.ERR, "Incomplete arguments")
+           ngx.exit(ngx.HTTP_BAD_REQUEST)
+        end
 
 	ngx.say("Inside Nginx Lua script: Pinging UserService...")
 	
-	local client = GenericObjectPool:connection(UserServiceClient, "ouser-service", 9090)
-	local status, ret = pcall(client.Ping, client)
---	client:PlaceOrder(1)
+	local client = GenericObjectPool:connection(UserServiceClient, "user-service", 9090)
+	local status, ret = pcall(client.Ping, client, post.text)
+
 	GenericObjectPool:returnConnection(client)
 	ngx.say("Status: ", status)
 

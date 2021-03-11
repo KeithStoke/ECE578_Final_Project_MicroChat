@@ -22,7 +22,7 @@ namespace microchat {
 class MessageServiceIf {
  public:
   virtual ~MessageServiceIf() {}
-  virtual void ping() = 0;
+  virtual void ping(std::string& _return, const std::string& text) = 0;
 };
 
 class MessageServiceIfFactory {
@@ -52,24 +52,35 @@ class MessageServiceIfSingletonFactory : virtual public MessageServiceIfFactory 
 class MessageServiceNull : virtual public MessageServiceIf {
  public:
   virtual ~MessageServiceNull() {}
-  void ping() {
+  void ping(std::string& /* _return */, const std::string& /* text */) {
     return;
   }
 };
 
+typedef struct _MessageService_ping_args__isset {
+  _MessageService_ping_args__isset() : text(false) {}
+  bool text :1;
+} _MessageService_ping_args__isset;
 
 class MessageService_ping_args {
  public:
 
   MessageService_ping_args(const MessageService_ping_args&);
   MessageService_ping_args& operator=(const MessageService_ping_args&);
-  MessageService_ping_args() {
+  MessageService_ping_args() : text() {
   }
 
   virtual ~MessageService_ping_args() noexcept;
+  std::string text;
 
-  bool operator == (const MessageService_ping_args & /* rhs */) const
+  _MessageService_ping_args__isset __isset;
+
+  void __set_text(const std::string& val);
+
+  bool operator == (const MessageService_ping_args & rhs) const
   {
+    if (!(text == rhs.text))
+      return false;
     return true;
   }
   bool operator != (const MessageService_ping_args &rhs) const {
@@ -89,24 +100,36 @@ class MessageService_ping_pargs {
 
 
   virtual ~MessageService_ping_pargs() noexcept;
+  const std::string* text;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
 };
 
+typedef struct _MessageService_ping_result__isset {
+  _MessageService_ping_result__isset() : success(false) {}
+  bool success :1;
+} _MessageService_ping_result__isset;
 
 class MessageService_ping_result {
  public:
 
   MessageService_ping_result(const MessageService_ping_result&);
   MessageService_ping_result& operator=(const MessageService_ping_result&);
-  MessageService_ping_result() {
+  MessageService_ping_result() : success() {
   }
 
   virtual ~MessageService_ping_result() noexcept;
+  std::string success;
 
-  bool operator == (const MessageService_ping_result & /* rhs */) const
+  _MessageService_ping_result__isset __isset;
+
+  void __set_success(const std::string& val);
+
+  bool operator == (const MessageService_ping_result & rhs) const
   {
+    if (!(success == rhs.success))
+      return false;
     return true;
   }
   bool operator != (const MessageService_ping_result &rhs) const {
@@ -120,12 +143,19 @@ class MessageService_ping_result {
 
 };
 
+typedef struct _MessageService_ping_presult__isset {
+  _MessageService_ping_presult__isset() : success(false) {}
+  bool success :1;
+} _MessageService_ping_presult__isset;
 
 class MessageService_ping_presult {
  public:
 
 
   virtual ~MessageService_ping_presult() noexcept;
+  std::string* success;
+
+  _MessageService_ping_presult__isset __isset;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
 
@@ -156,9 +186,9 @@ class MessageServiceClient : virtual public MessageServiceIf {
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void ping();
-  void send_ping();
-  void recv_ping();
+  void ping(std::string& _return, const std::string& text);
+  void send_ping(const std::string& text);
+  void recv_ping(std::string& _return);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -207,13 +237,14 @@ class MessageServiceMultiface : virtual public MessageServiceIf {
     ifaces_.push_back(iface);
   }
  public:
-  void ping() {
+  void ping(std::string& _return, const std::string& text) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->ping();
+      ifaces_[i]->ping(_return, text);
     }
-    ifaces_[i]->ping();
+    ifaces_[i]->ping(_return, text);
+    return;
   }
 
 };
@@ -248,9 +279,9 @@ class MessageServiceConcurrentClient : virtual public MessageServiceIf {
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void ping();
-  int32_t send_ping();
-  void recv_ping(const int32_t seqid);
+  void ping(std::string& _return, const std::string& text);
+  int32_t send_ping(const std::string& text);
+  void recv_ping(std::string& _return, const int32_t seqid);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;

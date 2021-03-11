@@ -45,31 +45,31 @@ struct Message {
 
 service UserService{
 
-  void ping(),
+  string ping(1:string text),
   User Login(1:string usernmae, 2:string password)throws(1: ServiceException se),
   User CreateUser(1:string username, 2:string name, 3:string password),
 
 }
 
 service MessageService{
-  void ping(),
+  string ping(1:string text),
 }
 
 service FriendRecommendationService{
 
-  void ping(),
+  string ping(1:string text),
   list<User> GetFriendRecommendations(1:User user),
 
 }
 
 service EmojiPredictionService{
-  void ping(),
+  string ping(1:string text),
   Emoji GetEmoji(1:string text),
 
 }
 
 service DatabaseService{
-  void ping(),
+  string ping(1:string text),
   string WriteToDatabase(1:string query),
   string ReadFromDatabase(1:string query),
 }

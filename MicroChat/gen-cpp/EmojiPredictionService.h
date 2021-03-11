@@ -22,7 +22,7 @@ namespace microchat {
 class EmojiPredictionServiceIf {
  public:
   virtual ~EmojiPredictionServiceIf() {}
-  virtual void ping() = 0;
+  virtual void ping(std::string& _return, const std::string& text) = 0;
   virtual void GetEmoji(Emoji& _return, const std::string& text) = 0;
 };
 
@@ -53,7 +53,7 @@ class EmojiPredictionServiceIfSingletonFactory : virtual public EmojiPredictionS
 class EmojiPredictionServiceNull : virtual public EmojiPredictionServiceIf {
  public:
   virtual ~EmojiPredictionServiceNull() {}
-  void ping() {
+  void ping(std::string& /* _return */, const std::string& /* text */) {
     return;
   }
   void GetEmoji(Emoji& /* _return */, const std::string& /* text */) {
@@ -61,19 +61,30 @@ class EmojiPredictionServiceNull : virtual public EmojiPredictionServiceIf {
   }
 };
 
+typedef struct _EmojiPredictionService_ping_args__isset {
+  _EmojiPredictionService_ping_args__isset() : text(false) {}
+  bool text :1;
+} _EmojiPredictionService_ping_args__isset;
 
 class EmojiPredictionService_ping_args {
  public:
 
   EmojiPredictionService_ping_args(const EmojiPredictionService_ping_args&);
   EmojiPredictionService_ping_args& operator=(const EmojiPredictionService_ping_args&);
-  EmojiPredictionService_ping_args() {
+  EmojiPredictionService_ping_args() : text() {
   }
 
   virtual ~EmojiPredictionService_ping_args() noexcept;
+  std::string text;
 
-  bool operator == (const EmojiPredictionService_ping_args & /* rhs */) const
+  _EmojiPredictionService_ping_args__isset __isset;
+
+  void __set_text(const std::string& val);
+
+  bool operator == (const EmojiPredictionService_ping_args & rhs) const
   {
+    if (!(text == rhs.text))
+      return false;
     return true;
   }
   bool operator != (const EmojiPredictionService_ping_args &rhs) const {
@@ -93,24 +104,36 @@ class EmojiPredictionService_ping_pargs {
 
 
   virtual ~EmojiPredictionService_ping_pargs() noexcept;
+  const std::string* text;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
 };
 
+typedef struct _EmojiPredictionService_ping_result__isset {
+  _EmojiPredictionService_ping_result__isset() : success(false) {}
+  bool success :1;
+} _EmojiPredictionService_ping_result__isset;
 
 class EmojiPredictionService_ping_result {
  public:
 
   EmojiPredictionService_ping_result(const EmojiPredictionService_ping_result&);
   EmojiPredictionService_ping_result& operator=(const EmojiPredictionService_ping_result&);
-  EmojiPredictionService_ping_result() {
+  EmojiPredictionService_ping_result() : success() {
   }
 
   virtual ~EmojiPredictionService_ping_result() noexcept;
+  std::string success;
 
-  bool operator == (const EmojiPredictionService_ping_result & /* rhs */) const
+  _EmojiPredictionService_ping_result__isset __isset;
+
+  void __set_success(const std::string& val);
+
+  bool operator == (const EmojiPredictionService_ping_result & rhs) const
   {
+    if (!(success == rhs.success))
+      return false;
     return true;
   }
   bool operator != (const EmojiPredictionService_ping_result &rhs) const {
@@ -124,12 +147,19 @@ class EmojiPredictionService_ping_result {
 
 };
 
+typedef struct _EmojiPredictionService_ping_presult__isset {
+  _EmojiPredictionService_ping_presult__isset() : success(false) {}
+  bool success :1;
+} _EmojiPredictionService_ping_presult__isset;
 
 class EmojiPredictionService_ping_presult {
  public:
 
 
   virtual ~EmojiPredictionService_ping_presult() noexcept;
+  std::string* success;
+
+  _EmojiPredictionService_ping_presult__isset __isset;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
 
@@ -264,9 +294,9 @@ class EmojiPredictionServiceClient : virtual public EmojiPredictionServiceIf {
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void ping();
-  void send_ping();
-  void recv_ping();
+  void ping(std::string& _return, const std::string& text);
+  void send_ping(const std::string& text);
+  void recv_ping(std::string& _return);
   void GetEmoji(Emoji& _return, const std::string& text);
   void send_GetEmoji(const std::string& text);
   void recv_GetEmoji(Emoji& _return);
@@ -320,13 +350,14 @@ class EmojiPredictionServiceMultiface : virtual public EmojiPredictionServiceIf 
     ifaces_.push_back(iface);
   }
  public:
-  void ping() {
+  void ping(std::string& _return, const std::string& text) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->ping();
+      ifaces_[i]->ping(_return, text);
     }
-    ifaces_[i]->ping();
+    ifaces_[i]->ping(_return, text);
+    return;
   }
 
   void GetEmoji(Emoji& _return, const std::string& text) {
@@ -371,9 +402,9 @@ class EmojiPredictionServiceConcurrentClient : virtual public EmojiPredictionSer
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void ping();
-  int32_t send_ping();
-  void recv_ping(const int32_t seqid);
+  void ping(std::string& _return, const std::string& text);
+  int32_t send_ping(const std::string& text);
+  void recv_ping(std::string& _return, const int32_t seqid);
   void GetEmoji(Emoji& _return, const std::string& text);
   int32_t send_GetEmoji(const std::string& text);
   void recv_GetEmoji(Emoji& _return, const int32_t seqid);

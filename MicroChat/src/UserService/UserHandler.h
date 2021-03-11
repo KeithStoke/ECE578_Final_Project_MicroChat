@@ -21,7 +21,7 @@ namespace microchat
     UserServiceHandler();
     ~UserServiceHandler()override=default;
 
-    void ping() override;
+    void ping(std::string &_return, const std::string &text) override;
     void Login(User &_return, const std::string &usernmae, const std::string &password) override;
     void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password) override;
   };
@@ -29,10 +29,10 @@ namespace microchat
   // constructor
   UserServiceHandler::UserServiceHandler() {}
 
-  void UserServiceHandler::ping()
+  void UserServiceHandler::ping(std::string &_return, const std::string &text)
   {
-    // Your implementation goes here
-    printf("ping\n");
+    std::cout << "Ping says " << text << std::endl;
+    _return = "Pong from UserService";
   }
 
   void UserServiceHandler::Login(User &_return, const std::string &usernmae, const std::string &password)

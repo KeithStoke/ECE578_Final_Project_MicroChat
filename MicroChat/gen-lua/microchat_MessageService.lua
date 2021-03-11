@@ -6,6 +6,7 @@
 --
 
 
+
 require 'Thrift'
 require 'microchat_ttypes'
 
@@ -13,20 +14,21 @@ MessageServiceClient = __TObject.new(__TClient, {
   __type = 'MessageServiceClient'
 })
 
-function MessageServiceClient:ping()
-  self:send_ping()
-  self:recv_ping()
+function MessageServiceClient:ping(text)
+  self:send_ping(text)
+  return self:recv_ping(text)
 end
 
-function MessageServiceClient:send_ping()
+function MessageServiceClient:send_ping(text)
   self.oprot:writeMessageBegin('ping', TMessageType.CALL, self._seqid)
   local args = ping_args:new{}
+  args.text = text
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function MessageServiceClient:recv_ping()
+function MessageServiceClient:recv_ping(text)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -37,6 +39,10 @@ function MessageServiceClient:recv_ping()
   local result = ping_result:new{}
   result:read(self.iprot)
   self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 MessageServiceIface = __TObject:new{
   __type = 'MessageServiceIface'
@@ -72,7 +78,7 @@ function MessageServiceProcessor:process_ping(seqid, iprot, oprot, server_ctx)
   args:read(iprot)
   iprot:readMessageEnd()
   local result = ping_result:new{}
-  local status, res = pcall(self.handler.ping, self.handler)
+  local status, res = pcall(self.handler.ping, self.handler, args.text)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
@@ -88,7 +94,7 @@ end
 -- HELPER FUNCTIONS AND STRUCTURES
 
 ping_args = __TObject:new{
-
+  text
 }
 
 function ping_args:read(iprot)
@@ -97,6 +103,12 @@ function ping_args:read(iprot)
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.text = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
     else
       iprot:skip(ftype)
     end
@@ -107,12 +119,17 @@ end
 
 function ping_args:write(oprot)
   oprot:writeStructBegin('ping_args')
+  if self.text ~= nil then
+    oprot:writeFieldBegin('text', TType.STRING, 1)
+    oprot:writeString(self.text)
+    oprot:writeFieldEnd()
+  end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
 
 ping_result = __TObject:new{
-
+  success
 }
 
 function ping_result:read(iprot)
@@ -121,6 +138,12 @@ function ping_result:read(iprot)
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
     else
       iprot:skip(ftype)
     end
@@ -131,6 +154,11 @@ end
 
 function ping_result:write(oprot)
   oprot:writeStructBegin('ping_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end

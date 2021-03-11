@@ -19,15 +19,16 @@ namespace microchat{
   FriendRecommendationServiceHandler();
   ~FriendRecommendationServiceHandler() override=default;
 
-  void ping() override;
+  void ping(std::string &_return, const std::string &text) override;
   void GetFriendRecommendations(std::vector<User> & _return, const User& user) override;
 
 };
 
 FriendRecommendationServiceHandler::FriendRecommendationServiceHandler() {};
 
-void FriendRecommendationServiceHandler::ping(){
-    printf("PONG!\n");
+void FriendRecommendationServiceHandler::ping(std::string &_return, const std::string &text){
+    std::cout << "Ping says " << text << std::endl;
+    _return = "Pong from FriendRecommendationService";
 }
 
 void FriendRecommendationServiceHandler::GetFriendRecommendations(std::vector<User> & _return, const User& user){

@@ -32,7 +32,20 @@ uint32_t EmojiPredictionService_ping_args::read(::apache::thrift::protocol::TPro
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->text);
+          this->__isset.text = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -45,6 +58,10 @@ uint32_t EmojiPredictionService_ping_args::write(::apache::thrift::protocol::TPr
   uint32_t xfer = 0;
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("EmojiPredictionService_ping_args");
+
+  xfer += oprot->writeFieldBegin("text", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->text);
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -60,6 +77,10 @@ uint32_t EmojiPredictionService_ping_pargs::write(::apache::thrift::protocol::TP
   uint32_t xfer = 0;
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("EmojiPredictionService_ping_pargs");
+
+  xfer += oprot->writeFieldBegin("text", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->text)));
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -90,7 +111,20 @@ uint32_t EmojiPredictionService_ping_result::read(::apache::thrift::protocol::TP
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -105,6 +139,11 @@ uint32_t EmojiPredictionService_ping_result::write(::apache::thrift::protocol::T
 
   xfer += oprot->writeStructBegin("EmojiPredictionService_ping_result");
 
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
+    xfer += oprot->writeFieldEnd();
+  }
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -134,7 +173,20 @@ uint32_t EmojiPredictionService_ping_presult::read(::apache::thrift::protocol::T
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -330,18 +382,19 @@ uint32_t EmojiPredictionService_GetEmoji_presult::read(::apache::thrift::protoco
   return xfer;
 }
 
-void EmojiPredictionServiceClient::ping()
+void EmojiPredictionServiceClient::ping(std::string& _return, const std::string& text)
 {
-  send_ping();
-  recv_ping();
+  send_ping(text);
+  recv_ping(_return);
 }
 
-void EmojiPredictionServiceClient::send_ping()
+void EmojiPredictionServiceClient::send_ping(const std::string& text)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("ping", ::apache::thrift::protocol::T_CALL, cseqid);
 
   EmojiPredictionService_ping_pargs args;
+  args.text = &text;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -349,7 +402,7 @@ void EmojiPredictionServiceClient::send_ping()
   oprot_->getTransport()->flush();
 }
 
-void EmojiPredictionServiceClient::recv_ping()
+void EmojiPredictionServiceClient::recv_ping(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -375,11 +428,16 @@ void EmojiPredictionServiceClient::recv_ping()
     iprot_->getTransport()->readEnd();
   }
   EmojiPredictionService_ping_presult result;
+  result.success = &_return;
   result.read(iprot_);
   iprot_->readMessageEnd();
   iprot_->getTransport()->readEnd();
 
-  return;
+  if (result.__isset.success) {
+    // _return pointer has now been filled
+    return;
+  }
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
 }
 
 void EmojiPredictionServiceClient::GetEmoji(Emoji& _return, const std::string& text)
@@ -482,7 +540,8 @@ void EmojiPredictionServiceProcessor::process_ping(int32_t seqid, ::apache::thri
 
   EmojiPredictionService_ping_result result;
   try {
-    iface_->ping();
+    iface_->ping(result.success, args.text);
+    result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
       this->eventHandler_->handlerError(ctx, "EmojiPredictionService.ping");
@@ -573,19 +632,20 @@ void EmojiPredictionServiceProcessor::process_GetEmoji(int32_t seqid, ::apache::
   return processor;
 }
 
-void EmojiPredictionServiceConcurrentClient::ping()
+void EmojiPredictionServiceConcurrentClient::ping(std::string& _return, const std::string& text)
 {
-  int32_t seqid = send_ping();
-  recv_ping(seqid);
+  int32_t seqid = send_ping(text);
+  recv_ping(_return, seqid);
 }
 
-int32_t EmojiPredictionServiceConcurrentClient::send_ping()
+int32_t EmojiPredictionServiceConcurrentClient::send_ping(const std::string& text)
 {
   int32_t cseqid = this->sync_->generateSeqId();
   ::apache::thrift::async::TConcurrentSendSentry sentry(this->sync_.get());
   oprot_->writeMessageBegin("ping", ::apache::thrift::protocol::T_CALL, cseqid);
 
   EmojiPredictionService_ping_pargs args;
+  args.text = &text;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -596,7 +656,7 @@ int32_t EmojiPredictionServiceConcurrentClient::send_ping()
   return cseqid;
 }
 
-void EmojiPredictionServiceConcurrentClient::recv_ping(const int32_t seqid)
+void EmojiPredictionServiceConcurrentClient::recv_ping(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -635,12 +695,18 @@ void EmojiPredictionServiceConcurrentClient::recv_ping(const int32_t seqid)
         throw TProtocolException(TProtocolException::INVALID_DATA);
       }
       EmojiPredictionService_ping_presult result;
+      result.success = &_return;
       result.read(iprot_);
       iprot_->readMessageEnd();
       iprot_->getTransport()->readEnd();
 
-      sentry.commit();
-      return;
+      if (result.__isset.success) {
+        // _return pointer has now been filled
+        sentry.commit();
+        return;
+      }
+      // in a bad state, don't commit
+      throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
     }
     // seqid != rseqid
     this->sync_->updatePending(fname, mtype, rseqid);

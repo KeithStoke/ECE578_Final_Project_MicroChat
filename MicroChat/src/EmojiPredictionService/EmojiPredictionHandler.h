@@ -21,16 +21,17 @@ namespace microchat
     EmojiPredictionServiceHandler();
     ~EmojiPredictionServiceHandler() override = default;
 
-    void ping() override;
+    void ping(std::string &_return, const std::string &text) override;
     void GetEmoji(Emoji &_return, const std::string &text) override;
   };
 
   EmojiPredictionServiceHandler::EmojiPredictionServiceHandler() {};
 
-  void EmojiPredictionServiceHandler::ping()
+  void EmojiPredictionServiceHandler::ping(std::string &_return, const std::string &text)
   {
     // Your implementation goes here
-    printf("ping\n");
+    std::cout << "Ping says " << text << std::endl;
+    _return = "Pong from EmojiPredictionService";
   }
 
   void EmojiPredictionServiceHandler::GetEmoji(Emoji &_return, const std::string &text)

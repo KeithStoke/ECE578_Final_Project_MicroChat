@@ -1,27 +1,27 @@
 version: "3"
 services:
   user-service:
-    image: ekuntz11/microchat:version_1
+    image: ekuntz11/microchat:version_2
     hostname: user-service
     restart: always
     entrypoint: UserService
   message-service:
-    image: ekuntz11/microchat:version_1
+    image: ekuntz11/microchat:version_2
     hostname: message-service
     restart: always
     entrypoint: MessageService
   emoji-prediction-service:
-    image: ekuntz11/microchat:version_1
+    image: ekuntz11/microchat:version_2
     hostname: emoji-prediction-service
     restart: always
     entrypoint: EmojiPredictionService
   friend-recommendation-service:
-    image: ekuntz11/microchat:version_1
+    image: ekuntz11/microchat:version_2
     hostname: friend-recommendation-service
     restart: always
     entrypoint: FriendRecommendationService
   database-service:
-    image: ekuntz11/microchat:version_1
+    image: ekuntz11/microchat:version_2
     hostname: databaes-service
     restart: always
     entrypoint: DatabaseService 

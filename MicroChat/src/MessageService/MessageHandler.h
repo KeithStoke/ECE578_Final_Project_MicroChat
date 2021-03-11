@@ -21,14 +21,15 @@ namespace microchat
         MessageServiceHandler();
         ~MessageServiceHandler() override=default;
 
-        void ping();
+        void ping(std::string &_return, const std::string &text) override;
     };
     // constructor
     MessageServiceHandler::MessageServiceHandler() {}
 
-    void MessageServiceHandler::ping()
+    void MessageServiceHandler::ping(std::string &_return, const std::string &text)
     {
-        printf("pong!\n");
+        std::cout << "Ping says " << text << std::endl;
+        _return = "Pong from MessageService";
     }
 
 }
