@@ -248,7 +248,6 @@ end
 
 ping_result = __TObject:new{
   success,
-  se
 }
 
 function ping_result:read(iprot)
