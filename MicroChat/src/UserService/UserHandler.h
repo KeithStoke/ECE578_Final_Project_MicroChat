@@ -74,8 +74,6 @@ namespace microchat
     _database_client_pool->Push(database_client_wrapper);
     std::cout << "Result from ReadFromDatabase query " << query_result << std::endl; **/
     User user;
-    user.username = username;
-    user.password = password;
     _return = user;
   }
 
