@@ -5,7 +5,6 @@
 -- @generated
 --
 
-
 local microchat__ttype = require 'microchat_ttypes'
 
 local Thrift = require 'Thrift'
@@ -25,6 +24,11 @@ local UserServiceClient = __TObject.new(__TClient, {
 
 local Ping_args = __TObject:new{
   id
+}
+
+local Login_args = __TObject:new{
+  username,
+  password
 }
 
 function UserServiceClient:Ping(id)
@@ -86,8 +90,6 @@ function UserServiceClient:recv_Login(username, password)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
     return result.success
-  elseif result.se then
-    error(result.se)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
@@ -181,8 +183,6 @@ function UserServiceProcessor:process_Login(seqid, iprot, oprot, server_ctx)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
-  elseif ttype(res) == 'ServiceException' then
-    result.se = res
   else
     result.success = res
   end
@@ -279,10 +279,6 @@ function Ping_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-local Login_args = __TObject:new{
-  username,
-  password
-}
 
 function Login_args:read(iprot)
   iprot:readStructBegin()
@@ -327,8 +323,7 @@ function Login_args:write(oprot)
 end
 
 Login_result = __TObject:new{
-  success,
-  se
+  success
 }
 
 function Login_result:read(iprot)
@@ -338,16 +333,8 @@ function Login_result:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 0 then
-      if ftype == TType.STRUCT then
-        self.success = User:new{}
-        self.success:read(iprot)
-      else
-        iprot:skip(ftype)
-      end
-    elseif fid == 1 then
-      if ftype == TType.STRUCT then
-        self.se = ServiceException:new{}
-        self.se:read(iprot)
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -362,13 +349,8 @@ end
 function Login_result:write(oprot)
   oprot:writeStructBegin('Login_result')
   if self.success ~= nil then
-    oprot:writeFieldBegin('success', TType.STRUCT, 0)
-    self.success:write(oprot)
-    oprot:writeFieldEnd()
-  end
-  if self.se ~= nil then
-    oprot:writeFieldBegin('se', TType.STRUCT, 1)
-    self.se:write(oprot)
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()

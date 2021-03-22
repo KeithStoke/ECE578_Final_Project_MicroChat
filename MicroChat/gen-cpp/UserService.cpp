@@ -317,17 +317,9 @@ uint32_t UserService_Login_result::read(::apache::thrift::protocol::TProtocol* i
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->success.read(iprot);
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
           this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->se.read(iprot);
-          this->__isset.se = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -351,12 +343,8 @@ uint32_t UserService_Login_result::write(::apache::thrift::protocol::TProtocol* 
   xfer += oprot->writeStructBegin("UserService_Login_result");
 
   if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRUCT, 0);
-    xfer += this->success.write(oprot);
-    xfer += oprot->writeFieldEnd();
-  } else if (this->__isset.se) {
-    xfer += oprot->writeFieldBegin("se", ::apache::thrift::protocol::T_STRUCT, 1);
-    xfer += this->se.write(oprot);
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
     xfer += oprot->writeFieldEnd();
   }
   xfer += oprot->writeFieldStop();
@@ -391,17 +379,9 @@ uint32_t UserService_Login_presult::read(::apache::thrift::protocol::TProtocol* 
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += (*(this->success)).read(iprot);
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
           this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->se.read(iprot);
-          this->__isset.se = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -695,7 +675,7 @@ void UserServiceClient::recv_Ping(std::string& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "Ping failed: unknown result");
 }
 
-void UserServiceClient::Login(User& _return, const std::string& username, const std::string& password)
+void UserServiceClient::Login(std::string& _return, const std::string& username, const std::string& password)
 {
   send_Login(username, password);
   recv_Login(_return);
@@ -716,7 +696,7 @@ void UserServiceClient::send_Login(const std::string& username, const std::strin
   oprot_->getTransport()->flush();
 }
 
-void UserServiceClient::recv_Login(User& _return)
+void UserServiceClient::recv_Login(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -750,9 +730,6 @@ void UserServiceClient::recv_Login(User& _return)
   if (result.__isset.success) {
     // _return pointer has now been filled
     return;
-  }
-  if (result.__isset.se) {
-    throw result.se;
   }
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "Login failed: unknown result");
 }
@@ -915,9 +892,6 @@ void UserServiceProcessor::process_Login(int32_t seqid, ::apache::thrift::protoc
   try {
     iface_->Login(result.success, args.username, args.password);
     result.__isset.success = true;
-  } catch (ServiceException &se) {
-    result.se = se;
-    result.__isset.se = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
       this->eventHandler_->handlerError(ctx, "UserService.Login");
@@ -1092,7 +1066,7 @@ void UserServiceConcurrentClient::recv_Ping(std::string& _return, const int32_t 
   } // end while(true)
 }
 
-void UserServiceConcurrentClient::Login(User& _return, const std::string& username, const std::string& password)
+void UserServiceConcurrentClient::Login(std::string& _return, const std::string& username, const std::string& password)
 {
   int32_t seqid = send_Login(username, password);
   recv_Login(_return, seqid);
@@ -1117,7 +1091,7 @@ int32_t UserServiceConcurrentClient::send_Login(const std::string& username, con
   return cseqid;
 }
 
-void UserServiceConcurrentClient::recv_Login(User& _return, const int32_t seqid)
+void UserServiceConcurrentClient::recv_Login(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -1165,10 +1139,6 @@ void UserServiceConcurrentClient::recv_Login(User& _return, const int32_t seqid)
         // _return pointer has now been filled
         sentry.commit();
         return;
-      }
-      if (result.__isset.se) {
-        sentry.commit();
-        throw result.se;
       }
       // in a bad state, don't commit
       throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "Login failed: unknown result");

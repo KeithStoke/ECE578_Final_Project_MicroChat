@@ -24,10 +24,9 @@ namespace microchat
     ~UserServiceHandler() override=default;
 
     void Ping(std::string &_return, const int32_t id) override;
-    void Login(User &_return, const std::string &username, const std::string &password) override;
+    void Login(std::string& _return, const std::string& username, const std::string& password) override;
     void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password) override;
 
-  private:
  //  ClientPool<ThriftClient<DatabaseServiceClient>> *_database_client_pool;
   };
 
@@ -46,7 +45,7 @@ namespace microchat
     _return = pong;
   }
 
-  void UserServiceHandler::Login(User &_return, const std::string &username, const std::string &password)
+ void UserServiceHandler::Login(std::string& _return, const std::string& username, const std::string& password)
   {
     std::cout << "In user service login method" << std::endl;
     std::cout << "username was " << username << " and password was " << password << std::endl;
@@ -74,11 +73,9 @@ namespace microchat
 
     _database_client_pool->Push(database_client_wrapper);
     std::cout << "Result from ReadFromDatabase query " << query_result << std::endl; **/
-    User user;
-    user.username = "test_username";
-    user.__set_username("test username");
-    std::cout << "Username set was... " << user.username << std::endl;
-        _return = user;
+
+    std::string result = "Pong from Login";
+        _return = result;
   }
 
   void UserServiceHandler::CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password)
