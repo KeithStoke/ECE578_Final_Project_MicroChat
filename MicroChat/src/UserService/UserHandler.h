@@ -48,6 +48,7 @@ namespace microchat
 
   void UserServiceHandler::Login(User &_return, const std::string &username, const std::string &password)
   {
+    std::cout << "In user service login method" << std::endl;
     std::cout << "username was " << username << " and password was " << password << std::endl;
     std::cout << "Login UserService Method" << std::endl;
 /**    auto database_client_wrapper = _database_client_pool->Pop();
@@ -74,7 +75,10 @@ namespace microchat
     _database_client_pool->Push(database_client_wrapper);
     std::cout << "Result from ReadFromDatabase query " << query_result << std::endl; **/
     User user;
-    _return = user;
+    user.username = "test_username";
+    user.__set_username("test username");
+    std::cout << "Username set was... " << user.username << std::endl;
+        _return = user;
   }
 
   void UserServiceHandler::CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password)
