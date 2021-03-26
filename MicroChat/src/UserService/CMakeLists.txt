@@ -17,9 +17,9 @@ target_link_libraries(
     ${Boost_LIBRARIES}
     Boost::log
     Boost::log_setup
+    mongo::mongoc_shared
 )
 
 
-target_link_libraries (hello_mongoc PRIVATE mongo::mongoc_shared)
 
 install(TARGETS UserService DESTINATION ./)
