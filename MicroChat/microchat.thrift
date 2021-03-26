@@ -47,19 +47,17 @@ service UserService{
 
   void ping(),
   User Login(1:string usernmae, 2:string password)throws(1: ServiceException se),
-  User CreateUser(1:string username, 2:string name, 3:string password),
-
 }
 
 service MessageService{
-  void ping(),
+  string ping(1:string text),
+  i32 deliver(1:string username, 2:string message),
 }
 
 service FriendRecommendationService{
 
   void ping(),
   list<User> GetFriendRecommendations(1:User user),
-
 }
 
 service EmojiPredictionService{

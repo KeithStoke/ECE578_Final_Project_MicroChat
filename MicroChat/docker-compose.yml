@@ -31,6 +31,15 @@ services:
     ports:
       - 8080:8080
     restart: always
+
+  user-mongodb:
+    image: mongo
+    hostname: user-mongodb
+    ports:
+     - 27023:27017
+    restart: always
+
+
     volumes:
       - ./nginx_reverse_proxy/lua-scripts:/usr/local/openresty/nginx/lua-scripts
       - ./nginx_reverse_proxy/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
