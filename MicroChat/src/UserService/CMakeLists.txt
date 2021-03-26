@@ -17,7 +17,7 @@ target_link_libraries(
     ${Boost_LIBRARIES}
     Boost::log
     Boost::log_setup
-    mongo::mongoc_shared
+    ${MONGOC_LIBRARIES}
 )
 
 
