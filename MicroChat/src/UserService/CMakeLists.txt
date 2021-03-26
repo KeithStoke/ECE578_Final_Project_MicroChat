@@ -18,8 +18,7 @@ target_link_libraries(
     Boost::log
     Boost::log_setup
 )
-# Specify the minimum version you require.
-find_package (mongoc-1.0 1.0 REQUIRED)
+
 
 target_link_libraries (hello_mongoc PRIVATE mongo::mongoc_shared)
 
