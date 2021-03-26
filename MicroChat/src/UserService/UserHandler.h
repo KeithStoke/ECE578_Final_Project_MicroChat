@@ -5,7 +5,7 @@
 #include <string>
 #include <regex>
 #include <future>
-#include <mongoc.h>
+#include <mongoc/mongoc.h>
 #include <bson/bson.h>
 #include "../../gen-cpp/UserService.h"
 
