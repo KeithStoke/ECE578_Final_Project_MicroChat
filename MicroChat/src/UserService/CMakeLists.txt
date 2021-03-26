@@ -7,6 +7,7 @@ add_executable(
 
 target_include_directories(
 	UserService PRIVATE
+    ${MONGOC_INCLUDE_DIRS}
 )
 
 target_link_libraries(
