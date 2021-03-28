@@ -12,7 +12,7 @@
 #include "../ClientPool.h"
 #include "../ThriftClient.h"
 #include "../logger.h"
-
+#define SERVER_SELECTION_TIMEOUT_MS 300
 namespace microchat
 {
   mongoc_client_pool_t* init_mongodb_client_pool(
@@ -97,7 +97,7 @@ namespace microchat
   };
 
   // constructor
-  UserServiceHandler::UserServiceHandler() {}
+  //UserServiceHandler::UserServiceHandler() {}
 
    UserServiceHandler::UserServiceHandler(mongoc_client_pool_t *mongo_pool)
    {
