@@ -102,7 +102,7 @@ namespace microchat
    UserServiceHandler::UserServiceHandler(mongoc_client_pool_t *mongo_pool)
    {
       _mongodb_client_pool = mongo_pool;
-   };
+   }
 
   void UserServiceHandler::Ping(std::string &_return, const int32_t id)
   {
