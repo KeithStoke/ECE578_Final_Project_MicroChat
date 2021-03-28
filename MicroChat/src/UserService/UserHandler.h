@@ -87,7 +87,7 @@ namespace microchat
     UserServiceHandler(mongoc_client_pool_t *);
     ~UserServiceHandler() override=default;
 
-    void Ping(std::string &_return, const int32_t id) override;
+    void ping() override;
     void Login(User &_return, const std::string &usernmae, const std::string &password) override;
     void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password) override;
 
@@ -104,11 +104,11 @@ namespace microchat
       _mongodb_client_pool = mongo_pool;
    }
 
-  void UserServiceHandler::Ping(std::string &_return, const int32_t id)
-  {
-    // Your implementation goes here
-    printf("ping\n");
-  }
+  // void UserServiceHandler::Ping(std::string &_return, const int32_t id)
+  // {
+  //   // Your implementation goes here
+  //   printf("ping\n");
+  // }
 
   void UserServiceHandler::Login(User &_return, const std::string &usernmae, const std::string &password)
   {
