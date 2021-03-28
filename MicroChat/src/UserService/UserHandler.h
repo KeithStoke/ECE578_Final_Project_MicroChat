@@ -109,7 +109,10 @@ namespace microchat
   //   // Your implementation goes here
   //   printf("ping\n");
   // }
-
+    void UserServiceHandler::ping()
+    {
+        printf("pong!\n");
+    }
   void UserServiceHandler::Login(User &_return, const std::string &usernmae, const std::string &password)
   {
     // Your implementation goes here
