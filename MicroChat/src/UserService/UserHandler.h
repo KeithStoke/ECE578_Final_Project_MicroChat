@@ -104,15 +104,15 @@ namespace microchat
       _mongodb_client_pool = mongo_pool;
    }
 
-  void UserServiceHandler::Ping(std::string &_return, const int32_t id)
+  // void UserServiceHandler::Ping(std::string &_return, const int32_t id)
+  // {
+  //   // Your implementation goes here
+  //   printf("ping\n");
+  // }
+  void UserServiceHandler::ping()
   {
-    // Your implementation goes here
-    printf("ping\n");
+      printf("pong!\n");
   }
-    void UserServiceHandler::ping()
-    {
-        printf("pong!\n");
-    }
   void UserServiceHandler::Login(User &_return, const std::string &usernmae, const std::string &password)
   {
     // Your implementation goes here
