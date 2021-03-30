@@ -102,12 +102,139 @@ namespace microchat
    UserServiceHandler::UserServiceHandler(mongoc_client_pool_t *mongo_pool)
    {
       _mongodb_client_pool = mongo_pool;
-   }
+    const int64_t req_id = 10;
+    const std::string first_name = "Keith";
+    const std::string last_name = "Stokely";
+    const std::string username = "kstokely";
+    const std::string password = "test";
+  // Store user info into mongodb
+  mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
+      _mongodb_client_pool);
+  if (!mongodb_client) {
+    ServiceException se;
+    se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+    se.message = "Failed to pop a client from MongoDB pool";
+    throw se;
+  }
+  auto collection = mongoc_client_get_collection(
+      mongodb_client, "user", "user");
+
+  // Check if the username has existed in the database
+  bson_t *query = bson_new();
+  BSON_APPEND_UTF8(query, "username", username.c_str());
+  mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
+      collection, query, nullptr, nullptr);
+  const bson_t *doc;
+  bson_error_t error;
+  bool found = mongoc_cursor_next(cursor, &doc);
+  if (mongoc_cursor_error (cursor, &error)) {
+    LOG(error) << error.message;
+    bson_destroy(query);
+    mongoc_cursor_destroy(cursor);
+    mongoc_collection_destroy(collection);
+    mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+    ServiceException se;
+    se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+    se.message = error.message;
+    throw se;
+  } 
+  else if (found) 
+  {
+    LOG(warning) << "User " << username << " already existed.";
+    ServiceException se;
+    se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
+    se.message = "User " + username + " already existed";
+    bson_destroy(query);
+    mongoc_cursor_destroy(cursor);
+    mongoc_collection_destroy(collection);
+    mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+    throw se;
+  } 
+  else 
+  {
+    bson_t *new_doc = bson_new();
+    BSON_APPEND_INT64(new_doc, "user_id", user_id);
+    BSON_APPEND_UTF8(new_doc, "first_name", first_name.c_str());
+    BSON_APPEND_UTF8(new_doc, "last_name", last_name.c_str());
+    BSON_APPEND_UTF8(new_doc, "username", username.c_str());
+    std::string salt = GenRandomString(32);
+    BSON_APPEND_UTF8(new_doc, "salt", salt.c_str());
+    std::string password_hashed = picosha2::hash256_hex_string(password + salt);
+    BSON_APPEND_UTF8(new_doc, "password", password_hashed.c_str());
+    
+    auto user_insert_span = opentracing::Tracer::Global()->StartSpan(
+        "MongoInsertUser", { opentracing::ChildOf(&span->context()) });
+    if (!mongoc_collection_insert_one(
+        collection, new_doc, nullptr, nullptr, &error)) {
+      LOG(error) << "Failed to insert user " << username
+          << " to MongoDB: " << error.message;
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
+      se.message = "Failed to insert user " + username + " to MongoDB: "
+          + error.message;
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+      throw se;
+    } else {
+      LOG(debug) << "User: " << username << " registered";
+    }
+    user_insert_span->Finish();
+    bson_destroy(new_doc);
+  }
+  bson_destroy(query);
+  mongoc_cursor_destroy(cursor);
+  mongoc_collection_destroy(collection);
+  mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+
+
+  
+
+
+  }
 
 
   void UserServiceHandler::ping()
   {
       printf("pong!\n");
+
+  const std::string username = "kstokely";  
+      // Check if the username has existed in the database
+  bson_t *query = bson_new();
+  BSON_APPEND_UTF8(query, "username", username.c_str());
+  mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
+      collection, query, nullptr, nullptr);
+  const bson_t *doc;
+  bson_error_t error;
+  bool found = mongoc_cursor_next(cursor, &doc);
+  if (mongoc_cursor_error (cursor, &error)) {
+    LOG(error) << error.message;
+    bson_destroy(query);
+    mongoc_cursor_destroy(cursor);
+    mongoc_collection_destroy(collection);
+    mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+    ServiceException se;
+    se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+    se.message = error.message;
+    throw se;
+  } 
+  else if (found) 
+  {
+    LOG(warning) << "User " << username << " already existed.";
+    ServiceException se;
+    se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
+    se.message = "User " + username + " already existed";
+    bson_destroy(query);
+    mongoc_cursor_destroy(cursor);
+    mongoc_collection_destroy(collection);
+    mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+    
+    printf("User kstokely already exists! PONG \n");
+    //throw se;
+  } 
+
+
   }
   
   void UserServiceHandler::Login(User &_return, const std::string &usernmae, const std::string &password)
