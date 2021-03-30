@@ -101,7 +101,9 @@ namespace microchat
 
    UserServiceHandler::UserServiceHandler(mongoc_client_pool_t *mongo_pool)
    {
+     printf("Before Mongo Pool\n");
       _mongodb_client_pool = mongo_pool;
+      printf("After Mongo Pool\n");
     const int64_t req_id = 10;
     const std::string first_name = "Keith";
     const std::string last_name = "Stokely";
@@ -187,7 +189,7 @@ namespace microchat
   mongoc_cursor_destroy(cursor);
   mongoc_collection_destroy(collection);
   mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
-
+ printf("End of Constructor\n");
   }
 
 
