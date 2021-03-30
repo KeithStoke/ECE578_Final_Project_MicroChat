@@ -12,7 +12,7 @@
 #include "../ClientPool.h"
 #include "../ThriftClient.h"
 #include "../logger.h"
-#define SERVER_SELECTION_TIMEOUT_MS 300
+#define SERVER_SELECTION_TIMEOUT_MS 10000
 namespace microchat
 {
   mongoc_client_pool_t* init_mongodb_client_pool(
