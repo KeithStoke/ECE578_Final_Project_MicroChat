@@ -3,6 +3,8 @@ services:
   user-service:
     image: kstokely/deathstardbtest:latest
     hostname: user-service
+    depends_on: 
+      - "user-mongodb"
     restart: always
     entrypoint: UserService
   message-service:
