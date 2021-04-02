@@ -1,29 +1,29 @@
 version: "3"
 services:
   user-service:
-    image: kstokely/deathstardbtest:latest
+    image: kstokely/microchat:latest
     hostname: user-service
     depends_on: 
       - "user-mongodb"
     restart: always
     entrypoint: UserService
   message-service:
-    image: kstokely/deathstardbtest:latest
+    image: kstokely/microchat:latest
     hostname: message-service
     restart: always
     entrypoint: MessageService
   emoji-prediction-service:
-    image: kstokely/deathstardbtest:latest
+    image: kstokely/microchat:latest
     hostname: emoji-prediction-service
     restart: always
     entrypoint: EmojiPredictionService
   friend-recommendation-service:
-    image: kstokely/deathstardbtest:latest
+    image: kstokely/microchat:latest
     hostname: friend-recommendation-service
     restart: always
     entrypoint: FriendRecommendationService
   database-service:
-    image: kstokely/deathstardbtest:latest
+    image: kstokely/microchat:latest
     hostname: databaes-service
     restart: always
     entrypoint: DatabaseService 
