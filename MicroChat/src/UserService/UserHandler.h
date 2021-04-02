@@ -93,7 +93,7 @@ namespace microchat
     void CheckForUser(User &_return);
   private:
     mongoc_client_pool_t *_mongodb_client_pool;
-    User lUSer;
+    
  //  ClientPool<ThriftClient<DatabaseServiceClient>> *_database_client_pool;
   };
 
@@ -111,11 +111,8 @@ namespace microchat
     const std::string username = "kstokely";
     const std::string password = "test";
   
-  lUser.userID = 10;
-  lUser.name = first_name;
-  lUser.username = username;
-
-  CreateUser(lUser, username, first_name, password);
+  microchat::User mUser;
+  CreateUser(mUser, username, first_name, password);
  printf("End of Constructor\n");
  printf("Getting ready to ping!\n");
  ping();
