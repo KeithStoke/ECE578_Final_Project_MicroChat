@@ -190,6 +190,7 @@ namespace microchat
   mongoc_collection_destroy(collection);
   mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
  printf("End of Constructor\n");
+ printf("Getting ready to ping!\n");
  ping();
   }
 
