@@ -130,7 +130,7 @@ namespace microchat
   bson_error_t error;
   bool found = mongoc_cursor_next(cursor, &doc);
   if (mongoc_cursor_error (cursor, &error)) {
-    LOG(error) << error.message;
+    std::cout << error.message;
     bson_destroy(query);
     mongoc_cursor_destroy(cursor);
     mongoc_collection_destroy(collection);
@@ -168,7 +168,7 @@ namespace microchat
 
     if (!mongoc_collection_insert_one(
         collection, new_doc, nullptr, nullptr, &error)) {
-      LOG(error) << "Failed to insert user " << username
+      std::cout << "Failed to insert user " << username
           << " to MongoDB: " << error.message;
       ServiceException se;
       se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
@@ -180,7 +180,7 @@ namespace microchat
       mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
       throw se;
     } else {
-      LOG(debug) << "User: " << username << " registered";
+      std::cout << "User: " << username << " registered";
     }
 
     bson_destroy(new_doc);
@@ -190,6 +190,7 @@ namespace microchat
   mongoc_collection_destroy(collection);
   mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
  printf("End of Constructor\n");
+ ping();
   }
 
 
@@ -228,7 +229,7 @@ namespace microchat
   } 
   else if (found) 
   {
-    LOG(warning) << "User " << username << " already existed.";
+    std::cout << "User " << username << " already existed.";
     ServiceException se;
     se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
     se.message = "User " + username + " already existed";
