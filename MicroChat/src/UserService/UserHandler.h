@@ -90,7 +90,7 @@ namespace microchat
     void ping() override;
     void Login(User &_return, const std::string &usernmae, const std::string &password);
     void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password);
-
+    void CheckForUser(User &_return);
   private:
     mongoc_client_pool_t *_mongodb_client_pool;
  //  ClientPool<ThriftClient<DatabaseServiceClient>> *_database_client_pool;
@@ -109,8 +109,12 @@ namespace microchat
     const std::string last_name = "Stokely";
     const std::string username = "kstokely";
     const std::string password = "test";
-  User mUser;
-  CreateUser(mUser, username, first_name, password);
+  User lUSer;
+  lUser.userID = 10;
+  lUser.name = first_name;
+  lUser.username = username;
+
+  CreateUser(lUser, username, first_name, password);
  printf("End of Constructor\n");
  printf("Getting ready to ping!\n");
  ping();
