@@ -7,10 +7,6 @@
       "addr": "message-service",
       "port": 9091
     },
-    "emoji-prediction-service": {
-     "addr": "emoji-prediction-service",
-     "port": 9092
-    },
     "friend-recommendation-service": {
     "addr": "friend-recommendation-service",
     "port": 9093
@@ -18,9 +14,5 @@
     "user-mongodb": {
       "addr": "user-mongodb",
       "port": 27017
-    },
-    "database-service": {
-    "addr": "friend-recommendation-service",
-    "port": 9094
     }
   }

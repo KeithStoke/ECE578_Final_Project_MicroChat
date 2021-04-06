@@ -10,23 +10,17 @@ services:
   message-service:
     image: kstokely/microchat:latest
     hostname: message-service
+    depends_on: 
+      - "message-mongodb"
     restart: always
     entrypoint: MessageService
-  emoji-prediction-service:
-    image: kstokely/microchat:latest
-    hostname: emoji-prediction-service
-    restart: always
-    entrypoint: EmojiPredictionService
   friend-recommendation-service:
     image: kstokely/microchat:latest
     hostname: friend-recommendation-service
+    depends_on: 
+      - "friend-mongodb"
     restart: always
     entrypoint: FriendRecommendationService
-  database-service:
-    image: kstokely/microchat:latest
-    hostname: databaes-service
-    restart: always
-    entrypoint: DatabaseService 
   nginx-thrift:
     image: yg397/openresty-thrift:xenial
     hostname: nginx-thrift
@@ -34,15 +28,28 @@ services:
       - 8080:8080
     restart: always
 
-  user-mongodb:
-    image: mongo
-    hostname: user-mongodb
-    ports:
-     - 27023:27017
-    restart: always
+user-mongodb:
+  image: mongo
+  hostname: user-mongodb
+  ports:
+    - 27023:27017
+  restart: always
 
+friend-mongodb:
+  image: mongo
+  hostname: user-mongodb
+  ports:
+   - 27023:27018
+  restart: always
 
-    volumes:
-      - ./nginx_reverse_proxy/lua-scripts:/usr/local/openresty/nginx/lua-scripts
-      - ./nginx_reverse_proxy/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
-      - ./gen-lua:/gen-lua
+message-mongodb:
+  image: mongo
+  hostname: user-mongodb
+  ports:
+    - 27023:27018
+  restart: always
+
+volumes:
+   - ./nginx_reverse_proxy/lua-scripts:/usr/local/openresty/nginx/lua-scripts
+   - ./nginx_reverse_proxy/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+   - ./gen-lua:/gen-lua

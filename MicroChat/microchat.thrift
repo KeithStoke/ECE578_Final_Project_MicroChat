@@ -59,15 +59,5 @@ service FriendRecommendationService{
   list<User> GetFriendRecommendations(1:User user),
 }
 
-service EmojiPredictionService{
-  void ping(),
-  Emoji GetEmoji(1:string text),
 
-}
-
-service DatabaseService{
-  void ping(),
-  string WriteToDatabase(1:string query),
-  string ReadFromDatabase(1:string query),
-}
 
