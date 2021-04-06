@@ -51,14 +51,11 @@ service UserService{
 
 service MessageService{
   string ping(1:string text),
-  i32 deliver(1:string username, 2:string message),
-  void sendCachedMessages(1:i32 userID),
 }
 
 service FriendRecommendationService{
 
   void ping(),
-  void onLogin(),
   list<User> GetFriendRecommendations(1:User user),
 }
 
