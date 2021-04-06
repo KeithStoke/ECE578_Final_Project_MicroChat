@@ -60,20 +60,7 @@ namespace microchat
       printf("pong!\n");
   
   } 
-  else if (found) 
-  {
-    std::cout << "User " << username << " already existed.";
-    ServiceException se;
-    se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
-    se.message = "User " + username + " already existed";
-    bson_destroy(query);
-    mongoc_cursor_destroy(cursor);
-    mongoc_collection_destroy(collection);
-    mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
-    
-    printf(" PONG \n");
-    //throw se;
-  } 
+
 
 
   }
