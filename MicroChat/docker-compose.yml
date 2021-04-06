@@ -49,7 +49,7 @@ message-mongodb:
     - 27023:27019
   restart: always
 
-volumes:
-   - ./nginx_reverse_proxy/lua-scripts:/usr/local/openresty/nginx/lua-scripts
-   - ./nginx_reverse_proxy/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
-   - ./gen-lua:/gen-lua
+    volumes:
+      - ./nginx_reverse_proxy/lua-scripts:/usr/local/openresty/nginx/lua-scripts
+      - ./nginx_reverse_proxy/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./gen-lua:/gen-lua
