@@ -22,7 +22,7 @@ namespace microchat
     UserServiceHandler();
     ~UserServiceHandler() override = default;
 
-    void Ping(std::string &_return, const int32_t id) override;
+    void Ping(std::string& _return, const int32_t id) override;
     void Login(std::string &_return, const std::string &username, const std::string &password) override;
     void CreateUser(const std::string &username, const std::string &name, const std::string &password) override;
     int64_t GetUserID(const std::string &username) override;
@@ -30,7 +30,7 @@ namespace microchat
 
   UserServiceHandler::UserServiceHandler(){};
 
-  void UserServiceHandler::Ping(std::string &_return, const int32_t id)
+  void UserServiceHandler::Ping(std::string& _return, const int32_t id)
   {
     std::cout << "ID received was " << id << std::endl;
     std::string pong = "Pong from UserService";

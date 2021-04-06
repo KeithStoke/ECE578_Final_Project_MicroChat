@@ -22,6 +22,15 @@ local UserServiceClient = __TObject.new(__TClient, {
   __type = 'UserServiceClient'
 })
 
+local Ping_args = __TObject:new{
+  id
+}
+
+local Login_args = __TObject:new{
+  username,
+  password
+}
+
 function UserServiceClient:Ping(id)
   self:send_Ping(id)
   return self:recv_Ping(id)
@@ -250,10 +259,6 @@ end
 
 -- HELPER FUNCTIONS AND STRUCTURES
 
-local Ping_args = __TObject:new{
-  id
-}
-
 function Ping_args:read(iprot)
   iprot:readStructBegin()
   while true do
@@ -319,11 +324,6 @@ function Ping_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
-
-local Login_args = __TObject:new{
-  username,
-  password
-}
 
 function Login_args:read(iprot)
   iprot:readStructBegin()
@@ -485,7 +485,7 @@ function CreateUser_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-GetUserID_args = __TObject:new{
+local GetUserID_args = __TObject:new{
   username
 }
 
@@ -554,4 +554,5 @@ function GetUserID_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
 return UserServiceClient
