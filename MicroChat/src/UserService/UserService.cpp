@@ -39,8 +39,8 @@ int main(int argc, char **argv) {
   int my_port = config_json["user-service"]["port"];
 
   // get database service port
-  int database_service_port = config_json["database-service"]["port"];
-  std::string database_service_addr = config_json["database-service"]["addr"];
+  //int database_service_port = config_json["database-service"]["port"];
+ // std::string database_service_addr = config_json["database-service"]["addr"];
 
  // ClientPool<ThriftClient<DatabaseServiceClient>> database_client_pool(
    //   "database-service", database_service_addr, database_service_port, 0, 128, 1000);
@@ -50,14 +50,14 @@ int main(int argc, char **argv) {
       init_mongodb_client_pool(config_json, "user", 128);
   mongoc_client_t *mongodb_client = mongoc_client_pool_pop(mongodb_client_pool);
   if (!mongodb_client) {
-    LOG(fatal) << "Failed to pop mongoc client";
+    std::cout << "Failed to pop mongoc client";
     return EXIT_FAILURE;
   }
   bool r = false;
   while (!r) {
     r = CreateIndex(mongodb_client, "user", "user_id", true);
     if (!r) {
-      LOG(error) << "Failed to create mongodb index, try again";
+      std::cout << "Failed to create mongodb index, try again";
       sleep(1);
     }
   }

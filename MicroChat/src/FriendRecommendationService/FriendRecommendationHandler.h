@@ -19,17 +19,23 @@ namespace microchat{
 
     class FriendRecommendationServiceHandler : public FriendRecommendationServiceIf {
  public:
-  FriendRecommendationServiceHandler();
+  FriendRecommendationServiceHandler(mongoc_client_pool_t *);
   ~FriendRecommendationServiceHandler() override=default;
 
-  void ping() override;
-  void GetFriendRecommendations(std::vector<User> & _return, const User& user) override;
-  void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password);
-  void CheckForUser(User &_return, std::string username);
-  mongoc_client_pool_t *_mongodb_client_pool;
+void ping() override;
+void GetFriendRecommendations(std::vector<User> & _return, const User& user) override;
+void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password);
+void CheckForUser(User &_return, std::string username);
+private:
+mongoc_client_pool_t *_mongodb_client_pool;
 };
 
-FriendRecommendationServiceHandler::FriendRecommendationServiceHandler() {};
+FriendRecommendationServiceHandler::FriendRecommendationServiceHandler(mongoc_client_pool_t *mongo_pool) 
+{
+      printf("Before Mongo Pool\n");
+      _mongodb_client_pool = mongo_pool;
+      printf("After Mongo Pool\n");
+}
 
 void FriendRecommendationServiceHandler::ping(){
     printf("PONG!\n");

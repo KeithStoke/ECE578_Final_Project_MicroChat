@@ -38,10 +38,29 @@ int main(int argc, char **argv) {
   // 3: get my port
   int my_port = config_json["friend-recommendation-service"]["port"];
 
+
+  mongoc_client_pool_t *mongodb_client_pool =
+      init_mongodb_client_pool(config_json, "friend", 128);
+  mongoc_client_t *mongodb_client = mongoc_client_pool_pop(mongodb_client_pool);
+  if (!mongodb_client) {
+    std::cout << "Failed to pop friend recommendation mongoc client";
+    return EXIT_FAILURE;
+  }
+  bool r = false;
+  while (!r) {
+    r = CreateIndex(mongodb_client, "user", "user_id", true);
+    if (!r) {
+      std::cout << "Failed to create mongodb index, try again";
+      sleep(1);
+    }
+  }
+  mongoc_client_pool_push(mongodb_client_pool, mongodb_client);
+
+
   // 4: configure this server
   TThreadedServer server(
       std::make_shared<FriendRecommendationServiceProcessor>(
-          std::make_shared<FriendRecommendationServiceHandler>()),
+          std::make_shared<FriendRecommendationServiceHandler>(mongodb_client_pool)),
       std::make_shared<TServerSocket>("0.0.0.0", my_port),
       std::make_shared<TFramedTransportFactory>(),
       std::make_shared<TBinaryProtocolFactory>()

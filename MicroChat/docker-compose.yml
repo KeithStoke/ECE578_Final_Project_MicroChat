@@ -46,7 +46,7 @@ message-mongodb:
   image: mongo
   hostname: user-mongodb
   ports:
-    - 27023:27018
+    - 27023:27019
   restart: always
 
 volumes:
