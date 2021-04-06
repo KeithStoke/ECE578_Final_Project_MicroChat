@@ -38,7 +38,7 @@ void FriendRecommendationServiceHandler::ping(){
 void FriendRecommendationServiceHandler::GetFriendRecommendations(std::vector<User> & _return, const User& user){
     printf("get friend recommendations RPC");
 }
-  void UserServiceHandler::CheckForUser(User &_return, std::string username)
+  void FriendRecommendationServiceHandler::CheckForUser(User &_return, std::string username)
   {
     mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
       _mongodb_client_pool);
@@ -71,7 +71,7 @@ void FriendRecommendationServiceHandler::GetFriendRecommendations(std::vector<Us
     throw se;
     
   }
-  void UserServiceHandler::CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password)
+  void FriendRecommendationServiceHandler::CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password)
   {
     // Your implementation goes here
     printf("CreateUser\n");
