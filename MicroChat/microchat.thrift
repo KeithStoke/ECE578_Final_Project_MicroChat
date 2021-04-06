@@ -50,7 +50,7 @@ service UserService{
 }
 
 service MessageService{
-  string ping(1:string text),
+  string ping(),
 }
 
 service FriendRecommendationService{
