@@ -23,9 +23,9 @@ services:
     entrypoint: FriendRecommendationService
   database-service:
     image: kstokely/microchat:latest
-    hostname: databaes-service
+    hostname: database-service
     restart: always
-    entrypoint: DatabaseService 
+    entrypoint: FriendRecommendationService 
   nginx-thrift:
     image: yg397/openresty-thrift:xenial
     hostname: nginx-thrift
