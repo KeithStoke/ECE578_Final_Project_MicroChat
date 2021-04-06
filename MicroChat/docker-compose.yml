@@ -21,6 +21,11 @@ services:
       - "friend-mongodb"
     restart: always
     entrypoint: FriendRecommendationService
+  database-service:
+    image: kstokely/microchat:latest
+    hostname: databaes-service
+    restart: always
+    entrypoint: DatabaseService 
   nginx-thrift:
     image: yg397/openresty-thrift:xenial
     hostname: nginx-thrift
