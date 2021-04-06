@@ -37,14 +37,14 @@ services:
 
   friend-mongodb:
     image: mongo
-    hostname: user-mongodb
+    hostname: friend-mongodb
    # ports:
     #- 27023:27018
     restart: always
 
   message-mongodb:
     image: mongo
-    hostname: user-mongodb
+    hostname: message-mongodb
    # ports:
     #  - 27023:27019
     restart: always
