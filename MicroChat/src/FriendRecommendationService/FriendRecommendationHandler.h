@@ -26,6 +26,7 @@ namespace microchat{
   void GetFriendRecommendations(std::vector<User> & _return, const User& user) override;
   void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password);
   void CheckForUser(User &_return, std::string username);
+  mongoc_client_pool_t *_mongodb_client_pool;
 };
 
 FriendRecommendationServiceHandler::FriendRecommendationServiceHandler() {};
