@@ -31,22 +31,22 @@ services:
   user-mongodb:
     image: mongo
     hostname: user-mongodb
-    ports:
-      - 27023:27017
+   # ports:
+    #  - 27023:27017
     restart: always
 
   friend-mongodb:
     image: mongo
     hostname: user-mongodb
-    ports:
-    - 27023:27018
+   # ports:
+    #- 27023:27018
     restart: always
 
   message-mongodb:
     image: mongo
     hostname: user-mongodb
-    ports:
-      - 27023:27019
+   # ports:
+    #  - 27023:27019
     restart: always
 
     volumes:
