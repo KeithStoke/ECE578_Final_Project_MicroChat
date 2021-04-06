@@ -48,7 +48,7 @@ namespace microchat
     const std::string password = "test";
   
   microchat::User mUser;
-  CreateUser(mUser, username, first_name, password);
+  //CreateUser(mUser, username, first_name, password);
  printf("End of Constructor\n");
  printf("Getting ready to ping!\n");
  ping();
