@@ -8,6 +8,9 @@ function _M.Login()
 	local UserServiceClient = require "microchat_UserService"
 	local GenericObjectPool = require "GenericObjectPool"
 	local ngx = ngx
+	local cjson = require "cjson"
+  	local jwt = require "resty.jwt"
+  	local liblualongnumber = require "liblualongnumber"
 	-- Read the parameters sent by the end user client
 	
 	ngx.req.read_body()
@@ -43,7 +46,8 @@ function _M.Login()
     		ngx.exit(ngx.HTTP_OK)
   	else
     		ngx.header.content_type = "text/plain"
-		ngx.say("Login successful: ", ret)
+			ngx.say("Login successful: ", ret)
+			ngx.say(cjson.encode(ret))
     		ngx.exit(ngx.HTTP_OK)
   	end
 

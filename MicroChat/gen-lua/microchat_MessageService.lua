@@ -43,6 +43,65 @@ function MessageServiceClient:recv_ping(text)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
+
+function MessageServiceClient:ComposeMessage(text, users)
+  self:send_ComposeMessage(text, users)
+  self:recv_ComposeMessage(text, users)
+end
+
+function MessageServiceClient:send_ComposeMessage(text, users)
+  self.oprot:writeMessageBegin('ComposeMessage', TMessageType.CALL, self._seqid)
+  local args = ComposeMessage_args:new{}
+  args.text = text
+  args.users = users
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function MessageServiceClient:recv_ComposeMessage(text, users)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = ComposeMessage_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+end
+
+function MessageServiceClient:ReadMessage(messageID)
+  self:send_ReadMessage(messageID)
+  return self:recv_ReadMessage(messageID)
+end
+
+function MessageServiceClient:send_ReadMessage(messageID)
+  self.oprot:writeMessageBegin('ReadMessage', TMessageType.CALL, self._seqid)
+  local args = ReadMessage_args:new{}
+  args.messageID = messageID
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function MessageServiceClient:recv_ReadMessage(messageID)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = ReadMessage_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
+end
 MessageServiceIface = __TObject:new{
   __type = 'MessageServiceIface'
 }
@@ -85,6 +144,44 @@ function MessageServiceProcessor:process_ping(seqid, iprot, oprot, server_ctx)
     result.success = res
   end
   oprot:writeMessageBegin('ping', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
+
+function MessageServiceProcessor:process_ComposeMessage(seqid, iprot, oprot, server_ctx)
+  local args = ComposeMessage_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = ComposeMessage_result:new{}
+  local status, res = pcall(self.handler.ComposeMessage, self.handler, args.text, args.users)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('ComposeMessage', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
+
+function MessageServiceProcessor:process_ReadMessage(seqid, iprot, oprot, server_ctx)
+  local args = ReadMessage_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = ReadMessage_result:new{}
+  local status, res = pcall(self.handler.ReadMessage, self.handler, args.messageID)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('ReadMessage', reply_type, seqid)
   result:write(oprot)
   oprot:writeMessageEnd()
   oprot.trans:flush()
@@ -153,6 +250,157 @@ end
 
 function ping_result:write(oprot)
   oprot:writeStructBegin('ping_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+ComposeMessage_args = __TObject:new{
+  text,
+  users
+}
+
+function ComposeMessage_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.text = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 2 then
+      if ftype == TType.LIST then
+        self.users = {}
+        local _etype15, _size12 = iprot:readListBegin()
+        for _i=1,_size12 do
+          local _elem16 = iprot:readString()
+          table.insert(self.users, _elem16)
+        end
+        iprot:readListEnd()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function ComposeMessage_args:write(oprot)
+  oprot:writeStructBegin('ComposeMessage_args')
+  if self.text ~= nil then
+    oprot:writeFieldBegin('text', TType.STRING, 1)
+    oprot:writeString(self.text)
+    oprot:writeFieldEnd()
+  end
+  if self.users ~= nil then
+    oprot:writeFieldBegin('users', TType.LIST, 2)
+    oprot:writeListBegin(TType.STRING, #self.users)
+    for _,iter17 in ipairs(self.users) do
+      oprot:writeString(iter17)
+    end
+    oprot:writeListEnd()
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+ComposeMessage_result = __TObject:new{
+
+}
+
+function ComposeMessage_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function ComposeMessage_result:write(oprot)
+  oprot:writeStructBegin('ComposeMessage_result')
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+ReadMessage_args = __TObject:new{
+  messageID
+}
+
+function ReadMessage_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.I64 then
+        self.messageID = iprot:readI64()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function ReadMessage_args:write(oprot)
+  oprot:writeStructBegin('ReadMessage_args')
+  if self.messageID ~= nil then
+    oprot:writeFieldBegin('messageID', TType.I64, 1)
+    oprot:writeI64(self.messageID)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+ReadMessage_result = __TObject:new{
+  success
+}
+
+function ReadMessage_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function ReadMessage_result:write(oprot)
+  oprot:writeStructBegin('ReadMessage_result')
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)

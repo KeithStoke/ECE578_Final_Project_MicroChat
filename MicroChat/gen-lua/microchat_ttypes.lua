@@ -89,8 +89,8 @@ function User:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 1 then
-      if ftype == TType.I32 then
-        self.userID = iprot:readI32()
+      if ftype == TType.I64 then
+        self.userID = iprot:readI64()
       else
         iprot:skip(ftype)
       end
@@ -123,8 +123,8 @@ end
 function User:write(oprot)
   oprot:writeStructBegin('User')
   if self.userID ~= nil then
-    oprot:writeFieldBegin('userID', TType.I32, 1)
-    oprot:writeI32(self.userID)
+    oprot:writeFieldBegin('userID', TType.I64, 1)
+    oprot:writeI64(self.userID)
     oprot:writeFieldEnd()
   end
   if self.username ~= nil then
@@ -158,8 +158,8 @@ function Emoji:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 1 then
-      if ftype == TType.I32 then
-        self.emojiID = iprot:readI32()
+      if ftype == TType.I64 then
+        self.emojiID = iprot:readI64()
       else
         iprot:skip(ftype)
       end
@@ -180,8 +180,8 @@ end
 function Emoji:write(oprot)
   oprot:writeStructBegin('Emoji')
   if self.emojiID ~= nil then
-    oprot:writeFieldBegin('emojiID', TType.I32, 1)
-    oprot:writeI32(self.emojiID)
+    oprot:writeFieldBegin('emojiID', TType.I64, 1)
+    oprot:writeI64(self.emojiID)
     oprot:writeFieldEnd()
   end
   if self.emojiname ~= nil then
@@ -198,7 +198,8 @@ local Message = __TObject:new{
   text,
   sender,
   recipients,
-  reactions
+  reactions,
+  timestamp
 }
 
 function Message:read(iprot)
@@ -208,8 +209,8 @@ function Message:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 1 then
-      if ftype == TType.I32 then
-        self.messageID = iprot:readI32()
+      if ftype == TType.I64 then
+        self.messageID = iprot:readI64()
       else
         iprot:skip(ftype)
       end
@@ -252,6 +253,12 @@ function Message:read(iprot)
       else
         iprot:skip(ftype)
       end
+    elseif fid == 6 then
+      if ftype == TType.I64 then
+        self.timestamp = iprot:readI64()
+      else
+        iprot:skip(ftype)
+      end
     else
       iprot:skip(ftype)
     end
@@ -263,8 +270,8 @@ end
 function Message:write(oprot)
   oprot:writeStructBegin('Message')
   if self.messageID ~= nil then
-    oprot:writeFieldBegin('messageID', TType.I32, 1)
-    oprot:writeI32(self.messageID)
+    oprot:writeFieldBegin('messageID', TType.I64, 1)
+    oprot:writeI64(self.messageID)
     oprot:writeFieldEnd()
   end
   if self.text ~= nil then
@@ -295,6 +302,20 @@ function Message:write(oprot)
     oprot:writeListEnd()
     oprot:writeFieldEnd()
   end
+  if self.timestamp ~= nil then
+    oprot:writeFieldBegin('timestamp', TType.I64, 6)
+    oprot:writeI64(self.timestamp)
+    oprot:writeFieldEnd()
+  end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
+return{
+  ErrorCode=ErrorCode,
+  User=User,
+  Message=Message,
+  Emoji=Emoji,
+  UserStatus=UserStatus,
+  ServiceException=ServiceException
+}

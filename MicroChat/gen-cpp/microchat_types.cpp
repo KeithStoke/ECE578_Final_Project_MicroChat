@@ -215,7 +215,7 @@ User::~User() noexcept {
 }
 
 
-void User::__set_userID(const int32_t val) {
+void User::__set_userID(const int64_t val) {
   this->userID = val;
 }
 
@@ -259,8 +259,8 @@ uint32_t User::read(::apache::thrift::protocol::TProtocol* iprot) {
     switch (fid)
     {
       case 1:
-        if (ftype == ::apache::thrift::protocol::T_I32) {
-          xfer += iprot->readI32(this->userID);
+        if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->userID);
           this->__isset.userID = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -309,8 +309,8 @@ uint32_t User::write(::apache::thrift::protocol::TProtocol* oprot) const {
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("User");
 
-  xfer += oprot->writeFieldBegin("userID", ::apache::thrift::protocol::T_I32, 1);
-  xfer += oprot->writeI32(this->userID);
+  xfer += oprot->writeFieldBegin("userID", ::apache::thrift::protocol::T_I64, 1);
+  xfer += oprot->writeI64(this->userID);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("username", ::apache::thrift::protocol::T_STRING, 2);
@@ -369,7 +369,7 @@ Emoji::~Emoji() noexcept {
 }
 
 
-void Emoji::__set_emojiID(const int32_t val) {
+void Emoji::__set_emojiID(const int64_t val) {
   this->emojiID = val;
 }
 
@@ -405,8 +405,8 @@ uint32_t Emoji::read(::apache::thrift::protocol::TProtocol* iprot) {
     switch (fid)
     {
       case 1:
-        if (ftype == ::apache::thrift::protocol::T_I32) {
-          xfer += iprot->readI32(this->emojiID);
+        if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->emojiID);
           this->__isset.emojiID = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -437,8 +437,8 @@ uint32_t Emoji::write(::apache::thrift::protocol::TProtocol* oprot) const {
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("Emoji");
 
-  xfer += oprot->writeFieldBegin("emojiID", ::apache::thrift::protocol::T_I32, 1);
-  xfer += oprot->writeI32(this->emojiID);
+  xfer += oprot->writeFieldBegin("emojiID", ::apache::thrift::protocol::T_I64, 1);
+  xfer += oprot->writeI64(this->emojiID);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("emojiname", ::apache::thrift::protocol::T_STRING, 2);
@@ -481,7 +481,7 @@ Message::~Message() noexcept {
 }
 
 
-void Message::__set_messageID(const int32_t val) {
+void Message::__set_messageID(const int64_t val) {
   this->messageID = val;
 }
 
@@ -499,6 +499,10 @@ void Message::__set_recipients(const std::vector<User> & val) {
 
 void Message::__set_reactions(const std::vector<Emoji> & val) {
   this->reactions = val;
+}
+
+void Message::__set_timestamp(const int64_t val) {
+  this->timestamp = val;
 }
 std::ostream& operator<<(std::ostream& out, const Message& obj)
 {
@@ -529,8 +533,8 @@ uint32_t Message::read(::apache::thrift::protocol::TProtocol* iprot) {
     switch (fid)
     {
       case 1:
-        if (ftype == ::apache::thrift::protocol::T_I32) {
-          xfer += iprot->readI32(this->messageID);
+        if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->messageID);
           this->__isset.messageID = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -592,6 +596,14 @@ uint32_t Message::read(::apache::thrift::protocol::TProtocol* iprot) {
           xfer += iprot->skip(ftype);
         }
         break;
+      case 6:
+        if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->timestamp);
+          this->__isset.timestamp = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -609,8 +621,8 @@ uint32_t Message::write(::apache::thrift::protocol::TProtocol* oprot) const {
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("Message");
 
-  xfer += oprot->writeFieldBegin("messageID", ::apache::thrift::protocol::T_I32, 1);
-  xfer += oprot->writeI32(this->messageID);
+  xfer += oprot->writeFieldBegin("messageID", ::apache::thrift::protocol::T_I64, 1);
+  xfer += oprot->writeI64(this->messageID);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("text", ::apache::thrift::protocol::T_STRING, 2);
@@ -645,6 +657,10 @@ uint32_t Message::write(::apache::thrift::protocol::TProtocol* oprot) const {
   }
   xfer += oprot->writeFieldEnd();
 
+  xfer += oprot->writeFieldBegin("timestamp", ::apache::thrift::protocol::T_I64, 6);
+  xfer += oprot->writeI64(this->timestamp);
+  xfer += oprot->writeFieldEnd();
+
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -657,6 +673,7 @@ void swap(Message &a, Message &b) {
   swap(a.sender, b.sender);
   swap(a.recipients, b.recipients);
   swap(a.reactions, b.reactions);
+  swap(a.timestamp, b.timestamp);
   swap(a.__isset, b.__isset);
 }
 
@@ -666,6 +683,7 @@ Message::Message(const Message& other20) {
   sender = other20.sender;
   recipients = other20.recipients;
   reactions = other20.reactions;
+  timestamp = other20.timestamp;
   __isset = other20.__isset;
 }
 Message& Message::operator=(const Message& other21) {
@@ -674,6 +692,7 @@ Message& Message::operator=(const Message& other21) {
   sender = other21.sender;
   recipients = other21.recipients;
   reactions = other21.reactions;
+  timestamp = other21.timestamp;
   __isset = other21.__isset;
   return *this;
 }
@@ -685,6 +704,7 @@ void Message::printTo(std::ostream& out) const {
   out << ", " << "sender=" << to_string(sender);
   out << ", " << "recipients=" << to_string(recipients);
   out << ", " << "reactions=" << to_string(reactions);
+  out << ", " << "timestamp=" << to_string(timestamp);
   out << ")";
 }
 

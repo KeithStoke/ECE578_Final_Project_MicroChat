@@ -22,15 +22,6 @@ local UserServiceClient = __TObject.new(__TClient, {
   __type = 'UserServiceClient'
 })
 
-local Ping_args = __TObject:new{
-  id
-}
-
-local Login_args = __TObject:new{
-  username,
-  password
-}
-
 function UserServiceClient:Ping(id)
   self:send_Ping(id)
   return self:recv_Ping(id)
@@ -96,7 +87,7 @@ end
 
 function UserServiceClient:CreateUser(username, name, password)
   self:send_CreateUser(username, name, password)
-  return self:recv_CreateUser(username, name, password)
+  self:recv_CreateUser(username, name, password)
 end
 
 function UserServiceClient:send_CreateUser(username, name, password)
@@ -119,6 +110,33 @@ function UserServiceClient:recv_CreateUser(username, name, password)
     error(x)
   end
   local result = CreateUser_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+end
+
+function UserServiceClient:GetUserID(username)
+  self:send_GetUserID(username)
+  return self:recv_GetUserID(username)
+end
+
+function UserServiceClient:send_GetUserID(username)
+  self.oprot:writeMessageBegin('GetUserID', TMessageType.CALL, self._seqid)
+  local args = GetUserID_args:new{}
+  args.username = username
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function UserServiceClient:recv_GetUserID(username)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = GetUserID_result:new{}
   result:read(self.iprot)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
@@ -211,7 +229,30 @@ function UserServiceProcessor:process_CreateUser(seqid, iprot, oprot, server_ctx
   oprot.trans:flush()
 end
 
+function UserServiceProcessor:process_GetUserID(seqid, iprot, oprot, server_ctx)
+  local args = GetUserID_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = GetUserID_result:new{}
+  local status, res = pcall(self.handler.GetUserID, self.handler, args.username)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('GetUserID', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
+
 -- HELPER FUNCTIONS AND STRUCTURES
+
+local Ping_args = __TObject:new{
+  id
+}
 
 function Ping_args:read(iprot)
   iprot:readStructBegin()
@@ -279,6 +320,10 @@ function Ping_result:write(oprot)
   oprot:writeStructEnd()
 end
 
+local Login_args = __TObject:new{
+  username,
+  password
+}
 
 function Login_args:read(iprot)
   iprot:readStructBegin()
@@ -417,7 +462,7 @@ function CreateUser_args:write(oprot)
 end
 
 CreateUser_result = __TObject:new{
-  success
+
 }
 
 function CreateUser_result:read(iprot)
@@ -426,10 +471,33 @@ function CreateUser_result:read(iprot)
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
-    elseif fid == 0 then
-      if ftype == TType.STRUCT then
-        self.success = User:new{}
-        self.success:read(iprot)
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function CreateUser_result:write(oprot)
+  oprot:writeStructBegin('CreateUser_result')
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+GetUserID_args = __TObject:new{
+  username
+}
+
+function GetUserID_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.username = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -441,15 +509,49 @@ function CreateUser_result:read(iprot)
   iprot:readStructEnd()
 end
 
-function CreateUser_result:write(oprot)
-  oprot:writeStructBegin('CreateUser_result')
-  if self.success ~= nil then
-    oprot:writeFieldBegin('success', TType.STRUCT, 0)
-    self.success:write(oprot)
+function GetUserID_args:write(oprot)
+  oprot:writeStructBegin('GetUserID_args')
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
 
+GetUserID_result = __TObject:new{
+  success
+}
+
+function GetUserID_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 0 then
+      if ftype == TType.I64 then
+        self.success = iprot:readI64()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function GetUserID_result:write(oprot)
+  oprot:writeStructBegin('GetUserID_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.I64, 0)
+    oprot:writeI64(self.success)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
 return UserServiceClient
