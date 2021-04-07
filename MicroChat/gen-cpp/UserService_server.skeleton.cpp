@@ -20,9 +20,9 @@ class UserServiceHandler : virtual public UserServiceIf {
     // Your initialization goes here
   }
 
-  void Ping(std::string& _return, const int32_t id) {
+  void ping(std::string& _return, const int32_t id) {
     // Your implementation goes here
-    printf("Ping\n");
+    printf("ping\n");
   }
 
   void Login(std::string& _return, const std::string& username, const std::string& password) {

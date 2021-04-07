@@ -71,6 +71,8 @@ function DatabaseServiceClient:recv_WriteToDatabase(query)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
     return result.success
+  elseif result.se then
+    error(result.se)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
@@ -102,6 +104,8 @@ function DatabaseServiceClient:recv_ReadFromDatabase(query)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
     return result.success
+  elseif result.se then
+    error(result.se)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
@@ -162,6 +166,8 @@ function DatabaseServiceProcessor:process_WriteToDatabase(seqid, iprot, oprot, s
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
   else
     result.success = res
   end
@@ -181,6 +187,8 @@ function DatabaseServiceProcessor:process_ReadFromDatabase(seqid, iprot, oprot, 
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
   else
     result.success = res
   end
@@ -298,7 +306,8 @@ function WriteToDatabase_args:write(oprot)
 end
 
 WriteToDatabase_result = __TObject:new{
-  success
+  success,
+  se
 }
 
 function WriteToDatabase_result:read(iprot)
@@ -310,6 +319,13 @@ function WriteToDatabase_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.STRING then
         self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
       else
         iprot:skip(ftype)
       end
@@ -326,6 +342,11 @@ function WriteToDatabase_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
@@ -368,7 +389,8 @@ function ReadFromDatabase_args:write(oprot)
 end
 
 ReadFromDatabase_result = __TObject:new{
-  success
+  success,
+  se
 }
 
 function ReadFromDatabase_result:read(iprot)
@@ -380,6 +402,13 @@ function ReadFromDatabase_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.STRING then
         self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
       else
         iprot:skip(ftype)
       end
@@ -396,6 +425,11 @@ function ReadFromDatabase_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()

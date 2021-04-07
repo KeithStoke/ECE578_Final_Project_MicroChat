@@ -35,6 +35,11 @@ class MessageServiceHandler : virtual public MessageServiceIf {
     printf("ReadMessage\n");
   }
 
+  void GetMessages(std::vector<Message> & _return, const int64_t userID) {
+    // Your implementation goes here
+    printf("GetMessages\n");
+  }
+
 };
 
 int main(int argc, char **argv) {

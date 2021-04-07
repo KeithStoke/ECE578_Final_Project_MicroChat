@@ -44,21 +44,21 @@ function FriendRecommendationServiceClient:recv_ping(text)
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
-function FriendRecommendationServiceClient:GetFriendRecommendations(user)
-  self:send_GetFriendRecommendations(user)
-  return self:recv_GetFriendRecommendations(user)
+function FriendRecommendationServiceClient:GetFriendRecommendations(userID)
+  self:send_GetFriendRecommendations(userID)
+  return self:recv_GetFriendRecommendations(userID)
 end
 
-function FriendRecommendationServiceClient:send_GetFriendRecommendations(user)
+function FriendRecommendationServiceClient:send_GetFriendRecommendations(userID)
   self.oprot:writeMessageBegin('GetFriendRecommendations', TMessageType.CALL, self._seqid)
   local args = GetFriendRecommendations_args:new{}
-  args.user = user
+  args.userID = userID
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function FriendRecommendationServiceClient:recv_GetFriendRecommendations(user)
+function FriendRecommendationServiceClient:recv_GetFriendRecommendations(userID)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -71,6 +71,8 @@ function FriendRecommendationServiceClient:recv_GetFriendRecommendations(user)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
     return result.success
+  elseif result.se then
+    error(result.se)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
@@ -127,10 +129,12 @@ function FriendRecommendationServiceProcessor:process_GetFriendRecommendations(s
   args:read(iprot)
   iprot:readMessageEnd()
   local result = GetFriendRecommendations_result:new{}
-  local status, res = pcall(self.handler.GetFriendRecommendations, self.handler, args.user)
+  local status, res = pcall(self.handler.GetFriendRecommendations, self.handler, args.userID)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
   else
     result.success = res
   end
@@ -213,7 +217,7 @@ function ping_result:write(oprot)
 end
 
 GetFriendRecommendations_args = __TObject:new{
-  user
+  userID
 }
 
 function GetFriendRecommendations_args:read(iprot)
@@ -223,9 +227,8 @@ function GetFriendRecommendations_args:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 1 then
-      if ftype == TType.STRUCT then
-        self.user = User:new{}
-        self.user:read(iprot)
+      if ftype == TType.I64 then
+        self.userID = iprot:readI64()
       else
         iprot:skip(ftype)
       end
@@ -239,9 +242,9 @@ end
 
 function GetFriendRecommendations_args:write(oprot)
   oprot:writeStructBegin('GetFriendRecommendations_args')
-  if self.user ~= nil then
-    oprot:writeFieldBegin('user', TType.STRUCT, 1)
-    self.user:write(oprot)
+  if self.userID ~= nil then
+    oprot:writeFieldBegin('userID', TType.I64, 1)
+    oprot:writeI64(self.userID)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
@@ -249,7 +252,8 @@ function GetFriendRecommendations_args:write(oprot)
 end
 
 GetFriendRecommendations_result = __TObject:new{
-  success
+  success,
+  se
 }
 
 function GetFriendRecommendations_result:read(iprot)
@@ -261,13 +265,19 @@ function GetFriendRecommendations_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.LIST then
         self.success = {}
-        local _etype21, _size18 = iprot:readListBegin()
-        for _i=1,_size18 do
-          local _elem22 = User:new{}
-          _elem22:read(iprot)
-          table.insert(self.success, _elem22)
+        local _etype27, _size24 = iprot:readListBegin()
+        for _i=1,_size24 do
+          local _elem28 = iprot:readString()
+          table.insert(self.success, _elem28)
         end
         iprot:readListEnd()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
       else
         iprot:skip(ftype)
       end
@@ -283,11 +293,16 @@ function GetFriendRecommendations_result:write(oprot)
   oprot:writeStructBegin('GetFriendRecommendations_result')
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.LIST, 0)
-    oprot:writeListBegin(TType.STRUCT, #self.success)
-    for _,iter23 in ipairs(self.success) do
-      iter23:write(oprot)
+    oprot:writeListBegin(TType.STRING, #self.success)
+    for _,iter29 in ipairs(self.success) do
+      oprot:writeString(iter29)
     end
     oprot:writeListEnd()
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()

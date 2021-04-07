@@ -219,8 +219,9 @@ class DatabaseService_WriteToDatabase_pargs {
 };
 
 typedef struct _DatabaseService_WriteToDatabase_result__isset {
-  _DatabaseService_WriteToDatabase_result__isset() : success(false) {}
+  _DatabaseService_WriteToDatabase_result__isset() : success(false), se(false) {}
   bool success :1;
+  bool se :1;
 } _DatabaseService_WriteToDatabase_result__isset;
 
 class DatabaseService_WriteToDatabase_result {
@@ -233,14 +234,19 @@ class DatabaseService_WriteToDatabase_result {
 
   virtual ~DatabaseService_WriteToDatabase_result() noexcept;
   std::string success;
+  ServiceException se;
 
   _DatabaseService_WriteToDatabase_result__isset __isset;
 
   void __set_success(const std::string& val);
 
+  void __set_se(const ServiceException& val);
+
   bool operator == (const DatabaseService_WriteToDatabase_result & rhs) const
   {
     if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
       return false;
     return true;
   }
@@ -256,8 +262,9 @@ class DatabaseService_WriteToDatabase_result {
 };
 
 typedef struct _DatabaseService_WriteToDatabase_presult__isset {
-  _DatabaseService_WriteToDatabase_presult__isset() : success(false) {}
+  _DatabaseService_WriteToDatabase_presult__isset() : success(false), se(false) {}
   bool success :1;
+  bool se :1;
 } _DatabaseService_WriteToDatabase_presult__isset;
 
 class DatabaseService_WriteToDatabase_presult {
@@ -266,6 +273,7 @@ class DatabaseService_WriteToDatabase_presult {
 
   virtual ~DatabaseService_WriteToDatabase_presult() noexcept;
   std::string* success;
+  ServiceException se;
 
   _DatabaseService_WriteToDatabase_presult__isset __isset;
 
@@ -323,8 +331,9 @@ class DatabaseService_ReadFromDatabase_pargs {
 };
 
 typedef struct _DatabaseService_ReadFromDatabase_result__isset {
-  _DatabaseService_ReadFromDatabase_result__isset() : success(false) {}
+  _DatabaseService_ReadFromDatabase_result__isset() : success(false), se(false) {}
   bool success :1;
+  bool se :1;
 } _DatabaseService_ReadFromDatabase_result__isset;
 
 class DatabaseService_ReadFromDatabase_result {
@@ -337,14 +346,19 @@ class DatabaseService_ReadFromDatabase_result {
 
   virtual ~DatabaseService_ReadFromDatabase_result() noexcept;
   std::string success;
+  ServiceException se;
 
   _DatabaseService_ReadFromDatabase_result__isset __isset;
 
   void __set_success(const std::string& val);
 
+  void __set_se(const ServiceException& val);
+
   bool operator == (const DatabaseService_ReadFromDatabase_result & rhs) const
   {
     if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
       return false;
     return true;
   }
@@ -360,8 +374,9 @@ class DatabaseService_ReadFromDatabase_result {
 };
 
 typedef struct _DatabaseService_ReadFromDatabase_presult__isset {
-  _DatabaseService_ReadFromDatabase_presult__isset() : success(false) {}
+  _DatabaseService_ReadFromDatabase_presult__isset() : success(false), se(false) {}
   bool success :1;
+  bool se :1;
 } _DatabaseService_ReadFromDatabase_presult__isset;
 
 class DatabaseService_ReadFromDatabase_presult {
@@ -370,6 +385,7 @@ class DatabaseService_ReadFromDatabase_presult {
 
   virtual ~DatabaseService_ReadFromDatabase_presult() noexcept;
   std::string* success;
+  ServiceException se;
 
   _DatabaseService_ReadFromDatabase_presult__isset __isset;
 

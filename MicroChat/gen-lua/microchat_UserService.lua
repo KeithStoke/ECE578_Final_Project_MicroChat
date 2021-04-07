@@ -31,21 +31,21 @@ local Login_args = __TObject:new{
   password
 }
 
-function UserServiceClient:Ping(id)
-  self:send_Ping(id)
-  return self:recv_Ping(id)
+function UserServiceClient:ping(id)
+  self:send_ping(id)
+  return self:recv_ping(id)
 end
 
-function UserServiceClient:send_Ping(id)
-  self.oprot:writeMessageBegin('Ping', TMessageType.CALL, self._seqid)
-  local args = Ping_args:new{}
+function UserServiceClient:send_ping(id)
+  self.oprot:writeMessageBegin('ping', TMessageType.CALL, self._seqid)
+  local args = ping_args:new{}
   args.id = id
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function UserServiceClient:recv_Ping(id)
+function UserServiceClient:recv_ping(id)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -53,7 +53,7 @@ function UserServiceClient:recv_Ping(id)
     self.iprot:readMessageEnd()
     error(x)
   end
-  local result = Ping_result:new{}
+  local result = ping_result:new{}
   result:read(self.iprot)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
@@ -90,6 +90,8 @@ function UserServiceClient:recv_Login(username, password)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
     return result.success
+  elseif result.se then
+    error(result.se)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
@@ -150,6 +152,8 @@ function UserServiceClient:recv_GetUserID(username)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
     return result.success
+  elseif result.se then
+    error(result.se)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
@@ -181,20 +185,20 @@ function UserServiceProcessor:process(iprot, oprot, server_ctx)
   end
 end
 
-function UserServiceProcessor:process_Ping(seqid, iprot, oprot, server_ctx)
-  local args = Ping_args:new{}
+function UserServiceProcessor:process_ping(seqid, iprot, oprot, server_ctx)
+  local args = ping_args:new{}
   local reply_type = TMessageType.REPLY
   args:read(iprot)
   iprot:readMessageEnd()
-  local result = Ping_result:new{}
-  local status, res = pcall(self.handler.Ping, self.handler, args.id)
+  local result = ping_result:new{}
+  local status, res = pcall(self.handler.ping, self.handler, args.id)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
   else
     result.success = res
   end
-  oprot:writeMessageBegin('Ping', reply_type, seqid)
+  oprot:writeMessageBegin('ping', reply_type, seqid)
   result:write(oprot)
   oprot:writeMessageEnd()
   oprot.trans:flush()
@@ -210,6 +214,8 @@ function UserServiceProcessor:process_Login(seqid, iprot, oprot, server_ctx)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
   else
     result.success = res
   end
@@ -229,6 +235,8 @@ function UserServiceProcessor:process_CreateUser(seqid, iprot, oprot, server_ctx
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
   else
     result.success = res
   end
@@ -248,6 +256,8 @@ function UserServiceProcessor:process_GetUserID(seqid, iprot, oprot, server_ctx)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
   else
     result.success = res
   end
@@ -259,7 +269,7 @@ end
 
 -- HELPER FUNCTIONS AND STRUCTURES
 
-function Ping_args:read(iprot)
+function ping_args:read(iprot)
   iprot:readStructBegin()
   while true do
     local fname, ftype, fid = iprot:readFieldBegin()
@@ -279,8 +289,8 @@ function Ping_args:read(iprot)
   iprot:readStructEnd()
 end
 
-function Ping_args:write(oprot)
-  oprot:writeStructBegin('Ping_args')
+function ping_args:write(oprot)
+  oprot:writeStructBegin('ping_args')
   if self.id ~= nil then
     oprot:writeFieldBegin('id', TType.I32, 1)
     oprot:writeI32(self.id)
@@ -290,11 +300,11 @@ function Ping_args:write(oprot)
   oprot:writeStructEnd()
 end
 
-Ping_result = __TObject:new{
+ping_result = __TObject:new{
   success
 }
 
-function Ping_result:read(iprot)
+function ping_result:read(iprot)
   iprot:readStructBegin()
   while true do
     local fname, ftype, fid = iprot:readFieldBegin()
@@ -314,8 +324,8 @@ function Ping_result:read(iprot)
   iprot:readStructEnd()
 end
 
-function Ping_result:write(oprot)
-  oprot:writeStructBegin('Ping_result')
+function ping_result:write(oprot)
+  oprot:writeStructBegin('ping_result')
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)
@@ -368,7 +378,8 @@ function Login_args:write(oprot)
 end
 
 Login_result = __TObject:new{
-  success
+  success,
+  se
 }
 
 function Login_result:read(iprot)
@@ -380,6 +391,13 @@ function Login_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.STRING then
         self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
       else
         iprot:skip(ftype)
       end
@@ -396,6 +414,11 @@ function Login_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
@@ -462,7 +485,7 @@ function CreateUser_args:write(oprot)
 end
 
 CreateUser_result = __TObject:new{
-
+  se
 }
 
 function CreateUser_result:read(iprot)
@@ -471,6 +494,13 @@ function CreateUser_result:read(iprot)
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
     else
       iprot:skip(ftype)
     end
@@ -481,6 +511,11 @@ end
 
 function CreateUser_result:write(oprot)
   oprot:writeStructBegin('CreateUser_result')
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
+    oprot:writeFieldEnd()
+  end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
@@ -521,7 +556,8 @@ function GetUserID_args:write(oprot)
 end
 
 GetUserID_result = __TObject:new{
-  success
+  success,
+  se
 }
 
 function GetUserID_result:read(iprot)
@@ -533,6 +569,13 @@ function GetUserID_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.I64 then
         self.success = iprot:readI64()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
       else
         iprot:skip(ftype)
       end
@@ -549,6 +592,11 @@ function GetUserID_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.I64, 0)
     oprot:writeI64(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
