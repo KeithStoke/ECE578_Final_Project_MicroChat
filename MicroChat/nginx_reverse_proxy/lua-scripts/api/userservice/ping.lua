@@ -23,7 +23,7 @@ function _M.Ping()
 	ngx.say("Inside Nginx Lua script: Pinging UserService...", post.id)
 	
 	local client = GenericObjectPool:connection(UserServiceClient, "user-service", 9090)
-	local status, ret = pcall(client.Ping, client, post.id)
+	local status, ret = pcall(client.ping, client, post.id)
 
 	GenericObjectPool:returnConnection(client)
 	ngx.say("Status: ", status)
