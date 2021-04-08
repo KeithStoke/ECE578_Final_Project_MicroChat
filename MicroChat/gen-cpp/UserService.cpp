@@ -555,6 +555,14 @@ uint32_t UserService_CreateUser_result::read(::apache::thrift::protocol::TProtoc
     }
     switch (fid)
     {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       case 1:
         if (ftype == ::apache::thrift::protocol::T_STRUCT) {
           xfer += this->se.read(iprot);
@@ -581,7 +589,11 @@ uint32_t UserService_CreateUser_result::write(::apache::thrift::protocol::TProto
 
   xfer += oprot->writeStructBegin("UserService_CreateUser_result");
 
-  if (this->__isset.se) {
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.se) {
     xfer += oprot->writeFieldBegin("se", ::apache::thrift::protocol::T_STRUCT, 1);
     xfer += this->se.write(oprot);
     xfer += oprot->writeFieldEnd();
@@ -617,6 +629,14 @@ uint32_t UserService_CreateUser_presult::read(::apache::thrift::protocol::TProto
     }
     switch (fid)
     {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       case 1:
         if (ftype == ::apache::thrift::protocol::T_STRUCT) {
           xfer += this->se.read(iprot);
@@ -743,8 +763,8 @@ uint32_t UserService_GetUserID_result::read(::apache::thrift::protocol::TProtoco
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->success);
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -777,8 +797,8 @@ uint32_t UserService_GetUserID_result::write(::apache::thrift::protocol::TProtoc
   xfer += oprot->writeStructBegin("UserService_GetUserID_result");
 
   if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_I64, 0);
-    xfer += oprot->writeI64(this->success);
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
     xfer += oprot->writeFieldEnd();
   } else if (this->__isset.se) {
     xfer += oprot->writeFieldBegin("se", ::apache::thrift::protocol::T_STRUCT, 1);
@@ -817,8 +837,8 @@ uint32_t UserService_GetUserID_presult::read(::apache::thrift::protocol::TProtoc
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64((*(this->success)));
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -964,10 +984,10 @@ void UserServiceClient::recv_Login(std::string& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "Login failed: unknown result");
 }
 
-void UserServiceClient::CreateUser(const std::string& username, const std::string& name, const std::string& password)
+void UserServiceClient::CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password)
 {
   send_CreateUser(username, name, password);
-  recv_CreateUser();
+  recv_CreateUser(_return);
 }
 
 void UserServiceClient::send_CreateUser(const std::string& username, const std::string& name, const std::string& password)
@@ -986,7 +1006,7 @@ void UserServiceClient::send_CreateUser(const std::string& username, const std::
   oprot_->getTransport()->flush();
 }
 
-void UserServiceClient::recv_CreateUser()
+void UserServiceClient::recv_CreateUser(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -1012,20 +1032,25 @@ void UserServiceClient::recv_CreateUser()
     iprot_->getTransport()->readEnd();
   }
   UserService_CreateUser_presult result;
+  result.success = &_return;
   result.read(iprot_);
   iprot_->readMessageEnd();
   iprot_->getTransport()->readEnd();
 
+  if (result.__isset.success) {
+    // _return pointer has now been filled
+    return;
+  }
   if (result.__isset.se) {
     throw result.se;
   }
-  return;
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "CreateUser failed: unknown result");
 }
 
-int64_t UserServiceClient::GetUserID(const std::string& username)
+void UserServiceClient::GetUserID(std::string& _return, const std::string& username)
 {
   send_GetUserID(username);
-  return recv_GetUserID();
+  recv_GetUserID(_return);
 }
 
 void UserServiceClient::send_GetUserID(const std::string& username)
@@ -1042,7 +1067,7 @@ void UserServiceClient::send_GetUserID(const std::string& username)
   oprot_->getTransport()->flush();
 }
 
-int64_t UserServiceClient::recv_GetUserID()
+void UserServiceClient::recv_GetUserID(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -1067,7 +1092,6 @@ int64_t UserServiceClient::recv_GetUserID()
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  int64_t _return;
   UserService_GetUserID_presult result;
   result.success = &_return;
   result.read(iprot_);
@@ -1075,7 +1099,8 @@ int64_t UserServiceClient::recv_GetUserID()
   iprot_->getTransport()->readEnd();
 
   if (result.__isset.success) {
-    return _return;
+    // _return pointer has now been filled
+    return;
   }
   if (result.__isset.se) {
     throw result.se;
@@ -1236,7 +1261,8 @@ void UserServiceProcessor::process_CreateUser(int32_t seqid, ::apache::thrift::p
 
   UserService_CreateUser_result result;
   try {
-    iface_->CreateUser(args.username, args.name, args.password);
+    iface_->CreateUser(result.success, args.username, args.name, args.password);
+    result.__isset.success = true;
   } catch (ServiceException &se) {
     result.se = se;
     result.__isset.se = true;
@@ -1292,7 +1318,7 @@ void UserServiceProcessor::process_GetUserID(int32_t seqid, ::apache::thrift::pr
 
   UserService_GetUserID_result result;
   try {
-    result.success = iface_->GetUserID(args.username);
+    iface_->GetUserID(result.success, args.username);
     result.__isset.success = true;
   } catch (ServiceException &se) {
     result.se = se;
@@ -1506,10 +1532,10 @@ void UserServiceConcurrentClient::recv_Login(std::string& _return, const int32_t
   } // end while(true)
 }
 
-void UserServiceConcurrentClient::CreateUser(const std::string& username, const std::string& name, const std::string& password)
+void UserServiceConcurrentClient::CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password)
 {
   int32_t seqid = send_CreateUser(username, name, password);
-  recv_CreateUser(seqid);
+  recv_CreateUser(_return, seqid);
 }
 
 int32_t UserServiceConcurrentClient::send_CreateUser(const std::string& username, const std::string& name, const std::string& password)
@@ -1532,7 +1558,7 @@ int32_t UserServiceConcurrentClient::send_CreateUser(const std::string& username
   return cseqid;
 }
 
-void UserServiceConcurrentClient::recv_CreateUser(const int32_t seqid)
+void UserServiceConcurrentClient::recv_CreateUser(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -1571,16 +1597,22 @@ void UserServiceConcurrentClient::recv_CreateUser(const int32_t seqid)
         throw TProtocolException(TProtocolException::INVALID_DATA);
       }
       UserService_CreateUser_presult result;
+      result.success = &_return;
       result.read(iprot_);
       iprot_->readMessageEnd();
       iprot_->getTransport()->readEnd();
 
+      if (result.__isset.success) {
+        // _return pointer has now been filled
+        sentry.commit();
+        return;
+      }
       if (result.__isset.se) {
         sentry.commit();
         throw result.se;
       }
-      sentry.commit();
-      return;
+      // in a bad state, don't commit
+      throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "CreateUser failed: unknown result");
     }
     // seqid != rseqid
     this->sync_->updatePending(fname, mtype, rseqid);
@@ -1590,10 +1622,10 @@ void UserServiceConcurrentClient::recv_CreateUser(const int32_t seqid)
   } // end while(true)
 }
 
-int64_t UserServiceConcurrentClient::GetUserID(const std::string& username)
+void UserServiceConcurrentClient::GetUserID(std::string& _return, const std::string& username)
 {
   int32_t seqid = send_GetUserID(username);
-  return recv_GetUserID(seqid);
+  recv_GetUserID(_return, seqid);
 }
 
 int32_t UserServiceConcurrentClient::send_GetUserID(const std::string& username)
@@ -1614,7 +1646,7 @@ int32_t UserServiceConcurrentClient::send_GetUserID(const std::string& username)
   return cseqid;
 }
 
-int64_t UserServiceConcurrentClient::recv_GetUserID(const int32_t seqid)
+void UserServiceConcurrentClient::recv_GetUserID(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -1652,7 +1684,6 @@ int64_t UserServiceConcurrentClient::recv_GetUserID(const int32_t seqid)
         using ::apache::thrift::protocol::TProtocolException;
         throw TProtocolException(TProtocolException::INVALID_DATA);
       }
-      int64_t _return;
       UserService_GetUserID_presult result;
       result.success = &_return;
       result.read(iprot_);
@@ -1660,8 +1691,9 @@ int64_t UserServiceConcurrentClient::recv_GetUserID(const int32_t seqid)
       iprot_->getTransport()->readEnd();
 
       if (result.__isset.success) {
+        // _return pointer has now been filled
         sentry.commit();
-        return _return;
+        return;
       }
       if (result.__isset.se) {
         sentry.commit();

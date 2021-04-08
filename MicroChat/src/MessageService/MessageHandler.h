@@ -23,7 +23,7 @@ namespace microchat
         ~MessageServiceHandler() override = default;
 
         void ping(std::string &_return, const std::string &text) override;
-        void ComposeMessage(const std::string &text, const std::vector<std::string> &users) override;
+        void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users) override;
         void ReadMessage(std::string &_return, const int64_t messageID) override;
         void GetMessages(std::vector<Message> &_return, const int64_t userID) override;
     };
@@ -37,7 +37,7 @@ namespace microchat
         _return = "Pong from MessageService";
     }
 
-    void MessageServiceHandler::ComposeMessage(const std::string &text, const std::vector<std::string> &users)
+    void MessageServiceHandler::ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users)
     {
         // Your implementation goes here
         printf("ComposeMessage\n");

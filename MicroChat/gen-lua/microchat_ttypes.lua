@@ -10,7 +10,7 @@ local Thrift = require 'Thrift'
 local __TObject = Thrift.__TObject
 local TException = Thrift.TException
 
-local ErrorCode = {
+local rrorCode = {
   SE_CONNPOOL_TIMEOUT = 0,
   SE_THRIFT_CONN_ERROR = 1,
   SE_UNAUTHORIZED = 2,
@@ -310,7 +310,6 @@ function Message:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
-
 return{
   ErrorCode=ErrorCode,
   User=User,

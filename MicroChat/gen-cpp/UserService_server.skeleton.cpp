@@ -30,12 +30,12 @@ class UserServiceHandler : virtual public UserServiceIf {
     printf("Login\n");
   }
 
-  void CreateUser(const std::string& username, const std::string& name, const std::string& password) {
+  void CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password) {
     // Your implementation goes here
     printf("CreateUser\n");
   }
 
-  int64_t GetUserID(const std::string& username) {
+  void GetUserID(std::string& _return, const std::string& username) {
     // Your implementation goes here
     printf("GetUserID\n");
   }

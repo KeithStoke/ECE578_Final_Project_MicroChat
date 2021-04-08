@@ -344,6 +344,14 @@ uint32_t MessageService_ComposeMessage_result::read(::apache::thrift::protocol::
     }
     switch (fid)
     {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       case 1:
         if (ftype == ::apache::thrift::protocol::T_STRUCT) {
           xfer += this->se.read(iprot);
@@ -370,7 +378,11 @@ uint32_t MessageService_ComposeMessage_result::write(::apache::thrift::protocol:
 
   xfer += oprot->writeStructBegin("MessageService_ComposeMessage_result");
 
-  if (this->__isset.se) {
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.se) {
     xfer += oprot->writeFieldBegin("se", ::apache::thrift::protocol::T_STRUCT, 1);
     xfer += this->se.write(oprot);
     xfer += oprot->writeFieldEnd();
@@ -406,6 +418,14 @@ uint32_t MessageService_ComposeMessage_presult::read(::apache::thrift::protocol:
     }
     switch (fid)
     {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       case 1:
         if (ftype == ::apache::thrift::protocol::T_STRUCT) {
           xfer += this->se.read(iprot);
@@ -930,10 +950,10 @@ void MessageServiceClient::recv_ping(std::string& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
 }
 
-void MessageServiceClient::ComposeMessage(const std::string& text, const std::vector<std::string> & users)
+void MessageServiceClient::ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users)
 {
   send_ComposeMessage(text, users);
-  recv_ComposeMessage();
+  recv_ComposeMessage(_return);
 }
 
 void MessageServiceClient::send_ComposeMessage(const std::string& text, const std::vector<std::string> & users)
@@ -951,7 +971,7 @@ void MessageServiceClient::send_ComposeMessage(const std::string& text, const st
   oprot_->getTransport()->flush();
 }
 
-void MessageServiceClient::recv_ComposeMessage()
+void MessageServiceClient::recv_ComposeMessage(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -977,14 +997,19 @@ void MessageServiceClient::recv_ComposeMessage()
     iprot_->getTransport()->readEnd();
   }
   MessageService_ComposeMessage_presult result;
+  result.success = &_return;
   result.read(iprot_);
   iprot_->readMessageEnd();
   iprot_->getTransport()->readEnd();
 
+  if (result.__isset.success) {
+    // _return pointer has now been filled
+    return;
+  }
   if (result.__isset.se) {
     throw result.se;
   }
-  return;
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ComposeMessage failed: unknown result");
 }
 
 void MessageServiceClient::ReadMessage(std::string& _return, const int64_t messageID)
@@ -1205,7 +1230,8 @@ void MessageServiceProcessor::process_ComposeMessage(int32_t seqid, ::apache::th
 
   MessageService_ComposeMessage_result result;
   try {
-    iface_->ComposeMessage(args.text, args.users);
+    iface_->ComposeMessage(result.success, args.text, args.users);
+    result.__isset.success = true;
   } catch (ServiceException &se) {
     result.se = se;
     result.__isset.se = true;
@@ -1443,10 +1469,10 @@ void MessageServiceConcurrentClient::recv_ping(std::string& _return, const int32
   } // end while(true)
 }
 
-void MessageServiceConcurrentClient::ComposeMessage(const std::string& text, const std::vector<std::string> & users)
+void MessageServiceConcurrentClient::ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users)
 {
   int32_t seqid = send_ComposeMessage(text, users);
-  recv_ComposeMessage(seqid);
+  recv_ComposeMessage(_return, seqid);
 }
 
 int32_t MessageServiceConcurrentClient::send_ComposeMessage(const std::string& text, const std::vector<std::string> & users)
@@ -1468,7 +1494,7 @@ int32_t MessageServiceConcurrentClient::send_ComposeMessage(const std::string& t
   return cseqid;
 }
 
-void MessageServiceConcurrentClient::recv_ComposeMessage(const int32_t seqid)
+void MessageServiceConcurrentClient::recv_ComposeMessage(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -1507,16 +1533,22 @@ void MessageServiceConcurrentClient::recv_ComposeMessage(const int32_t seqid)
         throw TProtocolException(TProtocolException::INVALID_DATA);
       }
       MessageService_ComposeMessage_presult result;
+      result.success = &_return;
       result.read(iprot_);
       iprot_->readMessageEnd();
       iprot_->getTransport()->readEnd();
 
+      if (result.__isset.success) {
+        // _return pointer has now been filled
+        sentry.commit();
+        return;
+      }
       if (result.__isset.se) {
         sentry.commit();
         throw result.se;
       }
-      sentry.commit();
-      return;
+      // in a bad state, don't commit
+      throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ComposeMessage failed: unknown result");
     }
     // seqid != rseqid
     this->sync_->updatePending(fname, mtype, rseqid);

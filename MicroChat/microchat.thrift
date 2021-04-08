@@ -48,14 +48,14 @@ service UserService{
 
   string ping(1:i32 id),
   string Login(1:string username, 2:string password) throws (1: ServiceException se),
-  void CreateUser(1:string username, 2:string name, 3:string password) throws (1: ServiceException se),
-  i64 GetUserID(1:string username) throws (1: ServiceException se)
+  string CreateUser(1:string username, 2:string name, 3:string password) throws (1: ServiceException se),
+  string GetUserID(1:string username) throws (1: ServiceException se)
 
 }
 
 service MessageService{
   string ping(1:string text),
-  void ComposeMessage(1:string text, 2:list<string> users) throws (1: ServiceException se),
+  string ComposeMessage(1:string text, 2:list<string> users) throws (1: ServiceException se),
   string ReadMessage(1:i64 messageID) throws (1: ServiceException se),
   list<Message> GetMessages(1:i64 userID) throws (1: ServiceException se)
 }

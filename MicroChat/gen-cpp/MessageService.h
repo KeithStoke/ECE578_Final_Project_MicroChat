@@ -23,7 +23,7 @@ class MessageServiceIf {
  public:
   virtual ~MessageServiceIf() {}
   virtual void ping(std::string& _return, const std::string& text) = 0;
-  virtual void ComposeMessage(const std::string& text, const std::vector<std::string> & users) = 0;
+  virtual void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users) = 0;
   virtual void ReadMessage(std::string& _return, const int64_t messageID) = 0;
   virtual void GetMessages(std::vector<Message> & _return, const int64_t userID) = 0;
 };
@@ -58,7 +58,7 @@ class MessageServiceNull : virtual public MessageServiceIf {
   void ping(std::string& /* _return */, const std::string& /* text */) {
     return;
   }
-  void ComposeMessage(const std::string& /* text */, const std::vector<std::string> & /* users */) {
+  void ComposeMessage(std::string& /* _return */, const std::string& /* text */, const std::vector<std::string> & /* users */) {
     return;
   }
   void ReadMessage(std::string& /* _return */, const int64_t /* messageID */) {
@@ -230,7 +230,8 @@ class MessageService_ComposeMessage_pargs {
 };
 
 typedef struct _MessageService_ComposeMessage_result__isset {
-  _MessageService_ComposeMessage_result__isset() : se(false) {}
+  _MessageService_ComposeMessage_result__isset() : success(false), se(false) {}
+  bool success :1;
   bool se :1;
 } _MessageService_ComposeMessage_result__isset;
 
@@ -239,18 +240,23 @@ class MessageService_ComposeMessage_result {
 
   MessageService_ComposeMessage_result(const MessageService_ComposeMessage_result&);
   MessageService_ComposeMessage_result& operator=(const MessageService_ComposeMessage_result&);
-  MessageService_ComposeMessage_result() {
+  MessageService_ComposeMessage_result() : success() {
   }
 
   virtual ~MessageService_ComposeMessage_result() noexcept;
+  std::string success;
   ServiceException se;
 
   _MessageService_ComposeMessage_result__isset __isset;
+
+  void __set_success(const std::string& val);
 
   void __set_se(const ServiceException& val);
 
   bool operator == (const MessageService_ComposeMessage_result & rhs) const
   {
+    if (!(success == rhs.success))
+      return false;
     if (!(se == rhs.se))
       return false;
     return true;
@@ -267,7 +273,8 @@ class MessageService_ComposeMessage_result {
 };
 
 typedef struct _MessageService_ComposeMessage_presult__isset {
-  _MessageService_ComposeMessage_presult__isset() : se(false) {}
+  _MessageService_ComposeMessage_presult__isset() : success(false), se(false) {}
+  bool success :1;
   bool se :1;
 } _MessageService_ComposeMessage_presult__isset;
 
@@ -276,6 +283,7 @@ class MessageService_ComposeMessage_presult {
 
 
   virtual ~MessageService_ComposeMessage_presult() noexcept;
+  std::string* success;
   ServiceException se;
 
   _MessageService_ComposeMessage_presult__isset __isset;
@@ -536,9 +544,9 @@ class MessageServiceClient : virtual public MessageServiceIf {
   void ping(std::string& _return, const std::string& text);
   void send_ping(const std::string& text);
   void recv_ping(std::string& _return);
-  void ComposeMessage(const std::string& text, const std::vector<std::string> & users);
+  void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users);
   void send_ComposeMessage(const std::string& text, const std::vector<std::string> & users);
-  void recv_ComposeMessage();
+  void recv_ComposeMessage(std::string& _return);
   void ReadMessage(std::string& _return, const int64_t messageID);
   void send_ReadMessage(const int64_t messageID);
   void recv_ReadMessage(std::string& _return);
@@ -609,13 +617,14 @@ class MessageServiceMultiface : virtual public MessageServiceIf {
     return;
   }
 
-  void ComposeMessage(const std::string& text, const std::vector<std::string> & users) {
+  void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->ComposeMessage(text, users);
+      ifaces_[i]->ComposeMessage(_return, text, users);
     }
-    ifaces_[i]->ComposeMessage(text, users);
+    ifaces_[i]->ComposeMessage(_return, text, users);
+    return;
   }
 
   void ReadMessage(std::string& _return, const int64_t messageID) {
@@ -673,9 +682,9 @@ class MessageServiceConcurrentClient : virtual public MessageServiceIf {
   void ping(std::string& _return, const std::string& text);
   int32_t send_ping(const std::string& text);
   void recv_ping(std::string& _return, const int32_t seqid);
-  void ComposeMessage(const std::string& text, const std::vector<std::string> & users);
+  void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users);
   int32_t send_ComposeMessage(const std::string& text, const std::vector<std::string> & users);
-  void recv_ComposeMessage(const int32_t seqid);
+  void recv_ComposeMessage(std::string& _return, const int32_t seqid);
   void ReadMessage(std::string& _return, const int64_t messageID);
   int32_t send_ReadMessage(const int64_t messageID);
   void recv_ReadMessage(std::string& _return, const int32_t seqid);

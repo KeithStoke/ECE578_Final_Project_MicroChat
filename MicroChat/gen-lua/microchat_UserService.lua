@@ -5,6 +5,7 @@
 -- @generated
 --
 
+
 local microchat__ttype = require 'microchat_ttypes'
 
 local Thrift = require 'Thrift'
@@ -29,6 +30,17 @@ local ping_args = __TObject:new{
 local Login_args = __TObject:new{
   username,
   password
+}
+
+local CreateUser_args = __TObject:new{
+  username,
+  name,
+  password
+}
+
+
+local GetUserID_args = __TObject:new{
+  username
 }
 
 function UserServiceClient:ping(id)
@@ -98,7 +110,7 @@ end
 
 function UserServiceClient:CreateUser(username, name, password)
   self:send_CreateUser(username, name, password)
-  self:recv_CreateUser(username, name, password)
+  return self:recv_CreateUser(username, name, password)
 end
 
 function UserServiceClient:send_CreateUser(username, name, password)
@@ -123,6 +135,12 @@ function UserServiceClient:recv_CreateUser(username, name, password)
   local result = CreateUser_result:new{}
   result:read(self.iprot)
   self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  elseif result.se then
+    error(result.se)
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
 function UserServiceClient:GetUserID(username)
@@ -269,6 +287,7 @@ end
 
 -- HELPER FUNCTIONS AND STRUCTURES
 
+
 function ping_args:read(iprot)
   iprot:readStructBegin()
   while true do
@@ -334,6 +353,7 @@ function ping_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
 
 function Login_args:read(iprot)
   iprot:readStructBegin()
@@ -425,11 +445,6 @@ function Login_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-local CreateUser_args = __TObject:new{
-  username,
-  name,
-  password
-}
 
 function CreateUser_args:read(iprot)
   iprot:readStructBegin()
@@ -485,6 +500,7 @@ function CreateUser_args:write(oprot)
 end
 
 CreateUser_result = __TObject:new{
+  success,
   se
 }
 
@@ -494,6 +510,12 @@ function CreateUser_result:read(iprot)
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
     elseif fid == 1 then
       if ftype == TType.STRUCT then
         self.se = ServiceException:new{}
@@ -511,6 +533,11 @@ end
 
 function CreateUser_result:write(oprot)
   oprot:writeStructBegin('CreateUser_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
   if self.se ~= nil then
     oprot:writeFieldBegin('se', TType.STRUCT, 1)
     self.se:write(oprot)
@@ -519,10 +546,6 @@ function CreateUser_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
-
-local GetUserID_args = __TObject:new{
-  username
-}
 
 function GetUserID_args:read(iprot)
   iprot:readStructBegin()
@@ -567,8 +590,8 @@ function GetUserID_result:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 0 then
-      if ftype == TType.I64 then
-        self.success = iprot:readI64()
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -590,8 +613,8 @@ end
 function GetUserID_result:write(oprot)
   oprot:writeStructBegin('GetUserID_result')
   if self.success ~= nil then
-    oprot:writeFieldBegin('success', TType.I64, 0)
-    oprot:writeI64(self.success)
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
     oprot:writeFieldEnd()
   end
   if self.se ~= nil then
@@ -602,5 +625,4 @@ function GetUserID_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
-
 return UserServiceClient

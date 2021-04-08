@@ -46,7 +46,7 @@ end
 
 function MessageServiceClient:ComposeMessage(text, users)
   self:send_ComposeMessage(text, users)
-  self:recv_ComposeMessage(text, users)
+  return self:recv_ComposeMessage(text, users)
 end
 
 function MessageServiceClient:send_ComposeMessage(text, users)
@@ -70,6 +70,12 @@ function MessageServiceClient:recv_ComposeMessage(text, users)
   local result = ComposeMessage_result:new{}
   result:read(self.iprot)
   self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  elseif result.se then
+    error(result.se)
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
 function MessageServiceClient:ReadMessage(messageID)
@@ -377,6 +383,7 @@ function ComposeMessage_args:write(oprot)
 end
 
 ComposeMessage_result = __TObject:new{
+  success,
   se
 }
 
@@ -386,6 +393,12 @@ function ComposeMessage_result:read(iprot)
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
     elseif fid == 1 then
       if ftype == TType.STRUCT then
         self.se = ServiceException:new{}
@@ -403,6 +416,11 @@ end
 
 function ComposeMessage_result:write(oprot)
   oprot:writeStructBegin('ComposeMessage_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
   if self.se ~= nil then
     oprot:writeFieldBegin('se', TType.STRUCT, 1)
     self.se:write(oprot)

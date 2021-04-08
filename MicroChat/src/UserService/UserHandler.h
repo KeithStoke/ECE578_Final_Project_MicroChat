@@ -25,7 +25,7 @@
 
 // Custom Epoch (January 1, 2018 Midnight GMT = 2018-01-01T00:00:00Z)
 #define CUSTOM_EPOCH 1514764800000
-#define MONGODB_TIMEOUT_MS 5000
+#define MONGODB_TIMEOUT_MS 1000
 
 namespace microchat
 {
@@ -86,8 +86,8 @@ namespace microchat
 
     void ping(std::string &_return, const int32_t id) override;
     void Login(std::string &_return, const std::string &username, const std::string &password) override;
-    void CreateUser(const std::string &username, const std::string &name, const std::string &password) override;
-    int64_t GetUserID(const std::string &username) override;
+    void CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password) override;
+    void GetUserID(std::string& _return, const std::string& username) override;
 
   private:
     std::string _machine_id;
@@ -117,7 +117,7 @@ namespace microchat
     _return = "this will use USERID";
   }
 
-  void UserServiceHandler::CreateUser(const std::string &username, const std::string &name, const std::string &password)
+  void UserServiceHandler::CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password)
   {
     std::cout << "CreateUser UserService Method" << std::endl;
 
@@ -130,7 +130,9 @@ namespace microchat
     int idx = GetCounter(timestamp);
     // _thread_lock->unlock();
 
-    std::stringstream sstream;
+    std::cout << "timestamp is " << timestamp << std::endl;
+
+   std::stringstream sstream;
     sstream << std::hex << timestamp;
     std::string timestamp_hex(sstream.str());
     if (timestamp_hex.size() > 10)
@@ -161,24 +163,27 @@ namespace microchat
     int64_t user_id = stoul(user_id_str, nullptr, 16) & 0x7FFFFFFFFFFFFFFF;
     ;
     LOG(debug) << "The user_id of the this request is " << user_id;
+    std::cout << "The user_id of this request is... " << user_id << std::endl;
 
     //check if usename already exists in mongoDB
 
     //if username is unique, store in mongoDB
 
     //return and "redirect" user to login
-    return;
+    _return = "User successfully created. Please login.";
   }
 
-  int64_t UserServiceHandler::GetUserID(const std::string &username)
+  void UserServiceHandler::GetUserID(std::string& _return, const std::string& username)
   {
+
+    std::cout << "GetUserID UserService method" << std::endl;
 
     //connect with mongoDB
     //find username
     // -if WRONG/not found, throw SE
     // -if RIGHT, grab userID and return
-
-    return 64;
+    
+    _return = "422445416448000";
   }
 
 } //namespace microchat

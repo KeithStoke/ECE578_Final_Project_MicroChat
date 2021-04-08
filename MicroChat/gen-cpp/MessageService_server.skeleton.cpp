@@ -25,7 +25,7 @@ class MessageServiceHandler : virtual public MessageServiceIf {
     printf("ping\n");
   }
 
-  void ComposeMessage(const std::string& text, const std::vector<std::string> & users) {
+  void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users) {
     // Your implementation goes here
     printf("ComposeMessage\n");
   }
