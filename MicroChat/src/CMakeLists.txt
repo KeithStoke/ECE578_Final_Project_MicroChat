@@ -1,10 +1,11 @@
 include("../cmake/Findthrift.cmake")
 include("../cmake/FindLibevent.cmake")
 
+find_package(libmongoc-1.0 1.13 REQUIRED)
 find_package(nlohmann_json 3.5.0 REQUIRED)
-find_package(Threads REQUIRED)
+find_package(Threads)
 find_package(OpenSSL REQUIRED)
-#find_package(amqpcpp REQUIRED)
+find_package(amqpcpp REQUIRED)
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.54.0 REQUIRED COMPONENTS log log_setup)

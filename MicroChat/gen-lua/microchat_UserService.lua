@@ -22,7 +22,7 @@ local UserServiceClient = __TObject.new(__TClient, {
   __type = 'UserServiceClient'
 })
 
-local Ping_args = __TObject:new{
+local ping_args = __TObject:new{
   id
 }
 
