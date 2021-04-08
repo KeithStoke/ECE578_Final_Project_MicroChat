@@ -129,14 +129,14 @@ class User : public virtual ::apache::thrift::TBase {
   }
 
   virtual ~User() noexcept;
-  int32_t userID;
+  int64_t userID;
   std::string username;
   std::string name;
   UserStatus::type userStatus;
 
   _User__isset __isset;
 
-  void __set_userID(const int32_t val);
+  void __set_userID(const int64_t val);
 
   void __set_username(const std::string& val);
 
@@ -187,12 +187,12 @@ class Emoji : public virtual ::apache::thrift::TBase {
   }
 
   virtual ~Emoji() noexcept;
-  int32_t emojiID;
+  int64_t emojiID;
   std::string emojiname;
 
   _Emoji__isset __isset;
 
-  void __set_emojiID(const int32_t val);
+  void __set_emojiID(const int64_t val);
 
   void __set_emojiname(const std::string& val);
 
@@ -221,12 +221,13 @@ void swap(Emoji &a, Emoji &b);
 std::ostream& operator<<(std::ostream& out, const Emoji& obj);
 
 typedef struct _Message__isset {
-  _Message__isset() : messageID(false), text(false), sender(false), recipients(false), reactions(false) {}
+  _Message__isset() : messageID(false), text(false), sender(false), recipients(false), reactions(false), timestamp(false) {}
   bool messageID :1;
   bool text :1;
   bool sender :1;
   bool recipients :1;
   bool reactions :1;
+  bool timestamp :1;
 } _Message__isset;
 
 class Message : public virtual ::apache::thrift::TBase {
@@ -234,19 +235,20 @@ class Message : public virtual ::apache::thrift::TBase {
 
   Message(const Message&);
   Message& operator=(const Message&);
-  Message() : messageID(0), text() {
+  Message() : messageID(0), text(), timestamp(0) {
   }
 
   virtual ~Message() noexcept;
-  int32_t messageID;
+  int64_t messageID;
   std::string text;
   User sender;
   std::vector<User>  recipients;
   std::vector<Emoji>  reactions;
+  int64_t timestamp;
 
   _Message__isset __isset;
 
-  void __set_messageID(const int32_t val);
+  void __set_messageID(const int64_t val);
 
   void __set_text(const std::string& val);
 
@@ -255,6 +257,8 @@ class Message : public virtual ::apache::thrift::TBase {
   void __set_recipients(const std::vector<User> & val);
 
   void __set_reactions(const std::vector<Emoji> & val);
+
+  void __set_timestamp(const int64_t val);
 
   bool operator == (const Message & rhs) const
   {
@@ -267,6 +271,8 @@ class Message : public virtual ::apache::thrift::TBase {
     if (!(recipients == rhs.recipients))
       return false;
     if (!(reactions == rhs.reactions))
+      return false;
+    if (!(timestamp == rhs.timestamp))
       return false;
     return true;
   }

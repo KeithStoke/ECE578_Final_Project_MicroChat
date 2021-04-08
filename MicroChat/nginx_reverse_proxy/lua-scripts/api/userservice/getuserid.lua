@@ -4,7 +4,7 @@ local function _StrIsEmpty(s)
 	return s == nil or s == ''
 end
 
-function _M.Ping()
+function _M.GetUserID()
 	local UserServiceClient = require "microchat_UserService"
 	local GenericObjectPool = require "GenericObjectPool"
 	local ngx = ngx
@@ -13,17 +13,17 @@ function _M.Ping()
 	ngx.req.read_body()
         local post = ngx.req.get_post_args()
 
-        if (_StrIsEmpty(post.id) ) then
+        if (_StrIsEmpty(post.username) ) then
            ngx.status = ngx.HTTP_BAD_REQUEST
            ngx.say("Incomplete arguments")
            ngx.log(ngx.ERR, "Incomplete arguments")
            ngx.exit(ngx.HTTP_BAD_REQUEST)
         end
 
-	ngx.say("Inside Nginx Lua script: Pinging UserService...", post.id)
+	ngx.say("Inside Nginx Lua script: Getting userID...", post.username)
 	
 	local client = GenericObjectPool:connection(UserServiceClient, "user-service", 9090)
-	local status, ret = pcall(client.ping, client, post.id)
+	local status, ret = pcall(client.GetUserID, client, post.username)
 
 	GenericObjectPool:returnConnection(client)
 	ngx.say("Status: ", status)
@@ -43,7 +43,7 @@ function _M.Ping()
     		ngx.exit(ngx.HTTP_OK)
   	else
     		ngx.header.content_type = "text/plain"
-		ngx.say("Hoping this works!: ", ret)
+		ngx.say("UserID for given username is: ", ret)
     		ngx.exit(ngx.HTTP_OK)
   	end
 

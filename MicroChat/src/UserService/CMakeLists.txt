@@ -7,6 +7,9 @@ add_executable(
 
 target_include_directories(
 	UserService PRIVATE
+    ${MONGOC_INCLUDE_DIRS}
+    /usr/local/include/jwt
+    /usr/local/include/jaegertracing
 )
 
 target_link_libraries(
@@ -17,6 +20,8 @@ target_link_libraries(
     ${Boost_LIBRARIES}
     Boost::log
     Boost::log_setup
+    jaegertracing
+    OpenSSL::SSL
 )
 
 install(TARGETS UserService DESTINATION ./)

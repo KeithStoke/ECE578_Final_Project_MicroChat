@@ -13,20 +13,21 @@ DatabaseServiceClient = __TObject.new(__TClient, {
   __type = 'DatabaseServiceClient'
 })
 
-function DatabaseServiceClient:ping()
-  self:send_ping()
-  self:recv_ping()
+function DatabaseServiceClient:ping(text)
+  self:send_ping(text)
+  return self:recv_ping(text)
 end
 
-function DatabaseServiceClient:send_ping()
+function DatabaseServiceClient:send_ping(text)
   self.oprot:writeMessageBegin('ping', TMessageType.CALL, self._seqid)
   local args = ping_args:new{}
+  args.text = text
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function DatabaseServiceClient:recv_ping()
+function DatabaseServiceClient:recv_ping(text)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -37,6 +38,10 @@ function DatabaseServiceClient:recv_ping()
   local result = ping_result:new{}
   result:read(self.iprot)
   self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
 function DatabaseServiceClient:WriteToDatabase(query)
@@ -66,6 +71,8 @@ function DatabaseServiceClient:recv_WriteToDatabase(query)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
     return result.success
+  elseif result.se then
+    error(result.se)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
@@ -97,6 +104,8 @@ function DatabaseServiceClient:recv_ReadFromDatabase(query)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
     return result.success
+  elseif result.se then
+    error(result.se)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
@@ -134,7 +143,7 @@ function DatabaseServiceProcessor:process_ping(seqid, iprot, oprot, server_ctx)
   args:read(iprot)
   iprot:readMessageEnd()
   local result = ping_result:new{}
-  local status, res = pcall(self.handler.ping, self.handler)
+  local status, res = pcall(self.handler.ping, self.handler, args.text)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
@@ -157,6 +166,8 @@ function DatabaseServiceProcessor:process_WriteToDatabase(seqid, iprot, oprot, s
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
   else
     result.success = res
   end
@@ -176,6 +187,8 @@ function DatabaseServiceProcessor:process_ReadFromDatabase(seqid, iprot, oprot, 
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
   else
     result.success = res
   end
@@ -188,7 +201,7 @@ end
 -- HELPER FUNCTIONS AND STRUCTURES
 
 ping_args = __TObject:new{
-
+  text
 }
 
 function ping_args:read(iprot)
@@ -197,6 +210,12 @@ function ping_args:read(iprot)
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.text = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
     else
       iprot:skip(ftype)
     end
@@ -207,12 +226,17 @@ end
 
 function ping_args:write(oprot)
   oprot:writeStructBegin('ping_args')
+  if self.text ~= nil then
+    oprot:writeFieldBegin('text', TType.STRING, 1)
+    oprot:writeString(self.text)
+    oprot:writeFieldEnd()
+  end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
 
 ping_result = __TObject:new{
-
+  success
 }
 
 function ping_result:read(iprot)
@@ -221,6 +245,12 @@ function ping_result:read(iprot)
     local fname, ftype, fid = iprot:readFieldBegin()
     if ftype == TType.STOP then
       break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
     else
       iprot:skip(ftype)
     end
@@ -231,6 +261,11 @@ end
 
 function ping_result:write(oprot)
   oprot:writeStructBegin('ping_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
@@ -271,7 +306,8 @@ function WriteToDatabase_args:write(oprot)
 end
 
 WriteToDatabase_result = __TObject:new{
-  success
+  success,
+  se
 }
 
 function WriteToDatabase_result:read(iprot)
@@ -283,6 +319,13 @@ function WriteToDatabase_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.STRING then
         self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
       else
         iprot:skip(ftype)
       end
@@ -299,6 +342,11 @@ function WriteToDatabase_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
@@ -341,7 +389,8 @@ function ReadFromDatabase_args:write(oprot)
 end
 
 ReadFromDatabase_result = __TObject:new{
-  success
+  success,
+  se
 }
 
 function ReadFromDatabase_result:read(iprot)
@@ -353,6 +402,13 @@ function ReadFromDatabase_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.STRING then
         self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
       else
         iprot:skip(ftype)
       end
@@ -369,6 +425,11 @@ function ReadFromDatabase_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()

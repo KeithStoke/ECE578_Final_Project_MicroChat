@@ -5,6 +5,7 @@
 #include <string>
 #include <regex>
 #include <future>
+#include <vector>
 
 #include "../../gen-cpp/FriendRecommendationService.h"
 
@@ -19,18 +20,19 @@ namespace microchat{
   FriendRecommendationServiceHandler();
   ~FriendRecommendationServiceHandler() override=default;
 
-  void ping() override;
-  void GetFriendRecommendations(std::vector<User> & _return, const User& user) override;
+  void ping(std::string &_return, const std::string &text) override;
+  void GetFriendRecommendations(std::vector<std::string> & _return, const int64_t userID) override;
 
 };
 
 FriendRecommendationServiceHandler::FriendRecommendationServiceHandler() {};
 
-void FriendRecommendationServiceHandler::ping(){
-    printf("PONG!\n");
+void FriendRecommendationServiceHandler::ping(std::string &_return, const std::string &text){
+    std::cout << "Ping says " << text << std::endl;
+    _return = "Pong from FriendRecommendationService";
 }
 
-void FriendRecommendationServiceHandler::GetFriendRecommendations(std::vector<User> & _return, const User& user){
+void FriendRecommendationServiceHandler::GetFriendRecommendations(std::vector<std::string> & _return, const int64_t userID){
     printf("get friend recommendations RPC");
 }
 

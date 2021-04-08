@@ -20,9 +20,24 @@ class MessageServiceHandler : virtual public MessageServiceIf {
     // Your initialization goes here
   }
 
-  void ping() {
+  void ping(std::string& _return, const std::string& text) {
     // Your implementation goes here
     printf("ping\n");
+  }
+
+  void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users) {
+    // Your implementation goes here
+    printf("ComposeMessage\n");
+  }
+
+  void ReadMessage(std::string& _return, const int64_t messageID) {
+    // Your implementation goes here
+    printf("ReadMessage\n");
+  }
+
+  void GetMessages(std::vector<Message> & _return, const int64_t userID) {
+    // Your implementation goes here
+    printf("GetMessages\n");
   }
 
 };

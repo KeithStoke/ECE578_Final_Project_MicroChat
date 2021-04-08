@@ -32,7 +32,20 @@ uint32_t DatabaseService_ping_args::read(::apache::thrift::protocol::TProtocol* 
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->text);
+          this->__isset.text = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -45,6 +58,10 @@ uint32_t DatabaseService_ping_args::write(::apache::thrift::protocol::TProtocol*
   uint32_t xfer = 0;
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("DatabaseService_ping_args");
+
+  xfer += oprot->writeFieldBegin("text", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->text);
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -60,6 +77,10 @@ uint32_t DatabaseService_ping_pargs::write(::apache::thrift::protocol::TProtocol
   uint32_t xfer = 0;
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("DatabaseService_ping_pargs");
+
+  xfer += oprot->writeFieldBegin("text", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->text)));
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -90,7 +111,20 @@ uint32_t DatabaseService_ping_result::read(::apache::thrift::protocol::TProtocol
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -105,6 +139,11 @@ uint32_t DatabaseService_ping_result::write(::apache::thrift::protocol::TProtoco
 
   xfer += oprot->writeStructBegin("DatabaseService_ping_result");
 
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
+    xfer += oprot->writeFieldEnd();
+  }
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -134,7 +173,20 @@ uint32_t DatabaseService_ping_presult::read(::apache::thrift::protocol::TProtoco
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -256,6 +308,14 @@ uint32_t DatabaseService_WriteToDatabase_result::read(::apache::thrift::protocol
           xfer += iprot->skip(ftype);
         }
         break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->se.read(iprot);
+          this->__isset.se = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -277,6 +337,10 @@ uint32_t DatabaseService_WriteToDatabase_result::write(::apache::thrift::protoco
   if (this->__isset.success) {
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
     xfer += oprot->writeString(this->success);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.se) {
+    xfer += oprot->writeFieldBegin("se", ::apache::thrift::protocol::T_STRUCT, 1);
+    xfer += this->se.write(oprot);
     xfer += oprot->writeFieldEnd();
   }
   xfer += oprot->writeFieldStop();
@@ -314,6 +378,14 @@ uint32_t DatabaseService_WriteToDatabase_presult::read(::apache::thrift::protoco
         if (ftype == ::apache::thrift::protocol::T_STRING) {
           xfer += iprot->readString((*(this->success)));
           this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->se.read(iprot);
+          this->__isset.se = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -443,6 +515,14 @@ uint32_t DatabaseService_ReadFromDatabase_result::read(::apache::thrift::protoco
           xfer += iprot->skip(ftype);
         }
         break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->se.read(iprot);
+          this->__isset.se = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -464,6 +544,10 @@ uint32_t DatabaseService_ReadFromDatabase_result::write(::apache::thrift::protoc
   if (this->__isset.success) {
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
     xfer += oprot->writeString(this->success);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.se) {
+    xfer += oprot->writeFieldBegin("se", ::apache::thrift::protocol::T_STRUCT, 1);
+    xfer += this->se.write(oprot);
     xfer += oprot->writeFieldEnd();
   }
   xfer += oprot->writeFieldStop();
@@ -505,6 +589,14 @@ uint32_t DatabaseService_ReadFromDatabase_presult::read(::apache::thrift::protoc
           xfer += iprot->skip(ftype);
         }
         break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->se.read(iprot);
+          this->__isset.se = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -517,18 +609,19 @@ uint32_t DatabaseService_ReadFromDatabase_presult::read(::apache::thrift::protoc
   return xfer;
 }
 
-void DatabaseServiceClient::ping()
+void DatabaseServiceClient::ping(std::string& _return, const std::string& text)
 {
-  send_ping();
-  recv_ping();
+  send_ping(text);
+  recv_ping(_return);
 }
 
-void DatabaseServiceClient::send_ping()
+void DatabaseServiceClient::send_ping(const std::string& text)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("ping", ::apache::thrift::protocol::T_CALL, cseqid);
 
   DatabaseService_ping_pargs args;
+  args.text = &text;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -536,7 +629,7 @@ void DatabaseServiceClient::send_ping()
   oprot_->getTransport()->flush();
 }
 
-void DatabaseServiceClient::recv_ping()
+void DatabaseServiceClient::recv_ping(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -562,11 +655,16 @@ void DatabaseServiceClient::recv_ping()
     iprot_->getTransport()->readEnd();
   }
   DatabaseService_ping_presult result;
+  result.success = &_return;
   result.read(iprot_);
   iprot_->readMessageEnd();
   iprot_->getTransport()->readEnd();
 
-  return;
+  if (result.__isset.success) {
+    // _return pointer has now been filled
+    return;
+  }
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
 }
 
 void DatabaseServiceClient::WriteToDatabase(std::string& _return, const std::string& query)
@@ -623,6 +721,9 @@ void DatabaseServiceClient::recv_WriteToDatabase(std::string& _return)
   if (result.__isset.success) {
     // _return pointer has now been filled
     return;
+  }
+  if (result.__isset.se) {
+    throw result.se;
   }
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "WriteToDatabase failed: unknown result");
 }
@@ -682,6 +783,9 @@ void DatabaseServiceClient::recv_ReadFromDatabase(std::string& _return)
     // _return pointer has now been filled
     return;
   }
+  if (result.__isset.se) {
+    throw result.se;
+  }
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ReadFromDatabase failed: unknown result");
 }
 
@@ -727,7 +831,8 @@ void DatabaseServiceProcessor::process_ping(int32_t seqid, ::apache::thrift::pro
 
   DatabaseService_ping_result result;
   try {
-    iface_->ping();
+    iface_->ping(result.success, args.text);
+    result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
       this->eventHandler_->handlerError(ctx, "DatabaseService.ping");
@@ -782,6 +887,9 @@ void DatabaseServiceProcessor::process_WriteToDatabase(int32_t seqid, ::apache::
   try {
     iface_->WriteToDatabase(result.success, args.query);
     result.__isset.success = true;
+  } catch (ServiceException &se) {
+    result.se = se;
+    result.__isset.se = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
       this->eventHandler_->handlerError(ctx, "DatabaseService.WriteToDatabase");
@@ -836,6 +944,9 @@ void DatabaseServiceProcessor::process_ReadFromDatabase(int32_t seqid, ::apache:
   try {
     iface_->ReadFromDatabase(result.success, args.query);
     result.__isset.success = true;
+  } catch (ServiceException &se) {
+    result.se = se;
+    result.__isset.se = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
       this->eventHandler_->handlerError(ctx, "DatabaseService.ReadFromDatabase");
@@ -872,19 +983,20 @@ void DatabaseServiceProcessor::process_ReadFromDatabase(int32_t seqid, ::apache:
   return processor;
 }
 
-void DatabaseServiceConcurrentClient::ping()
+void DatabaseServiceConcurrentClient::ping(std::string& _return, const std::string& text)
 {
-  int32_t seqid = send_ping();
-  recv_ping(seqid);
+  int32_t seqid = send_ping(text);
+  recv_ping(_return, seqid);
 }
 
-int32_t DatabaseServiceConcurrentClient::send_ping()
+int32_t DatabaseServiceConcurrentClient::send_ping(const std::string& text)
 {
   int32_t cseqid = this->sync_->generateSeqId();
   ::apache::thrift::async::TConcurrentSendSentry sentry(this->sync_.get());
   oprot_->writeMessageBegin("ping", ::apache::thrift::protocol::T_CALL, cseqid);
 
   DatabaseService_ping_pargs args;
+  args.text = &text;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -895,7 +1007,7 @@ int32_t DatabaseServiceConcurrentClient::send_ping()
   return cseqid;
 }
 
-void DatabaseServiceConcurrentClient::recv_ping(const int32_t seqid)
+void DatabaseServiceConcurrentClient::recv_ping(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -934,12 +1046,18 @@ void DatabaseServiceConcurrentClient::recv_ping(const int32_t seqid)
         throw TProtocolException(TProtocolException::INVALID_DATA);
       }
       DatabaseService_ping_presult result;
+      result.success = &_return;
       result.read(iprot_);
       iprot_->readMessageEnd();
       iprot_->getTransport()->readEnd();
 
-      sentry.commit();
-      return;
+      if (result.__isset.success) {
+        // _return pointer has now been filled
+        sentry.commit();
+        return;
+      }
+      // in a bad state, don't commit
+      throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
     }
     // seqid != rseqid
     this->sync_->updatePending(fname, mtype, rseqid);
@@ -1021,6 +1139,10 @@ void DatabaseServiceConcurrentClient::recv_WriteToDatabase(std::string& _return,
         // _return pointer has now been filled
         sentry.commit();
         return;
+      }
+      if (result.__isset.se) {
+        sentry.commit();
+        throw result.se;
       }
       // in a bad state, don't commit
       throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "WriteToDatabase failed: unknown result");
@@ -1105,6 +1227,10 @@ void DatabaseServiceConcurrentClient::recv_ReadFromDatabase(std::string& _return
         // _return pointer has now been filled
         sentry.commit();
         return;
+      }
+      if (result.__isset.se) {
+        sentry.commit();
+        throw result.se;
       }
       // in a bad state, don't commit
       throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ReadFromDatabase failed: unknown result");

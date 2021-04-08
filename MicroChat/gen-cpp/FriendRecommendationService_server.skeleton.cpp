@@ -20,12 +20,12 @@ class FriendRecommendationServiceHandler : virtual public FriendRecommendationSe
     // Your initialization goes here
   }
 
-  void ping() {
+  void ping(std::string& _return, const std::string& text) {
     // Your implementation goes here
     printf("ping\n");
   }
 
-  void GetFriendRecommendations(std::vector<User> & _return, const User& user) {
+  void GetFriendRecommendations(std::vector<std::string> & _return, const int64_t userID) {
     // Your implementation goes here
     printf("GetFriendRecommendations\n");
   }

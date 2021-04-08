@@ -24,53 +24,52 @@ exception ServiceException {
 }
 
 struct User {
-  1: i32 userID,
+  1: i64 userID,
   2: string username,
   3: string name,
   4: UserStatus userStatus,
 }
 
 struct Emoji {
-  1: i32 emojiID,
+  1: i64 emojiID,
   2: string emojiname,
 }
 
 struct Message {
-  1: i32 messageID,
+  1: i64 messageID,
   2: string text,
   3: User sender,
   4: list<User> recipients,
   5: list<Emoji> reactions,
+  6: i64 timestamp,
 }
 
 service UserService{
 
-  void ping(),
-  User Login(1:string usernmae, 2:string password)throws(1: ServiceException se),
-  User CreateUser(1:string username, 2:string name, 3:string password),
+  string ping(1:i32 id),
+  string Login(1:string username, 2:string password) throws (1: ServiceException se),
+  string CreateUser(1:string username, 2:string name, 3:string password) throws (1: ServiceException se),
+  string GetUserID(1:string username) throws (1: ServiceException se)
 
 }
 
 service MessageService{
-  void ping(),
+  string ping(1:string text),
+  string ComposeMessage(1:string text, 2:list<string> users) throws (1: ServiceException se),
+  string ReadMessage(1:i64 messageID) throws (1: ServiceException se),
+  list<Message> GetMessages(1:i64 userID) throws (1: ServiceException se)
 }
 
 service FriendRecommendationService{
 
-  void ping(),
-  list<User> GetFriendRecommendations(1:User user),
-
-}
-
-service EmojiPredictionService{
-  void ping(),
-  Emoji GetEmoji(1:string text),
+  string ping(1:string text),
+  list<string> GetFriendRecommendations(1:i64 userID) throws (1: ServiceException se),
 
 }
 
 service DatabaseService{
-  void ping(),
-  string WriteToDatabase(1:string query),
-  string ReadFromDatabase(1:string query),
+  string ping(1:string text),
+  string WriteToDatabase(1:string query) throws (1: ServiceException se),
+  string ReadFromDatabase(1:string query) throws (1: ServiceException se),
 }
 
