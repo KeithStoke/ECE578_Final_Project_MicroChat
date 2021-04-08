@@ -355,6 +355,7 @@ function ping_result:write(oprot)
 end
 
 
+
 function Login_args:read(iprot)
   iprot:readStructBegin()
   while true do
@@ -444,6 +445,7 @@ function Login_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
 
 
 function CreateUser_args:read(iprot)
@@ -546,6 +548,7 @@ function CreateUser_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
 
 function GetUserID_args:read(iprot)
   iprot:readStructBegin()

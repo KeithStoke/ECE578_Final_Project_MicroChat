@@ -25,7 +25,7 @@ namespace microchat
         void ping(std::string &_return, const std::string &text) override;
         void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users) override;
         void ReadMessage(std::string &_return, const int64_t messageID) override;
-        void GetMessages(std::vector<Message> &_return, const int64_t userID) override;
+        void GetMessages(std::vector<Message> &_return, const std::string& username) override;
     };
 
     // constructor
@@ -39,20 +39,17 @@ namespace microchat
 
     void MessageServiceHandler::ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users)
     {
-        // Your implementation goes here
-        printf("ComposeMessage\n");
+        
     }
 
     void MessageServiceHandler::ReadMessage(std::string &_return, const int64_t messageID)
     {
-        // Your implementation goes here
-        printf("ReadMessage\n");
+       
     }
 
-    void MessageServiceHandler::GetMessages(std::vector<Message> &_return, const int64_t userID)
+    void MessageServiceHandler::GetMessages(std::vector<Message> &_return, const std::string& username)
     {
-        // Your implementation goes here
-        printf("GetMessages\n");
+        
     }
 
 }

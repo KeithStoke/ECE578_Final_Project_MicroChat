@@ -25,7 +25,7 @@ class MessageServiceIf {
   virtual void ping(std::string& _return, const std::string& text) = 0;
   virtual void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users) = 0;
   virtual void ReadMessage(std::string& _return, const int64_t messageID) = 0;
-  virtual void GetMessages(std::vector<Message> & _return, const int64_t userID) = 0;
+  virtual void GetMessages(std::vector<Message> & _return, const std::string& username) = 0;
 };
 
 class MessageServiceIfFactory {
@@ -64,7 +64,7 @@ class MessageServiceNull : virtual public MessageServiceIf {
   void ReadMessage(std::string& /* _return */, const int64_t /* messageID */) {
     return;
   }
-  void GetMessages(std::vector<Message> & /* _return */, const int64_t /* userID */) {
+  void GetMessages(std::vector<Message> & /* _return */, const std::string& /* username */) {
     return;
   }
 };
@@ -405,8 +405,8 @@ class MessageService_ReadMessage_presult {
 };
 
 typedef struct _MessageService_GetMessages_args__isset {
-  _MessageService_GetMessages_args__isset() : userID(false) {}
-  bool userID :1;
+  _MessageService_GetMessages_args__isset() : username(false) {}
+  bool username :1;
 } _MessageService_GetMessages_args__isset;
 
 class MessageService_GetMessages_args {
@@ -414,19 +414,19 @@ class MessageService_GetMessages_args {
 
   MessageService_GetMessages_args(const MessageService_GetMessages_args&);
   MessageService_GetMessages_args& operator=(const MessageService_GetMessages_args&);
-  MessageService_GetMessages_args() : userID(0) {
+  MessageService_GetMessages_args() : username() {
   }
 
   virtual ~MessageService_GetMessages_args() noexcept;
-  int64_t userID;
+  std::string username;
 
   _MessageService_GetMessages_args__isset __isset;
 
-  void __set_userID(const int64_t val);
+  void __set_username(const std::string& val);
 
   bool operator == (const MessageService_GetMessages_args & rhs) const
   {
-    if (!(userID == rhs.userID))
+    if (!(username == rhs.username))
       return false;
     return true;
   }
@@ -447,7 +447,7 @@ class MessageService_GetMessages_pargs {
 
 
   virtual ~MessageService_GetMessages_pargs() noexcept;
-  const int64_t* userID;
+  const std::string* username;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -550,8 +550,8 @@ class MessageServiceClient : virtual public MessageServiceIf {
   void ReadMessage(std::string& _return, const int64_t messageID);
   void send_ReadMessage(const int64_t messageID);
   void recv_ReadMessage(std::string& _return);
-  void GetMessages(std::vector<Message> & _return, const int64_t userID);
-  void send_GetMessages(const int64_t userID);
+  void GetMessages(std::vector<Message> & _return, const std::string& username);
+  void send_GetMessages(const std::string& username);
   void recv_GetMessages(std::vector<Message> & _return);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
@@ -637,13 +637,13 @@ class MessageServiceMultiface : virtual public MessageServiceIf {
     return;
   }
 
-  void GetMessages(std::vector<Message> & _return, const int64_t userID) {
+  void GetMessages(std::vector<Message> & _return, const std::string& username) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->GetMessages(_return, userID);
+      ifaces_[i]->GetMessages(_return, username);
     }
-    ifaces_[i]->GetMessages(_return, userID);
+    ifaces_[i]->GetMessages(_return, username);
     return;
   }
 
@@ -688,8 +688,8 @@ class MessageServiceConcurrentClient : virtual public MessageServiceIf {
   void ReadMessage(std::string& _return, const int64_t messageID);
   int32_t send_ReadMessage(const int64_t messageID);
   void recv_ReadMessage(std::string& _return, const int32_t seqid);
-  void GetMessages(std::vector<Message> & _return, const int64_t userID);
-  int32_t send_GetMessages(const int64_t userID);
+  void GetMessages(std::vector<Message> & _return, const std::string& username);
+  int32_t send_GetMessages(const std::string& username);
   void recv_GetMessages(std::vector<Message> & _return, const int32_t seqid);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;

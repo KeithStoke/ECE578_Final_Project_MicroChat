@@ -111,21 +111,21 @@ function MessageServiceClient:recv_ReadMessage(messageID)
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
-function MessageServiceClient:GetMessages(userID)
-  self:send_GetMessages(userID)
-  return self:recv_GetMessages(userID)
+function MessageServiceClient:GetMessages(username)
+  self:send_GetMessages(username)
+  return self:recv_GetMessages(username)
 end
 
-function MessageServiceClient:send_GetMessages(userID)
+function MessageServiceClient:send_GetMessages(username)
   self.oprot:writeMessageBegin('GetMessages', TMessageType.CALL, self._seqid)
   local args = GetMessages_args:new{}
-  args.userID = userID
+  args.username = username
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function MessageServiceClient:recv_GetMessages(userID)
+function MessageServiceClient:recv_GetMessages(username)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -238,7 +238,7 @@ function MessageServiceProcessor:process_GetMessages(seqid, iprot, oprot, server
   args:read(iprot)
   iprot:readMessageEnd()
   local result = GetMessages_result:new{}
-  local status, res = pcall(self.handler.GetMessages, self.handler, args.userID)
+  local status, res = pcall(self.handler.GetMessages, self.handler, args.username)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
@@ -514,7 +514,7 @@ function ReadMessage_result:write(oprot)
 end
 
 GetMessages_args = __TObject:new{
-  userID
+  username
 }
 
 function GetMessages_args:read(iprot)
@@ -524,8 +524,8 @@ function GetMessages_args:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 1 then
-      if ftype == TType.I64 then
-        self.userID = iprot:readI64()
+      if ftype == TType.STRING then
+        self.username = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -539,9 +539,9 @@ end
 
 function GetMessages_args:write(oprot)
   oprot:writeStructBegin('GetMessages_args')
-  if self.userID ~= nil then
-    oprot:writeFieldBegin('userID', TType.I64, 1)
-    oprot:writeI64(self.userID)
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()

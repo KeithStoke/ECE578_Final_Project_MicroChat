@@ -57,7 +57,7 @@ service MessageService{
   string ping(1:string text),
   string ComposeMessage(1:string text, 2:list<string> users) throws (1: ServiceException se),
   string ReadMessage(1:i64 messageID) throws (1: ServiceException se),
-  list<Message> GetMessages(1:i64 userID) throws (1: ServiceException se)
+  list<Message> GetMessages(1:string username) throws (1: ServiceException se)
 }
 
 service FriendRecommendationService{

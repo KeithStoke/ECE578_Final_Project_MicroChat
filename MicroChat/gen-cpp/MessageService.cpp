@@ -680,9 +680,9 @@ uint32_t MessageService_GetMessages_args::read(::apache::thrift::protocol::TProt
     switch (fid)
     {
       case 1:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->userID);
-          this->__isset.userID = true;
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->username);
+          this->__isset.username = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -704,8 +704,8 @@ uint32_t MessageService_GetMessages_args::write(::apache::thrift::protocol::TPro
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("MessageService_GetMessages_args");
 
-  xfer += oprot->writeFieldBegin("userID", ::apache::thrift::protocol::T_I64, 1);
-  xfer += oprot->writeI64(this->userID);
+  xfer += oprot->writeFieldBegin("username", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->username);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -723,8 +723,8 @@ uint32_t MessageService_GetMessages_pargs::write(::apache::thrift::protocol::TPr
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("MessageService_GetMessages_pargs");
 
-  xfer += oprot->writeFieldBegin("userID", ::apache::thrift::protocol::T_I64, 1);
-  xfer += oprot->writeI64((*(this->userID)));
+  xfer += oprot->writeFieldBegin("username", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->username)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -1073,19 +1073,19 @@ void MessageServiceClient::recv_ReadMessage(std::string& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ReadMessage failed: unknown result");
 }
 
-void MessageServiceClient::GetMessages(std::vector<Message> & _return, const int64_t userID)
+void MessageServiceClient::GetMessages(std::vector<Message> & _return, const std::string& username)
 {
-  send_GetMessages(userID);
+  send_GetMessages(username);
   recv_GetMessages(_return);
 }
 
-void MessageServiceClient::send_GetMessages(const int64_t userID)
+void MessageServiceClient::send_GetMessages(const std::string& username)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("GetMessages", ::apache::thrift::protocol::T_CALL, cseqid);
 
   MessageService_GetMessages_pargs args;
-  args.userID = &userID;
+  args.username = &username;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -1344,7 +1344,7 @@ void MessageServiceProcessor::process_GetMessages(int32_t seqid, ::apache::thrif
 
   MessageService_GetMessages_result result;
   try {
-    iface_->GetMessages(result.success, args.userID);
+    iface_->GetMessages(result.success, args.username);
     result.__isset.success = true;
   } catch (ServiceException &se) {
     result.se = se;
@@ -1646,20 +1646,20 @@ void MessageServiceConcurrentClient::recv_ReadMessage(std::string& _return, cons
   } // end while(true)
 }
 
-void MessageServiceConcurrentClient::GetMessages(std::vector<Message> & _return, const int64_t userID)
+void MessageServiceConcurrentClient::GetMessages(std::vector<Message> & _return, const std::string& username)
 {
-  int32_t seqid = send_GetMessages(userID);
+  int32_t seqid = send_GetMessages(username);
   recv_GetMessages(_return, seqid);
 }
 
-int32_t MessageServiceConcurrentClient::send_GetMessages(const int64_t userID)
+int32_t MessageServiceConcurrentClient::send_GetMessages(const std::string& username)
 {
   int32_t cseqid = this->sync_->generateSeqId();
   ::apache::thrift::async::TConcurrentSendSentry sentry(this->sync_.get());
   oprot_->writeMessageBegin("GetMessages", ::apache::thrift::protocol::T_CALL, cseqid);
 
   MessageService_GetMessages_pargs args;
-  args.userID = &userID;
+  args.username = &username;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
