@@ -88,6 +88,7 @@ namespace microchat
     void Login(std::string &_return, const std::string &username, const std::string &password) override;
     void CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password) override;
     void GetUserID(std::string& _return, const std::string& username) override;
+    void Logout(std::string& _return, const std::string& username) override;
 
   private:
     std::string _machine_id;
@@ -184,6 +185,14 @@ namespace microchat
     // -if RIGHT, grab userID and return
     
     _return = "422445416448000";
+  }
+
+  void UserServiceHandler::Logout(std::string& _return, const std::string& username){
+    //set user status to OFFLINE
+    std::cout << "Logout UserService method" << std::endl;
+
+
+    _return = "Logout for user " + username + " was successful";
   }
 
 } //namespace microchat

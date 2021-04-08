@@ -30,7 +30,7 @@ class MessageServiceHandler : virtual public MessageServiceIf {
     printf("ComposeMessage\n");
   }
 
-  void ReadMessage(std::string& _return, const int64_t messageID) {
+  void ReadMessage(std::string& _return, const int64_t messageID, const std::string& username) {
     // Your implementation goes here
     printf("ReadMessage\n");
   }
@@ -38,6 +38,16 @@ class MessageServiceHandler : virtual public MessageServiceIf {
   void GetMessages(std::vector<Message> & _return, const std::string& username) {
     // Your implementation goes here
     printf("GetMessages\n");
+  }
+
+  void GetUnreadMessages(std::vector<Message> & _return, const std::string& username) {
+    // Your implementation goes here
+    printf("GetUnreadMessages\n");
+  }
+
+  void GetReadMessages(std::vector<Message> & _return, const std::string& username) {
+    // Your implementation goes here
+    printf("GetReadMessages\n");
   }
 
 };

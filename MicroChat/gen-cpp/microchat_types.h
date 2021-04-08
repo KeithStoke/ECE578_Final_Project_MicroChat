@@ -58,8 +58,6 @@ class ServiceException;
 
 class User;
 
-class Emoji;
-
 class Message;
 
 typedef struct _ServiceException__isset {
@@ -172,61 +170,12 @@ void swap(User &a, User &b);
 
 std::ostream& operator<<(std::ostream& out, const User& obj);
 
-typedef struct _Emoji__isset {
-  _Emoji__isset() : emojiID(false), emojiname(false) {}
-  bool emojiID :1;
-  bool emojiname :1;
-} _Emoji__isset;
-
-class Emoji : public virtual ::apache::thrift::TBase {
- public:
-
-  Emoji(const Emoji&);
-  Emoji& operator=(const Emoji&);
-  Emoji() : emojiID(0), emojiname() {
-  }
-
-  virtual ~Emoji() noexcept;
-  int64_t emojiID;
-  std::string emojiname;
-
-  _Emoji__isset __isset;
-
-  void __set_emojiID(const int64_t val);
-
-  void __set_emojiname(const std::string& val);
-
-  bool operator == (const Emoji & rhs) const
-  {
-    if (!(emojiID == rhs.emojiID))
-      return false;
-    if (!(emojiname == rhs.emojiname))
-      return false;
-    return true;
-  }
-  bool operator != (const Emoji &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const Emoji & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-  virtual void printTo(std::ostream& out) const;
-};
-
-void swap(Emoji &a, Emoji &b);
-
-std::ostream& operator<<(std::ostream& out, const Emoji& obj);
-
 typedef struct _Message__isset {
-  _Message__isset() : messageID(false), text(false), sender(false), recipients(false), reactions(false), timestamp(false) {}
+  _Message__isset() : messageID(false), text(false), sender(false), recipients(false), timestamp(false) {}
   bool messageID :1;
   bool text :1;
   bool sender :1;
   bool recipients :1;
-  bool reactions :1;
   bool timestamp :1;
 } _Message__isset;
 
@@ -235,15 +184,14 @@ class Message : public virtual ::apache::thrift::TBase {
 
   Message(const Message&);
   Message& operator=(const Message&);
-  Message() : messageID(0), text(), timestamp(0) {
+  Message() : messageID(0), text(), sender(), timestamp(0) {
   }
 
   virtual ~Message() noexcept;
   int64_t messageID;
   std::string text;
-  User sender;
-  std::vector<User>  recipients;
-  std::vector<Emoji>  reactions;
+  std::string sender;
+  std::vector<std::string>  recipients;
   int64_t timestamp;
 
   _Message__isset __isset;
@@ -252,11 +200,9 @@ class Message : public virtual ::apache::thrift::TBase {
 
   void __set_text(const std::string& val);
 
-  void __set_sender(const User& val);
+  void __set_sender(const std::string& val);
 
-  void __set_recipients(const std::vector<User> & val);
-
-  void __set_reactions(const std::vector<Emoji> & val);
+  void __set_recipients(const std::vector<std::string> & val);
 
   void __set_timestamp(const int64_t val);
 
@@ -269,8 +215,6 @@ class Message : public virtual ::apache::thrift::TBase {
     if (!(sender == rhs.sender))
       return false;
     if (!(recipients == rhs.recipients))
-      return false;
-    if (!(reactions == rhs.reactions))
       return false;
     if (!(timestamp == rhs.timestamp))
       return false;

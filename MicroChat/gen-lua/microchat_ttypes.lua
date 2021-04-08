@@ -146,59 +146,11 @@ function User:write(oprot)
   oprot:writeStructEnd()
 end
 
-local Emoji = __TObject:new{
-  emojiID,
-  emojiname
-}
-
-function Emoji:read(iprot)
-  iprot:readStructBegin()
-  while true do
-    local fname, ftype, fid = iprot:readFieldBegin()
-    if ftype == TType.STOP then
-      break
-    elseif fid == 1 then
-      if ftype == TType.I64 then
-        self.emojiID = iprot:readI64()
-      else
-        iprot:skip(ftype)
-      end
-    elseif fid == 2 then
-      if ftype == TType.STRING then
-        self.emojiname = iprot:readString()
-      else
-        iprot:skip(ftype)
-      end
-    else
-      iprot:skip(ftype)
-    end
-    iprot:readFieldEnd()
-  end
-  iprot:readStructEnd()
-end
-
-function Emoji:write(oprot)
-  oprot:writeStructBegin('Emoji')
-  if self.emojiID ~= nil then
-    oprot:writeFieldBegin('emojiID', TType.I64, 1)
-    oprot:writeI64(self.emojiID)
-    oprot:writeFieldEnd()
-  end
-  if self.emojiname ~= nil then
-    oprot:writeFieldBegin('emojiname', TType.STRING, 2)
-    oprot:writeString(self.emojiname)
-    oprot:writeFieldEnd()
-  end
-  oprot:writeFieldStop()
-  oprot:writeStructEnd()
-end
-
 local Message = __TObject:new{
   messageID,
   text,
   sender,
   recipients,
-  reactions,
   timestamp
 }
 
@@ -221,9 +173,8 @@ function Message:read(iprot)
         iprot:skip(ftype)
       end
     elseif fid == 3 then
-      if ftype == TType.STRUCT then
-        self.sender = User:new{}
-        self.sender:read(iprot)
+      if ftype == TType.STRING then
+        self.sender = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -232,22 +183,8 @@ function Message:read(iprot)
         self.recipients = {}
         local _etype3, _size0 = iprot:readListBegin()
         for _i=1,_size0 do
-          local _elem4 = User:new{}
-          _elem4:read(iprot)
+          local _elem4 = iprot:readString()
           table.insert(self.recipients, _elem4)
-        end
-        iprot:readListEnd()
-      else
-        iprot:skip(ftype)
-      end
-    elseif fid == 5 then
-      if ftype == TType.LIST then
-        self.reactions = {}
-        local _etype8, _size5 = iprot:readListBegin()
-        for _i=1,_size5 do
-          local _elem9 = Emoji:new{}
-          _elem9:read(iprot)
-          table.insert(self.reactions, _elem9)
         end
         iprot:readListEnd()
       else
@@ -280,24 +217,15 @@ function Message:write(oprot)
     oprot:writeFieldEnd()
   end
   if self.sender ~= nil then
-    oprot:writeFieldBegin('sender', TType.STRUCT, 3)
-    self.sender:write(oprot)
+    oprot:writeFieldBegin('sender', TType.STRING, 3)
+    oprot:writeString(self.sender)
     oprot:writeFieldEnd()
   end
   if self.recipients ~= nil then
     oprot:writeFieldBegin('recipients', TType.LIST, 4)
-    oprot:writeListBegin(TType.STRUCT, #self.recipients)
-    for _,iter10 in ipairs(self.recipients) do
-      iter10:write(oprot)
-    end
-    oprot:writeListEnd()
-    oprot:writeFieldEnd()
-  end
-  if self.reactions ~= nil then
-    oprot:writeFieldBegin('reactions', TType.LIST, 5)
-    oprot:writeListBegin(TType.STRUCT, #self.reactions)
-    for _,iter11 in ipairs(self.reactions) do
-      iter11:write(oprot)
+    oprot:writeListBegin(TType.STRING, #self.recipients)
+    for _,iter5 in ipairs(self.recipients) do
+      oprot:writeString(iter5)
     end
     oprot:writeListEnd()
     oprot:writeFieldEnd()

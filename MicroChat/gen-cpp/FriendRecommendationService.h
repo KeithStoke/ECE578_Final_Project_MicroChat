@@ -23,7 +23,7 @@ class FriendRecommendationServiceIf {
  public:
   virtual ~FriendRecommendationServiceIf() {}
   virtual void ping(std::string& _return, const std::string& text) = 0;
-  virtual void GetFriendRecommendations(std::vector<std::string> & _return, const int64_t userID) = 0;
+  virtual void GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username) = 0;
 };
 
 class FriendRecommendationServiceIfFactory {
@@ -56,7 +56,7 @@ class FriendRecommendationServiceNull : virtual public FriendRecommendationServi
   void ping(std::string& /* _return */, const std::string& /* text */) {
     return;
   }
-  void GetFriendRecommendations(std::vector<std::string> & /* _return */, const int64_t /* userID */) {
+  void GetFriendRecommendations(std::vector<std::string> & /* _return */, const std::string& /* username */) {
     return;
   }
 };
@@ -166,8 +166,8 @@ class FriendRecommendationService_ping_presult {
 };
 
 typedef struct _FriendRecommendationService_GetFriendRecommendations_args__isset {
-  _FriendRecommendationService_GetFriendRecommendations_args__isset() : userID(false) {}
-  bool userID :1;
+  _FriendRecommendationService_GetFriendRecommendations_args__isset() : username(false) {}
+  bool username :1;
 } _FriendRecommendationService_GetFriendRecommendations_args__isset;
 
 class FriendRecommendationService_GetFriendRecommendations_args {
@@ -175,19 +175,19 @@ class FriendRecommendationService_GetFriendRecommendations_args {
 
   FriendRecommendationService_GetFriendRecommendations_args(const FriendRecommendationService_GetFriendRecommendations_args&);
   FriendRecommendationService_GetFriendRecommendations_args& operator=(const FriendRecommendationService_GetFriendRecommendations_args&);
-  FriendRecommendationService_GetFriendRecommendations_args() : userID(0) {
+  FriendRecommendationService_GetFriendRecommendations_args() : username() {
   }
 
   virtual ~FriendRecommendationService_GetFriendRecommendations_args() noexcept;
-  int64_t userID;
+  std::string username;
 
   _FriendRecommendationService_GetFriendRecommendations_args__isset __isset;
 
-  void __set_userID(const int64_t val);
+  void __set_username(const std::string& val);
 
   bool operator == (const FriendRecommendationService_GetFriendRecommendations_args & rhs) const
   {
-    if (!(userID == rhs.userID))
+    if (!(username == rhs.username))
       return false;
     return true;
   }
@@ -208,7 +208,7 @@ class FriendRecommendationService_GetFriendRecommendations_pargs {
 
 
   virtual ~FriendRecommendationService_GetFriendRecommendations_pargs() noexcept;
-  const int64_t* userID;
+  const std::string* username;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -305,8 +305,8 @@ class FriendRecommendationServiceClient : virtual public FriendRecommendationSer
   void ping(std::string& _return, const std::string& text);
   void send_ping(const std::string& text);
   void recv_ping(std::string& _return);
-  void GetFriendRecommendations(std::vector<std::string> & _return, const int64_t userID);
-  void send_GetFriendRecommendations(const int64_t userID);
+  void GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username);
+  void send_GetFriendRecommendations(const std::string& username);
   void recv_GetFriendRecommendations(std::vector<std::string> & _return);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
@@ -368,13 +368,13 @@ class FriendRecommendationServiceMultiface : virtual public FriendRecommendation
     return;
   }
 
-  void GetFriendRecommendations(std::vector<std::string> & _return, const int64_t userID) {
+  void GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->GetFriendRecommendations(_return, userID);
+      ifaces_[i]->GetFriendRecommendations(_return, username);
     }
-    ifaces_[i]->GetFriendRecommendations(_return, userID);
+    ifaces_[i]->GetFriendRecommendations(_return, username);
     return;
   }
 
@@ -413,8 +413,8 @@ class FriendRecommendationServiceConcurrentClient : virtual public FriendRecomme
   void ping(std::string& _return, const std::string& text);
   int32_t send_ping(const std::string& text);
   void recv_ping(std::string& _return, const int32_t seqid);
-  void GetFriendRecommendations(std::vector<std::string> & _return, const int64_t userID);
-  int32_t send_GetFriendRecommendations(const int64_t userID);
+  void GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username);
+  int32_t send_GetFriendRecommendations(const std::string& username);
   void recv_GetFriendRecommendations(std::vector<std::string> & _return, const int32_t seqid);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;

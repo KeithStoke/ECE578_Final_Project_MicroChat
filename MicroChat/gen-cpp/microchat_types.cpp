@@ -365,118 +365,6 @@ void User::printTo(std::ostream& out) const {
 }
 
 
-Emoji::~Emoji() noexcept {
-}
-
-
-void Emoji::__set_emojiID(const int64_t val) {
-  this->emojiID = val;
-}
-
-void Emoji::__set_emojiname(const std::string& val) {
-  this->emojiname = val;
-}
-std::ostream& operator<<(std::ostream& out, const Emoji& obj)
-{
-  obj.printTo(out);
-  return out;
-}
-
-
-uint32_t Emoji::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  ::apache::thrift::protocol::TInputRecursionTracker tracker(*iprot);
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->emojiID);
-          this->__isset.emojiID = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->emojiname);
-          this->__isset.emojiname = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t Emoji::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
-  xfer += oprot->writeStructBegin("Emoji");
-
-  xfer += oprot->writeFieldBegin("emojiID", ::apache::thrift::protocol::T_I64, 1);
-  xfer += oprot->writeI64(this->emojiID);
-  xfer += oprot->writeFieldEnd();
-
-  xfer += oprot->writeFieldBegin("emojiname", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeString(this->emojiname);
-  xfer += oprot->writeFieldEnd();
-
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-void swap(Emoji &a, Emoji &b) {
-  using ::std::swap;
-  swap(a.emojiID, b.emojiID);
-  swap(a.emojiname, b.emojiname);
-  swap(a.__isset, b.__isset);
-}
-
-Emoji::Emoji(const Emoji& other6) {
-  emojiID = other6.emojiID;
-  emojiname = other6.emojiname;
-  __isset = other6.__isset;
-}
-Emoji& Emoji::operator=(const Emoji& other7) {
-  emojiID = other7.emojiID;
-  emojiname = other7.emojiname;
-  __isset = other7.__isset;
-  return *this;
-}
-void Emoji::printTo(std::ostream& out) const {
-  using ::apache::thrift::to_string;
-  out << "Emoji(";
-  out << "emojiID=" << to_string(emojiID);
-  out << ", " << "emojiname=" << to_string(emojiname);
-  out << ")";
-}
-
-
 Message::~Message() noexcept {
 }
 
@@ -489,16 +377,12 @@ void Message::__set_text(const std::string& val) {
   this->text = val;
 }
 
-void Message::__set_sender(const User& val) {
+void Message::__set_sender(const std::string& val) {
   this->sender = val;
 }
 
-void Message::__set_recipients(const std::vector<User> & val) {
+void Message::__set_recipients(const std::vector<std::string> & val) {
   this->recipients = val;
-}
-
-void Message::__set_reactions(const std::vector<Emoji> & val) {
-  this->reactions = val;
 }
 
 void Message::__set_timestamp(const int64_t val) {
@@ -549,8 +433,8 @@ uint32_t Message::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 3:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->sender.read(iprot);
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->sender);
           this->__isset.sender = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -560,38 +444,18 @@ uint32_t Message::read(::apache::thrift::protocol::TProtocol* iprot) {
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->recipients.clear();
-            uint32_t _size8;
-            ::apache::thrift::protocol::TType _etype11;
-            xfer += iprot->readListBegin(_etype11, _size8);
-            this->recipients.resize(_size8);
-            uint32_t _i12;
-            for (_i12 = 0; _i12 < _size8; ++_i12)
+            uint32_t _size6;
+            ::apache::thrift::protocol::TType _etype9;
+            xfer += iprot->readListBegin(_etype9, _size6);
+            this->recipients.resize(_size6);
+            uint32_t _i10;
+            for (_i10 = 0; _i10 < _size6; ++_i10)
             {
-              xfer += this->recipients[_i12].read(iprot);
+              xfer += iprot->readString(this->recipients[_i10]);
             }
             xfer += iprot->readListEnd();
           }
           this->__isset.recipients = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 5:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            this->reactions.clear();
-            uint32_t _size13;
-            ::apache::thrift::protocol::TType _etype16;
-            xfer += iprot->readListBegin(_etype16, _size13);
-            this->reactions.resize(_size13);
-            uint32_t _i17;
-            for (_i17 = 0; _i17 < _size13; ++_i17)
-            {
-              xfer += this->reactions[_i17].read(iprot);
-            }
-            xfer += iprot->readListEnd();
-          }
-          this->__isset.reactions = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -629,29 +493,17 @@ uint32_t Message::write(::apache::thrift::protocol::TProtocol* oprot) const {
   xfer += oprot->writeString(this->text);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("sender", ::apache::thrift::protocol::T_STRUCT, 3);
-  xfer += this->sender.write(oprot);
+  xfer += oprot->writeFieldBegin("sender", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString(this->sender);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("recipients", ::apache::thrift::protocol::T_LIST, 4);
   {
-    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->recipients.size()));
-    std::vector<User> ::const_iterator _iter18;
-    for (_iter18 = this->recipients.begin(); _iter18 != this->recipients.end(); ++_iter18)
+    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, static_cast<uint32_t>(this->recipients.size()));
+    std::vector<std::string> ::const_iterator _iter11;
+    for (_iter11 = this->recipients.begin(); _iter11 != this->recipients.end(); ++_iter11)
     {
-      xfer += (*_iter18).write(oprot);
-    }
-    xfer += oprot->writeListEnd();
-  }
-  xfer += oprot->writeFieldEnd();
-
-  xfer += oprot->writeFieldBegin("reactions", ::apache::thrift::protocol::T_LIST, 5);
-  {
-    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->reactions.size()));
-    std::vector<Emoji> ::const_iterator _iter19;
-    for (_iter19 = this->reactions.begin(); _iter19 != this->reactions.end(); ++_iter19)
-    {
-      xfer += (*_iter19).write(oprot);
+      xfer += oprot->writeString((*_iter11));
     }
     xfer += oprot->writeListEnd();
   }
@@ -672,28 +524,25 @@ void swap(Message &a, Message &b) {
   swap(a.text, b.text);
   swap(a.sender, b.sender);
   swap(a.recipients, b.recipients);
-  swap(a.reactions, b.reactions);
   swap(a.timestamp, b.timestamp);
   swap(a.__isset, b.__isset);
 }
 
-Message::Message(const Message& other20) {
-  messageID = other20.messageID;
-  text = other20.text;
-  sender = other20.sender;
-  recipients = other20.recipients;
-  reactions = other20.reactions;
-  timestamp = other20.timestamp;
-  __isset = other20.__isset;
+Message::Message(const Message& other12) {
+  messageID = other12.messageID;
+  text = other12.text;
+  sender = other12.sender;
+  recipients = other12.recipients;
+  timestamp = other12.timestamp;
+  __isset = other12.__isset;
 }
-Message& Message::operator=(const Message& other21) {
-  messageID = other21.messageID;
-  text = other21.text;
-  sender = other21.sender;
-  recipients = other21.recipients;
-  reactions = other21.reactions;
-  timestamp = other21.timestamp;
-  __isset = other21.__isset;
+Message& Message::operator=(const Message& other13) {
+  messageID = other13.messageID;
+  text = other13.text;
+  sender = other13.sender;
+  recipients = other13.recipients;
+  timestamp = other13.timestamp;
+  __isset = other13.__isset;
   return *this;
 }
 void Message::printTo(std::ostream& out) const {
@@ -703,7 +552,6 @@ void Message::printTo(std::ostream& out) const {
   out << ", " << "text=" << to_string(text);
   out << ", " << "sender=" << to_string(sender);
   out << ", " << "recipients=" << to_string(recipients);
-  out << ", " << "reactions=" << to_string(reactions);
   out << ", " << "timestamp=" << to_string(timestamp);
   out << ")";
 }

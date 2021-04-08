@@ -24,8 +24,10 @@ class MessageServiceIf {
   virtual ~MessageServiceIf() {}
   virtual void ping(std::string& _return, const std::string& text) = 0;
   virtual void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users) = 0;
-  virtual void ReadMessage(std::string& _return, const int64_t messageID) = 0;
+  virtual void ReadMessage(std::string& _return, const int64_t messageID, const std::string& username) = 0;
   virtual void GetMessages(std::vector<Message> & _return, const std::string& username) = 0;
+  virtual void GetUnreadMessages(std::vector<Message> & _return, const std::string& username) = 0;
+  virtual void GetReadMessages(std::vector<Message> & _return, const std::string& username) = 0;
 };
 
 class MessageServiceIfFactory {
@@ -61,10 +63,16 @@ class MessageServiceNull : virtual public MessageServiceIf {
   void ComposeMessage(std::string& /* _return */, const std::string& /* text */, const std::vector<std::string> & /* users */) {
     return;
   }
-  void ReadMessage(std::string& /* _return */, const int64_t /* messageID */) {
+  void ReadMessage(std::string& /* _return */, const int64_t /* messageID */, const std::string& /* username */) {
     return;
   }
   void GetMessages(std::vector<Message> & /* _return */, const std::string& /* username */) {
+    return;
+  }
+  void GetUnreadMessages(std::vector<Message> & /* _return */, const std::string& /* username */) {
+    return;
+  }
+  void GetReadMessages(std::vector<Message> & /* _return */, const std::string& /* username */) {
     return;
   }
 };
@@ -293,8 +301,9 @@ class MessageService_ComposeMessage_presult {
 };
 
 typedef struct _MessageService_ReadMessage_args__isset {
-  _MessageService_ReadMessage_args__isset() : messageID(false) {}
+  _MessageService_ReadMessage_args__isset() : messageID(false), username(false) {}
   bool messageID :1;
+  bool username :1;
 } _MessageService_ReadMessage_args__isset;
 
 class MessageService_ReadMessage_args {
@@ -302,19 +311,24 @@ class MessageService_ReadMessage_args {
 
   MessageService_ReadMessage_args(const MessageService_ReadMessage_args&);
   MessageService_ReadMessage_args& operator=(const MessageService_ReadMessage_args&);
-  MessageService_ReadMessage_args() : messageID(0) {
+  MessageService_ReadMessage_args() : messageID(0), username() {
   }
 
   virtual ~MessageService_ReadMessage_args() noexcept;
   int64_t messageID;
+  std::string username;
 
   _MessageService_ReadMessage_args__isset __isset;
 
   void __set_messageID(const int64_t val);
 
+  void __set_username(const std::string& val);
+
   bool operator == (const MessageService_ReadMessage_args & rhs) const
   {
     if (!(messageID == rhs.messageID))
+      return false;
+    if (!(username == rhs.username))
       return false;
     return true;
   }
@@ -336,6 +350,7 @@ class MessageService_ReadMessage_pargs {
 
   virtual ~MessageService_ReadMessage_pargs() noexcept;
   const int64_t* messageID;
+  const std::string* username;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -516,6 +531,230 @@ class MessageService_GetMessages_presult {
 
 };
 
+typedef struct _MessageService_GetUnreadMessages_args__isset {
+  _MessageService_GetUnreadMessages_args__isset() : username(false) {}
+  bool username :1;
+} _MessageService_GetUnreadMessages_args__isset;
+
+class MessageService_GetUnreadMessages_args {
+ public:
+
+  MessageService_GetUnreadMessages_args(const MessageService_GetUnreadMessages_args&);
+  MessageService_GetUnreadMessages_args& operator=(const MessageService_GetUnreadMessages_args&);
+  MessageService_GetUnreadMessages_args() : username() {
+  }
+
+  virtual ~MessageService_GetUnreadMessages_args() noexcept;
+  std::string username;
+
+  _MessageService_GetUnreadMessages_args__isset __isset;
+
+  void __set_username(const std::string& val);
+
+  bool operator == (const MessageService_GetUnreadMessages_args & rhs) const
+  {
+    if (!(username == rhs.username))
+      return false;
+    return true;
+  }
+  bool operator != (const MessageService_GetUnreadMessages_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const MessageService_GetUnreadMessages_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class MessageService_GetUnreadMessages_pargs {
+ public:
+
+
+  virtual ~MessageService_GetUnreadMessages_pargs() noexcept;
+  const std::string* username;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _MessageService_GetUnreadMessages_result__isset {
+  _MessageService_GetUnreadMessages_result__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _MessageService_GetUnreadMessages_result__isset;
+
+class MessageService_GetUnreadMessages_result {
+ public:
+
+  MessageService_GetUnreadMessages_result(const MessageService_GetUnreadMessages_result&);
+  MessageService_GetUnreadMessages_result& operator=(const MessageService_GetUnreadMessages_result&);
+  MessageService_GetUnreadMessages_result() {
+  }
+
+  virtual ~MessageService_GetUnreadMessages_result() noexcept;
+  std::vector<Message>  success;
+  ServiceException se;
+
+  _MessageService_GetUnreadMessages_result__isset __isset;
+
+  void __set_success(const std::vector<Message> & val);
+
+  void __set_se(const ServiceException& val);
+
+  bool operator == (const MessageService_GetUnreadMessages_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
+      return false;
+    return true;
+  }
+  bool operator != (const MessageService_GetUnreadMessages_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const MessageService_GetUnreadMessages_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _MessageService_GetUnreadMessages_presult__isset {
+  _MessageService_GetUnreadMessages_presult__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _MessageService_GetUnreadMessages_presult__isset;
+
+class MessageService_GetUnreadMessages_presult {
+ public:
+
+
+  virtual ~MessageService_GetUnreadMessages_presult() noexcept;
+  std::vector<Message> * success;
+  ServiceException se;
+
+  _MessageService_GetUnreadMessages_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
+typedef struct _MessageService_GetReadMessages_args__isset {
+  _MessageService_GetReadMessages_args__isset() : username(false) {}
+  bool username :1;
+} _MessageService_GetReadMessages_args__isset;
+
+class MessageService_GetReadMessages_args {
+ public:
+
+  MessageService_GetReadMessages_args(const MessageService_GetReadMessages_args&);
+  MessageService_GetReadMessages_args& operator=(const MessageService_GetReadMessages_args&);
+  MessageService_GetReadMessages_args() : username() {
+  }
+
+  virtual ~MessageService_GetReadMessages_args() noexcept;
+  std::string username;
+
+  _MessageService_GetReadMessages_args__isset __isset;
+
+  void __set_username(const std::string& val);
+
+  bool operator == (const MessageService_GetReadMessages_args & rhs) const
+  {
+    if (!(username == rhs.username))
+      return false;
+    return true;
+  }
+  bool operator != (const MessageService_GetReadMessages_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const MessageService_GetReadMessages_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class MessageService_GetReadMessages_pargs {
+ public:
+
+
+  virtual ~MessageService_GetReadMessages_pargs() noexcept;
+  const std::string* username;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _MessageService_GetReadMessages_result__isset {
+  _MessageService_GetReadMessages_result__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _MessageService_GetReadMessages_result__isset;
+
+class MessageService_GetReadMessages_result {
+ public:
+
+  MessageService_GetReadMessages_result(const MessageService_GetReadMessages_result&);
+  MessageService_GetReadMessages_result& operator=(const MessageService_GetReadMessages_result&);
+  MessageService_GetReadMessages_result() {
+  }
+
+  virtual ~MessageService_GetReadMessages_result() noexcept;
+  std::vector<Message>  success;
+  ServiceException se;
+
+  _MessageService_GetReadMessages_result__isset __isset;
+
+  void __set_success(const std::vector<Message> & val);
+
+  void __set_se(const ServiceException& val);
+
+  bool operator == (const MessageService_GetReadMessages_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
+      return false;
+    return true;
+  }
+  bool operator != (const MessageService_GetReadMessages_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const MessageService_GetReadMessages_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _MessageService_GetReadMessages_presult__isset {
+  _MessageService_GetReadMessages_presult__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _MessageService_GetReadMessages_presult__isset;
+
+class MessageService_GetReadMessages_presult {
+ public:
+
+
+  virtual ~MessageService_GetReadMessages_presult() noexcept;
+  std::vector<Message> * success;
+  ServiceException se;
+
+  _MessageService_GetReadMessages_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
 class MessageServiceClient : virtual public MessageServiceIf {
  public:
   MessageServiceClient(std::shared_ptr< ::apache::thrift::protocol::TProtocol> prot) {
@@ -547,12 +786,18 @@ class MessageServiceClient : virtual public MessageServiceIf {
   void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users);
   void send_ComposeMessage(const std::string& text, const std::vector<std::string> & users);
   void recv_ComposeMessage(std::string& _return);
-  void ReadMessage(std::string& _return, const int64_t messageID);
-  void send_ReadMessage(const int64_t messageID);
+  void ReadMessage(std::string& _return, const int64_t messageID, const std::string& username);
+  void send_ReadMessage(const int64_t messageID, const std::string& username);
   void recv_ReadMessage(std::string& _return);
   void GetMessages(std::vector<Message> & _return, const std::string& username);
   void send_GetMessages(const std::string& username);
   void recv_GetMessages(std::vector<Message> & _return);
+  void GetUnreadMessages(std::vector<Message> & _return, const std::string& username);
+  void send_GetUnreadMessages(const std::string& username);
+  void recv_GetUnreadMessages(std::vector<Message> & _return);
+  void GetReadMessages(std::vector<Message> & _return, const std::string& username);
+  void send_GetReadMessages(const std::string& username);
+  void recv_GetReadMessages(std::vector<Message> & _return);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -572,6 +817,8 @@ class MessageServiceProcessor : public ::apache::thrift::TDispatchProcessor {
   void process_ComposeMessage(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_ReadMessage(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_GetMessages(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_GetUnreadMessages(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_GetReadMessages(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   MessageServiceProcessor(::std::shared_ptr<MessageServiceIf> iface) :
     iface_(iface) {
@@ -579,6 +826,8 @@ class MessageServiceProcessor : public ::apache::thrift::TDispatchProcessor {
     processMap_["ComposeMessage"] = &MessageServiceProcessor::process_ComposeMessage;
     processMap_["ReadMessage"] = &MessageServiceProcessor::process_ReadMessage;
     processMap_["GetMessages"] = &MessageServiceProcessor::process_GetMessages;
+    processMap_["GetUnreadMessages"] = &MessageServiceProcessor::process_GetUnreadMessages;
+    processMap_["GetReadMessages"] = &MessageServiceProcessor::process_GetReadMessages;
   }
 
   virtual ~MessageServiceProcessor() {}
@@ -627,13 +876,13 @@ class MessageServiceMultiface : virtual public MessageServiceIf {
     return;
   }
 
-  void ReadMessage(std::string& _return, const int64_t messageID) {
+  void ReadMessage(std::string& _return, const int64_t messageID, const std::string& username) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->ReadMessage(_return, messageID);
+      ifaces_[i]->ReadMessage(_return, messageID, username);
     }
-    ifaces_[i]->ReadMessage(_return, messageID);
+    ifaces_[i]->ReadMessage(_return, messageID, username);
     return;
   }
 
@@ -644,6 +893,26 @@ class MessageServiceMultiface : virtual public MessageServiceIf {
       ifaces_[i]->GetMessages(_return, username);
     }
     ifaces_[i]->GetMessages(_return, username);
+    return;
+  }
+
+  void GetUnreadMessages(std::vector<Message> & _return, const std::string& username) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->GetUnreadMessages(_return, username);
+    }
+    ifaces_[i]->GetUnreadMessages(_return, username);
+    return;
+  }
+
+  void GetReadMessages(std::vector<Message> & _return, const std::string& username) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->GetReadMessages(_return, username);
+    }
+    ifaces_[i]->GetReadMessages(_return, username);
     return;
   }
 
@@ -685,12 +954,18 @@ class MessageServiceConcurrentClient : virtual public MessageServiceIf {
   void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users);
   int32_t send_ComposeMessage(const std::string& text, const std::vector<std::string> & users);
   void recv_ComposeMessage(std::string& _return, const int32_t seqid);
-  void ReadMessage(std::string& _return, const int64_t messageID);
-  int32_t send_ReadMessage(const int64_t messageID);
+  void ReadMessage(std::string& _return, const int64_t messageID, const std::string& username);
+  int32_t send_ReadMessage(const int64_t messageID, const std::string& username);
   void recv_ReadMessage(std::string& _return, const int32_t seqid);
   void GetMessages(std::vector<Message> & _return, const std::string& username);
   int32_t send_GetMessages(const std::string& username);
   void recv_GetMessages(std::vector<Message> & _return, const int32_t seqid);
+  void GetUnreadMessages(std::vector<Message> & _return, const std::string& username);
+  int32_t send_GetUnreadMessages(const std::string& username);
+  void recv_GetUnreadMessages(std::vector<Message> & _return, const int32_t seqid);
+  void GetReadMessages(std::vector<Message> & _return, const std::string& username);
+  int32_t send_GetReadMessages(const std::string& username);
+  void recv_GetReadMessages(std::vector<Message> & _return, const int32_t seqid);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
