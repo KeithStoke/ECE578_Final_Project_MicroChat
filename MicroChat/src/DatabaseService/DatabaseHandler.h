@@ -5,13 +5,21 @@
 #include <string>
 #include <regex>
 #include <future>
-
-#include "../../gen-cpp/DatabaseService.h"
 #include <mongoc.h>
 #include <bson/bson.h>
+#include <iomanip>
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <nlohmann/json.hpp>
+#include <jwt/jwt.hpp>
+
+#include "../../gen-cpp/DatabaseService.h"
 #include "../ClientPool.h"
 #include "../ThriftClient.h"
 #include "../logger.h"
+#include "../utils_mongodb.h"
 
 namespace microchat
 {
@@ -22,12 +30,13 @@ namespace microchat
         DatabaseServiceHandler(mongoc_client_pool_t *);
         ~DatabaseServiceHandler() override=default;
 
-        void ping() override;
+        void ping(std::string& _return, const std::string& text) override;
         void WriteToDatabase(std::string& _return, const std::string& query) override;
         void ReadFromDatabase(std::string& _return, const std::string& query) override;
-        void CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password);
-        void CheckForUser(User &_return, std::string username);
-        private:
+        void CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password, const int64_t userID) override;
+        void CheckForUser(std::string& _return, const std::string& username) override;
+
+      private:
         mongoc_client_pool_t *_mongodb_client_pool;
     };
 
@@ -39,10 +48,10 @@ namespace microchat
     };
     
 
-    void DatabaseServiceHandler::ping()
+    void DatabaseServiceHandler::ping(std::string& _return, const std::string& text)
     {
-        // Your implementation goes here
-        printf("ping\n");
+        std::cout << "Ping from DatabaseServiceHandler... " << std::endl;
+        _return = "Pong from DatabaseServiceHandler!";
     }
 
     void DatabaseServiceHandler::WriteToDatabase(std::string& _return, const std::string& query) {
@@ -55,7 +64,7 @@ namespace microchat
     printf("ReadFromDatabase\n");
   }
 
-void DatabaseServiceHandler::CheckForUser(User &_return, std::string username)
+void DatabaseServiceHandler::CheckForUser(std::string& _return, const std::string& username)
   {
     mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
       _mongodb_client_pool);
@@ -90,10 +99,13 @@ void DatabaseServiceHandler::CheckForUser(User &_return, std::string username)
   }
 }
 
-void DatabaseServiceHandler::CreateUser(User &_return, const std::string &username, const std::string &name, const std::string &password)
+void DatabaseServiceHandler::CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password, const int64_t userID)
 {
-    // Your implementation goes here
-    printf("CreateUser\n");
+
+  //TODO: EVA ADD USERID to this method!!!!!
+
+std::cout << "CreateUser in Database Service Handler..." << std::endl;
+
      // Store user info into mongodb
      const int64_t req_id = 10;
   mongoc_client_t *mongodb_client = mongoc_client_pool_pop(

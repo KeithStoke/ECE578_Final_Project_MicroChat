@@ -19,7 +19,27 @@ services:
     image: ekuntz11/microchat:version_2
     hostname: databaes-service
     restart: always
-    entrypoint: DatabaseService 
+    entrypoint: DatabaseService
+  user-mongodb:
+      image: mongo
+      hostname: user-mongodb
+      # ports:
+      #  - 27023:27017
+      restart: always
+  
+  friend-mongodb:
+      image: mongo
+      hostname: friend-mongodb
+      # ports:
+      #- 27023:27018
+      restart: always
+  
+  message-mongodb:
+      image: mongo
+      hostname: message-mongodb
+      # ports:
+      #  - 27023:27019
+      restart: always
   nginx-thrift:
     image: yg397/openresty-thrift:xenial
     hostname: nginx-thrift
