@@ -222,9 +222,9 @@ uint32_t FriendRecommendationService_GetFriendRecommendations_args::read(::apach
     switch (fid)
     {
       case 1:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->userID);
-          this->__isset.userID = true;
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->username);
+          this->__isset.username = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -246,8 +246,8 @@ uint32_t FriendRecommendationService_GetFriendRecommendations_args::write(::apac
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("FriendRecommendationService_GetFriendRecommendations_args");
 
-  xfer += oprot->writeFieldBegin("userID", ::apache::thrift::protocol::T_I64, 1);
-  xfer += oprot->writeI64(this->userID);
+  xfer += oprot->writeFieldBegin("username", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->username);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -265,8 +265,8 @@ uint32_t FriendRecommendationService_GetFriendRecommendations_pargs::write(::apa
   ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("FriendRecommendationService_GetFriendRecommendations_pargs");
 
-  xfer += oprot->writeFieldBegin("userID", ::apache::thrift::protocol::T_I64, 1);
-  xfer += oprot->writeI64((*(this->userID)));
+  xfer += oprot->writeFieldBegin("username", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->username)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -304,14 +304,14 @@ uint32_t FriendRecommendationService_GetFriendRecommendations_result::read(::apa
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->success.clear();
-            uint32_t _size40;
-            ::apache::thrift::protocol::TType _etype43;
-            xfer += iprot->readListBegin(_etype43, _size40);
-            this->success.resize(_size40);
-            uint32_t _i44;
-            for (_i44 = 0; _i44 < _size40; ++_i44)
+            uint32_t _size54;
+            ::apache::thrift::protocol::TType _etype57;
+            xfer += iprot->readListBegin(_etype57, _size54);
+            this->success.resize(_size54);
+            uint32_t _i58;
+            for (_i58 = 0; _i58 < _size54; ++_i58)
             {
-              xfer += iprot->readString(this->success[_i44]);
+              xfer += iprot->readString(this->success[_i58]);
             }
             xfer += iprot->readListEnd();
           }
@@ -350,10 +350,10 @@ uint32_t FriendRecommendationService_GetFriendRecommendations_result::write(::ap
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, static_cast<uint32_t>(this->success.size()));
-      std::vector<std::string> ::const_iterator _iter45;
-      for (_iter45 = this->success.begin(); _iter45 != this->success.end(); ++_iter45)
+      std::vector<std::string> ::const_iterator _iter59;
+      for (_iter59 = this->success.begin(); _iter59 != this->success.end(); ++_iter59)
       {
-        xfer += oprot->writeString((*_iter45));
+        xfer += oprot->writeString((*_iter59));
       }
       xfer += oprot->writeListEnd();
     }
@@ -398,14 +398,14 @@ uint32_t FriendRecommendationService_GetFriendRecommendations_presult::read(::ap
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             (*(this->success)).clear();
-            uint32_t _size46;
-            ::apache::thrift::protocol::TType _etype49;
-            xfer += iprot->readListBegin(_etype49, _size46);
-            (*(this->success)).resize(_size46);
-            uint32_t _i50;
-            for (_i50 = 0; _i50 < _size46; ++_i50)
+            uint32_t _size60;
+            ::apache::thrift::protocol::TType _etype63;
+            xfer += iprot->readListBegin(_etype63, _size60);
+            (*(this->success)).resize(_size60);
+            uint32_t _i64;
+            for (_i64 = 0; _i64 < _size60; ++_i64)
             {
-              xfer += iprot->readString((*(this->success))[_i50]);
+              xfer += iprot->readString((*(this->success))[_i64]);
             }
             xfer += iprot->readListEnd();
           }
@@ -492,19 +492,19 @@ void FriendRecommendationServiceClient::recv_ping(std::string& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
 }
 
-void FriendRecommendationServiceClient::GetFriendRecommendations(std::vector<std::string> & _return, const int64_t userID)
+void FriendRecommendationServiceClient::GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username)
 {
-  send_GetFriendRecommendations(userID);
+  send_GetFriendRecommendations(username);
   recv_GetFriendRecommendations(_return);
 }
 
-void FriendRecommendationServiceClient::send_GetFriendRecommendations(const int64_t userID)
+void FriendRecommendationServiceClient::send_GetFriendRecommendations(const std::string& username)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("GetFriendRecommendations", ::apache::thrift::protocol::T_CALL, cseqid);
 
   FriendRecommendationService_GetFriendRecommendations_pargs args;
-  args.userID = &userID;
+  args.username = &username;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -649,7 +649,7 @@ void FriendRecommendationServiceProcessor::process_GetFriendRecommendations(int3
 
   FriendRecommendationService_GetFriendRecommendations_result result;
   try {
-    iface_->GetFriendRecommendations(result.success, args.userID);
+    iface_->GetFriendRecommendations(result.success, args.username);
     result.__isset.success = true;
   } catch (ServiceException &se) {
     result.se = se;
@@ -774,20 +774,20 @@ void FriendRecommendationServiceConcurrentClient::recv_ping(std::string& _return
   } // end while(true)
 }
 
-void FriendRecommendationServiceConcurrentClient::GetFriendRecommendations(std::vector<std::string> & _return, const int64_t userID)
+void FriendRecommendationServiceConcurrentClient::GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username)
 {
-  int32_t seqid = send_GetFriendRecommendations(userID);
+  int32_t seqid = send_GetFriendRecommendations(username);
   recv_GetFriendRecommendations(_return, seqid);
 }
 
-int32_t FriendRecommendationServiceConcurrentClient::send_GetFriendRecommendations(const int64_t userID)
+int32_t FriendRecommendationServiceConcurrentClient::send_GetFriendRecommendations(const std::string& username)
 {
   int32_t cseqid = this->sync_->generateSeqId();
   ::apache::thrift::async::TConcurrentSendSentry sentry(this->sync_.get());
   oprot_->writeMessageBegin("GetFriendRecommendations", ::apache::thrift::protocol::T_CALL, cseqid);
 
   FriendRecommendationService_GetFriendRecommendations_pargs args;
-  args.userID = &userID;
+  args.username = &username;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();

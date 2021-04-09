@@ -44,21 +44,21 @@ function FriendRecommendationServiceClient:recv_ping(text)
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
-function FriendRecommendationServiceClient:GetFriendRecommendations(userID)
-  self:send_GetFriendRecommendations(userID)
-  return self:recv_GetFriendRecommendations(userID)
+function FriendRecommendationServiceClient:GetFriendRecommendations(username)
+  self:send_GetFriendRecommendations(username)
+  return self:recv_GetFriendRecommendations(username)
 end
 
-function FriendRecommendationServiceClient:send_GetFriendRecommendations(userID)
+function FriendRecommendationServiceClient:send_GetFriendRecommendations(username)
   self.oprot:writeMessageBegin('GetFriendRecommendations', TMessageType.CALL, self._seqid)
   local args = GetFriendRecommendations_args:new{}
-  args.userID = userID
+  args.username = username
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function FriendRecommendationServiceClient:recv_GetFriendRecommendations(userID)
+function FriendRecommendationServiceClient:recv_GetFriendRecommendations(username)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -129,7 +129,7 @@ function FriendRecommendationServiceProcessor:process_GetFriendRecommendations(s
   args:read(iprot)
   iprot:readMessageEnd()
   local result = GetFriendRecommendations_result:new{}
-  local status, res = pcall(self.handler.GetFriendRecommendations, self.handler, args.userID)
+  local status, res = pcall(self.handler.GetFriendRecommendations, self.handler, args.username)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
@@ -217,7 +217,7 @@ function ping_result:write(oprot)
 end
 
 GetFriendRecommendations_args = __TObject:new{
-  userID
+  username
 }
 
 function GetFriendRecommendations_args:read(iprot)
@@ -227,8 +227,8 @@ function GetFriendRecommendations_args:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 1 then
-      if ftype == TType.I64 then
-        self.userID = iprot:readI64()
+      if ftype == TType.STRING then
+        self.username = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -242,9 +242,9 @@ end
 
 function GetFriendRecommendations_args:write(oprot)
   oprot:writeStructBegin('GetFriendRecommendations_args')
-  if self.userID ~= nil then
-    oprot:writeFieldBegin('userID', TType.I64, 1)
-    oprot:writeI64(self.userID)
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
@@ -265,10 +265,10 @@ function GetFriendRecommendations_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.LIST then
         self.success = {}
-        local _etype27, _size24 = iprot:readListBegin()
-        for _i=1,_size24 do
-          local _elem28 = iprot:readString()
-          table.insert(self.success, _elem28)
+        local _etype33, _size30 = iprot:readListBegin()
+        for _i=1,_size30 do
+          local _elem34 = iprot:readString()
+          table.insert(self.success, _elem34)
         end
         iprot:readListEnd()
       else
@@ -294,8 +294,8 @@ function GetFriendRecommendations_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.LIST, 0)
     oprot:writeListBegin(TType.STRING, #self.success)
-    for _,iter29 in ipairs(self.success) do
-      oprot:writeString(iter29)
+    for _,iter35 in ipairs(self.success) do
+      oprot:writeString(iter35)
     end
     oprot:writeListEnd()
     oprot:writeFieldEnd()

@@ -30,17 +30,11 @@ struct User {
   4: UserStatus userStatus,
 }
 
-struct Emoji {
-  1: i64 emojiID,
-  2: string emojiname,
-}
-
 struct Message {
   1: i64 messageID,
   2: string text,
-  3: User sender,
-  4: list<User> recipients,
-  5: list<Emoji> reactions,
+  3: string sender,
+  4: list<string> recipients,
   6: i64 timestamp,
 }
 
@@ -49,21 +43,24 @@ service UserService{
   string ping(1:i32 id),
   string Login(1:string username, 2:string password) throws (1: ServiceException se),
   string CreateUser(1:string username, 2:string name, 3:string password) throws (1: ServiceException se),
-  string GetUserID(1:string username) throws (1: ServiceException se)
+  string GetUserID(1:string username) throws (1: ServiceException se),
+  string Logout(1:string username) throws (1:ServiceException se)
 
 }
 
 service MessageService{
   string ping(1:string text),
   string ComposeMessage(1:string text, 2:list<string> users) throws (1: ServiceException se),
-  string ReadMessage(1:i64 messageID) throws (1: ServiceException se),
-  list<Message> GetMessages(1:i64 userID) throws (1: ServiceException se)
+  string ReadMessage(1:i64 messageID, 2:string username) throws (1: ServiceException se),
+  list<Message> GetMessages(1:string username) throws (1: ServiceException se),
+  list<Message> GetUnreadMessages(1:string username) throws(1:ServiceException se),
+  list<Message> GetReadMessages(1:string username) throws(1:ServiceException se)
 }
 
 service FriendRecommendationService{
 
   string ping(1:string text),
-  list<string> GetFriendRecommendations(1:i64 userID) throws (1: ServiceException se),
+  list<string> GetFriendRecommendations(1:string username) throws (1: ServiceException se),
 
 }
 
@@ -71,5 +68,7 @@ service DatabaseService{
   string ping(1:string text),
   string WriteToDatabase(1:string query) throws (1: ServiceException se),
   string ReadFromDatabase(1:string query) throws (1: ServiceException se),
+  string CreateUser(1:string username, 2:string name, 3:string password, 4:i64 userID) throws(1:ServiceException se),
+  string CheckForUser(1:string username) throws(1:ServiceException se)
 }
 

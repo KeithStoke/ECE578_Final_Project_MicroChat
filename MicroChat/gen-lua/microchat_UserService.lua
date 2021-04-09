@@ -5,9 +5,7 @@
 -- @generated
 --
 
-
 local microchat__ttype = require 'microchat_ttypes'
-
 local Thrift = require 'Thrift'
 local TType = Thrift.TType
 local TMessageType = Thrift.TMessageType
@@ -40,6 +38,10 @@ local CreateUser_args = __TObject:new{
 
 
 local GetUserID_args = __TObject:new{
+  username
+}
+
+local Logout_args = __TObject:new{
   username
 }
 
@@ -175,7 +177,40 @@ function UserServiceClient:recv_GetUserID(username)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
-local UserServiceIface = __TObject:new{
+
+function UserServiceClient:Logout(username)
+  self:send_Logout(username)
+  return self:recv_Logout(username)
+end
+
+function UserServiceClient:send_Logout(username)
+  self.oprot:writeMessageBegin('Logout', TMessageType.CALL, self._seqid)
+  local args = Logout_args:new{}
+  args.username = username
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function UserServiceClient:recv_Logout(username)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = Logout_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  elseif result.se then
+    error(result.se)
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
+end
+UserServiceIface = __TObject:new{
   __type = 'UserServiceIface'
 }
 
@@ -285,8 +320,28 @@ function UserServiceProcessor:process_GetUserID(seqid, iprot, oprot, server_ctx)
   oprot.trans:flush()
 end
 
--- HELPER FUNCTIONS AND STRUCTURES
+function UserServiceProcessor:process_Logout(seqid, iprot, oprot, server_ctx)
+  local args = Logout_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = Logout_result:new{}
+  local status, res = pcall(self.handler.Logout, self.handler, args.username)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('Logout', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
 
+-- HELPER FUNCTIONS AND STRUCTURES
 
 function ping_args:read(iprot)
   iprot:readStructBegin()
@@ -547,6 +602,7 @@ function CreateUser_result:write(oprot)
   oprot:writeStructEnd()
 end
 
+
 function GetUserID_args:read(iprot)
   iprot:readStructBegin()
   while true do
@@ -625,4 +681,85 @@ function GetUserID_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
+
+function Logout_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.username = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function Logout_args:write(oprot)
+  oprot:writeStructBegin('Logout_args')
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+Logout_result = __TObject:new{
+  success,
+  se
+}
+
+function Logout_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function Logout_result:write(oprot)
+  oprot:writeStructBegin('Logout_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
 return UserServiceClient

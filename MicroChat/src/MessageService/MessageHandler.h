@@ -23,9 +23,11 @@ namespace microchat
         ~MessageServiceHandler() override = default;
 
         void ping(std::string &_return, const std::string &text) override;
-        void ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users) override;
-        void ReadMessage(std::string &_return, const int64_t messageID) override;
-        void GetMessages(std::vector<Message> &_return, const int64_t userID) override;
+        void ComposeMessage(std::string &_return, const std::string &text, const std::vector<std::string> &users) override;
+        void ReadMessage(std::string &_return, const int64_t messageID, const std::string &username) override;
+        void GetMessages(std::vector<Message> &_return, const std::string &username) override;
+        void GetUnreadMessages(std::vector<Message> &_return, const std::string &username);
+        void GetReadMessages(std::vector<Message> &_return, const std::string &username);
     };
 
     // constructor
@@ -37,22 +39,36 @@ namespace microchat
         _return = "Pong from MessageService";
     }
 
-    void MessageServiceHandler::ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users)
+    void MessageServiceHandler::ComposeMessage(std::string &_return, const std::string &text, const std::vector<std::string> &users)
     {
-        // Your implementation goes here
-        printf("ComposeMessage\n");
+
+        //create new Message object w/ list of recipients
+        //create new SimpleMessage object w/ same messageID, username, READ/UNREAD status
+        //store 1 Message and X SimpleMessage objects into mongoDB
     }
 
-    void MessageServiceHandler::ReadMessage(std::string &_return, const int64_t messageID)
+    void MessageServiceHandler::ReadMessage(std::string &_return, const int64_t messageID, const std::string &username)
     {
-        // Your implementation goes here
-        printf("ReadMessage\n");
+        
+    }
+    void MessageServiceHandler::GetMessages(std::vector<Message> &_return, const std::string &username)
+    {
+        //FIRST search users to see if username exists
+        // if NOT, throw SE
+        // else, search db for any messages that include 'username' in list of recipients
+        //  grab messages and return to user so they can read them
     }
 
-    void MessageServiceHandler::GetMessages(std::vector<Message> &_return, const int64_t userID)
+    void MessageServiceHandler::GetUnreadMessages(std::vector<Message> &_return, const std::string &username)
     {
         // Your implementation goes here
-        printf("GetMessages\n");
+        printf("GetUnreadMessages\n");
+    }
+
+    void MessageServiceHandler::GetReadMessages(std::vector<Message> &_return, const std::string &username)
+    {
+        // Your implementation goes here
+        printf("GetReadMessages\n");
     }
 
 }

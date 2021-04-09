@@ -4,8 +4,11 @@
 #include <mongoc.h>
 #include <bson/bson.h>
 
-#define SERVER_SELECTION_TIMEOUT_MS 1000
+#define SERVER_SELECTION_TIMEOUT_MS 10000
 
+/**
+ * Taken from DeathStarBench Git repo
+ **/
 namespace microchat {
 
 mongoc_client_pool_t* init_mongodb_client_pool(

@@ -25,6 +25,8 @@ class DatabaseServiceIf {
   virtual void ping(std::string& _return, const std::string& text) = 0;
   virtual void WriteToDatabase(std::string& _return, const std::string& query) = 0;
   virtual void ReadFromDatabase(std::string& _return, const std::string& query) = 0;
+  virtual void CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password, const int64_t userID) = 0;
+  virtual void CheckForUser(std::string& _return, const std::string& username) = 0;
 };
 
 class DatabaseServiceIfFactory {
@@ -61,6 +63,12 @@ class DatabaseServiceNull : virtual public DatabaseServiceIf {
     return;
   }
   void ReadFromDatabase(std::string& /* _return */, const std::string& /* query */) {
+    return;
+  }
+  void CreateUser(std::string& /* _return */, const std::string& /* username */, const std::string& /* name */, const std::string& /* password */, const int64_t /* userID */) {
+    return;
+  }
+  void CheckForUser(std::string& /* _return */, const std::string& /* username */) {
     return;
   }
 };
@@ -393,6 +401,251 @@ class DatabaseService_ReadFromDatabase_presult {
 
 };
 
+typedef struct _DatabaseService_CreateUser_args__isset {
+  _DatabaseService_CreateUser_args__isset() : username(false), name(false), password(false), userID(false) {}
+  bool username :1;
+  bool name :1;
+  bool password :1;
+  bool userID :1;
+} _DatabaseService_CreateUser_args__isset;
+
+class DatabaseService_CreateUser_args {
+ public:
+
+  DatabaseService_CreateUser_args(const DatabaseService_CreateUser_args&);
+  DatabaseService_CreateUser_args& operator=(const DatabaseService_CreateUser_args&);
+  DatabaseService_CreateUser_args() : username(), name(), password(), userID(0) {
+  }
+
+  virtual ~DatabaseService_CreateUser_args() noexcept;
+  std::string username;
+  std::string name;
+  std::string password;
+  int64_t userID;
+
+  _DatabaseService_CreateUser_args__isset __isset;
+
+  void __set_username(const std::string& val);
+
+  void __set_name(const std::string& val);
+
+  void __set_password(const std::string& val);
+
+  void __set_userID(const int64_t val);
+
+  bool operator == (const DatabaseService_CreateUser_args & rhs) const
+  {
+    if (!(username == rhs.username))
+      return false;
+    if (!(name == rhs.name))
+      return false;
+    if (!(password == rhs.password))
+      return false;
+    if (!(userID == rhs.userID))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_CreateUser_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_CreateUser_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class DatabaseService_CreateUser_pargs {
+ public:
+
+
+  virtual ~DatabaseService_CreateUser_pargs() noexcept;
+  const std::string* username;
+  const std::string* name;
+  const std::string* password;
+  const int64_t* userID;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_CreateUser_result__isset {
+  _DatabaseService_CreateUser_result__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_CreateUser_result__isset;
+
+class DatabaseService_CreateUser_result {
+ public:
+
+  DatabaseService_CreateUser_result(const DatabaseService_CreateUser_result&);
+  DatabaseService_CreateUser_result& operator=(const DatabaseService_CreateUser_result&);
+  DatabaseService_CreateUser_result() : success() {
+  }
+
+  virtual ~DatabaseService_CreateUser_result() noexcept;
+  std::string success;
+  ServiceException se;
+
+  _DatabaseService_CreateUser_result__isset __isset;
+
+  void __set_success(const std::string& val);
+
+  void __set_se(const ServiceException& val);
+
+  bool operator == (const DatabaseService_CreateUser_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_CreateUser_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_CreateUser_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_CreateUser_presult__isset {
+  _DatabaseService_CreateUser_presult__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_CreateUser_presult__isset;
+
+class DatabaseService_CreateUser_presult {
+ public:
+
+
+  virtual ~DatabaseService_CreateUser_presult() noexcept;
+  std::string* success;
+  ServiceException se;
+
+  _DatabaseService_CreateUser_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
+typedef struct _DatabaseService_CheckForUser_args__isset {
+  _DatabaseService_CheckForUser_args__isset() : username(false) {}
+  bool username :1;
+} _DatabaseService_CheckForUser_args__isset;
+
+class DatabaseService_CheckForUser_args {
+ public:
+
+  DatabaseService_CheckForUser_args(const DatabaseService_CheckForUser_args&);
+  DatabaseService_CheckForUser_args& operator=(const DatabaseService_CheckForUser_args&);
+  DatabaseService_CheckForUser_args() : username() {
+  }
+
+  virtual ~DatabaseService_CheckForUser_args() noexcept;
+  std::string username;
+
+  _DatabaseService_CheckForUser_args__isset __isset;
+
+  void __set_username(const std::string& val);
+
+  bool operator == (const DatabaseService_CheckForUser_args & rhs) const
+  {
+    if (!(username == rhs.username))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_CheckForUser_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_CheckForUser_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class DatabaseService_CheckForUser_pargs {
+ public:
+
+
+  virtual ~DatabaseService_CheckForUser_pargs() noexcept;
+  const std::string* username;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_CheckForUser_result__isset {
+  _DatabaseService_CheckForUser_result__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_CheckForUser_result__isset;
+
+class DatabaseService_CheckForUser_result {
+ public:
+
+  DatabaseService_CheckForUser_result(const DatabaseService_CheckForUser_result&);
+  DatabaseService_CheckForUser_result& operator=(const DatabaseService_CheckForUser_result&);
+  DatabaseService_CheckForUser_result() : success() {
+  }
+
+  virtual ~DatabaseService_CheckForUser_result() noexcept;
+  std::string success;
+  ServiceException se;
+
+  _DatabaseService_CheckForUser_result__isset __isset;
+
+  void __set_success(const std::string& val);
+
+  void __set_se(const ServiceException& val);
+
+  bool operator == (const DatabaseService_CheckForUser_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_CheckForUser_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_CheckForUser_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_CheckForUser_presult__isset {
+  _DatabaseService_CheckForUser_presult__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_CheckForUser_presult__isset;
+
+class DatabaseService_CheckForUser_presult {
+ public:
+
+
+  virtual ~DatabaseService_CheckForUser_presult() noexcept;
+  std::string* success;
+  ServiceException se;
+
+  _DatabaseService_CheckForUser_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
 class DatabaseServiceClient : virtual public DatabaseServiceIf {
  public:
   DatabaseServiceClient(std::shared_ptr< ::apache::thrift::protocol::TProtocol> prot) {
@@ -427,6 +680,12 @@ class DatabaseServiceClient : virtual public DatabaseServiceIf {
   void ReadFromDatabase(std::string& _return, const std::string& query);
   void send_ReadFromDatabase(const std::string& query);
   void recv_ReadFromDatabase(std::string& _return);
+  void CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password, const int64_t userID);
+  void send_CreateUser(const std::string& username, const std::string& name, const std::string& password, const int64_t userID);
+  void recv_CreateUser(std::string& _return);
+  void CheckForUser(std::string& _return, const std::string& username);
+  void send_CheckForUser(const std::string& username);
+  void recv_CheckForUser(std::string& _return);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -445,12 +704,16 @@ class DatabaseServiceProcessor : public ::apache::thrift::TDispatchProcessor {
   void process_ping(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_WriteToDatabase(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_ReadFromDatabase(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_CreateUser(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_CheckForUser(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   DatabaseServiceProcessor(::std::shared_ptr<DatabaseServiceIf> iface) :
     iface_(iface) {
     processMap_["ping"] = &DatabaseServiceProcessor::process_ping;
     processMap_["WriteToDatabase"] = &DatabaseServiceProcessor::process_WriteToDatabase;
     processMap_["ReadFromDatabase"] = &DatabaseServiceProcessor::process_ReadFromDatabase;
+    processMap_["CreateUser"] = &DatabaseServiceProcessor::process_CreateUser;
+    processMap_["CheckForUser"] = &DatabaseServiceProcessor::process_CheckForUser;
   }
 
   virtual ~DatabaseServiceProcessor() {}
@@ -509,6 +772,26 @@ class DatabaseServiceMultiface : virtual public DatabaseServiceIf {
     return;
   }
 
+  void CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password, const int64_t userID) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->CreateUser(_return, username, name, password, userID);
+    }
+    ifaces_[i]->CreateUser(_return, username, name, password, userID);
+    return;
+  }
+
+  void CheckForUser(std::string& _return, const std::string& username) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->CheckForUser(_return, username);
+    }
+    ifaces_[i]->CheckForUser(_return, username);
+    return;
+  }
+
 };
 
 // The 'concurrent' client is a thread safe client that correctly handles
@@ -550,6 +833,12 @@ class DatabaseServiceConcurrentClient : virtual public DatabaseServiceIf {
   void ReadFromDatabase(std::string& _return, const std::string& query);
   int32_t send_ReadFromDatabase(const std::string& query);
   void recv_ReadFromDatabase(std::string& _return, const int32_t seqid);
+  void CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password, const int64_t userID);
+  int32_t send_CreateUser(const std::string& username, const std::string& name, const std::string& password, const int64_t userID);
+  void recv_CreateUser(std::string& _return, const int32_t seqid);
+  void CheckForUser(std::string& _return, const std::string& username);
+  int32_t send_CheckForUser(const std::string& username);
+  void recv_CheckForUser(std::string& _return, const int32_t seqid);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;

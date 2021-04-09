@@ -26,6 +26,7 @@ class UserServiceIf {
   virtual void Login(std::string& _return, const std::string& username, const std::string& password) = 0;
   virtual void CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password) = 0;
   virtual void GetUserID(std::string& _return, const std::string& username) = 0;
+  virtual void Logout(std::string& _return, const std::string& username) = 0;
 };
 
 class UserServiceIfFactory {
@@ -65,6 +66,9 @@ class UserServiceNull : virtual public UserServiceIf {
     return;
   }
   void GetUserID(std::string& /* _return */, const std::string& /* username */) {
+    return;
+  }
+  void Logout(std::string& /* _return */, const std::string& /* username */) {
     return;
   }
 };
@@ -530,6 +534,118 @@ class UserService_GetUserID_presult {
 
 };
 
+typedef struct _UserService_Logout_args__isset {
+  _UserService_Logout_args__isset() : username(false) {}
+  bool username :1;
+} _UserService_Logout_args__isset;
+
+class UserService_Logout_args {
+ public:
+
+  UserService_Logout_args(const UserService_Logout_args&);
+  UserService_Logout_args& operator=(const UserService_Logout_args&);
+  UserService_Logout_args() : username() {
+  }
+
+  virtual ~UserService_Logout_args() noexcept;
+  std::string username;
+
+  _UserService_Logout_args__isset __isset;
+
+  void __set_username(const std::string& val);
+
+  bool operator == (const UserService_Logout_args & rhs) const
+  {
+    if (!(username == rhs.username))
+      return false;
+    return true;
+  }
+  bool operator != (const UserService_Logout_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const UserService_Logout_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class UserService_Logout_pargs {
+ public:
+
+
+  virtual ~UserService_Logout_pargs() noexcept;
+  const std::string* username;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _UserService_Logout_result__isset {
+  _UserService_Logout_result__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _UserService_Logout_result__isset;
+
+class UserService_Logout_result {
+ public:
+
+  UserService_Logout_result(const UserService_Logout_result&);
+  UserService_Logout_result& operator=(const UserService_Logout_result&);
+  UserService_Logout_result() : success() {
+  }
+
+  virtual ~UserService_Logout_result() noexcept;
+  std::string success;
+  ServiceException se;
+
+  _UserService_Logout_result__isset __isset;
+
+  void __set_success(const std::string& val);
+
+  void __set_se(const ServiceException& val);
+
+  bool operator == (const UserService_Logout_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
+      return false;
+    return true;
+  }
+  bool operator != (const UserService_Logout_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const UserService_Logout_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _UserService_Logout_presult__isset {
+  _UserService_Logout_presult__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _UserService_Logout_presult__isset;
+
+class UserService_Logout_presult {
+ public:
+
+
+  virtual ~UserService_Logout_presult() noexcept;
+  std::string* success;
+  ServiceException se;
+
+  _UserService_Logout_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
 class UserServiceClient : virtual public UserServiceIf {
  public:
   UserServiceClient(std::shared_ptr< ::apache::thrift::protocol::TProtocol> prot) {
@@ -567,6 +683,9 @@ class UserServiceClient : virtual public UserServiceIf {
   void GetUserID(std::string& _return, const std::string& username);
   void send_GetUserID(const std::string& username);
   void recv_GetUserID(std::string& _return);
+  void Logout(std::string& _return, const std::string& username);
+  void send_Logout(const std::string& username);
+  void recv_Logout(std::string& _return);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -586,6 +705,7 @@ class UserServiceProcessor : public ::apache::thrift::TDispatchProcessor {
   void process_Login(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_CreateUser(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_GetUserID(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_Logout(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   UserServiceProcessor(::std::shared_ptr<UserServiceIf> iface) :
     iface_(iface) {
@@ -593,6 +713,7 @@ class UserServiceProcessor : public ::apache::thrift::TDispatchProcessor {
     processMap_["Login"] = &UserServiceProcessor::process_Login;
     processMap_["CreateUser"] = &UserServiceProcessor::process_CreateUser;
     processMap_["GetUserID"] = &UserServiceProcessor::process_GetUserID;
+    processMap_["Logout"] = &UserServiceProcessor::process_Logout;
   }
 
   virtual ~UserServiceProcessor() {}
@@ -661,6 +782,16 @@ class UserServiceMultiface : virtual public UserServiceIf {
     return;
   }
 
+  void Logout(std::string& _return, const std::string& username) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->Logout(_return, username);
+    }
+    ifaces_[i]->Logout(_return, username);
+    return;
+  }
+
 };
 
 // The 'concurrent' client is a thread safe client that correctly handles
@@ -705,6 +836,9 @@ class UserServiceConcurrentClient : virtual public UserServiceIf {
   void GetUserID(std::string& _return, const std::string& username);
   int32_t send_GetUserID(const std::string& username);
   void recv_GetUserID(std::string& _return, const int32_t seqid);
+  void Logout(std::string& _return, const std::string& username);
+  int32_t send_Logout(const std::string& username);
+  void recv_Logout(std::string& _return, const int32_t seqid);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;

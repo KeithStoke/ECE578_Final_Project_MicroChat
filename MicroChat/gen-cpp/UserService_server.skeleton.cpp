@@ -40,6 +40,11 @@ class UserServiceHandler : virtual public UserServiceIf {
     printf("GetUserID\n");
   }
 
+  void Logout(std::string& _return, const std::string& username) {
+    // Your implementation goes here
+    printf("Logout\n");
+  }
+
 };
 
 int main(int argc, char **argv) {
