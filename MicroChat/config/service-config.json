@@ -20,11 +20,11 @@
       "port": 27017
     },
     "friend-mongodb": {
-      "addr": "message-mongodb",
+      "addr": "friend-mongodb",
       "port": 27018
     },
     "message-mongodb": {
-      "addr": "friend-mongodb",
+      "addr": "message-mongodb",
       "port": 27019
     }
   }

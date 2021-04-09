@@ -4,7 +4,7 @@
 #include <mongoc.h>
 #include <bson/bson.h>
 
-#define SERVER_SELECTION_TIMEOUT_MS 10000
+#define SERVER_SELECTION_TIMEOUT_MS 5000
 
 /**
  * Taken from DeathStarBench Git repo

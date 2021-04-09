@@ -39,10 +39,10 @@ int main(int argc, char **argv) {
   int my_port = config_json["database-service"]["port"];
 
   mongoc_client_pool_t *mongodb_client_pool =
-      init_mongodb_client_pool(config_json, "friend", 128);
+      init_mongodb_client_pool(config_json, "user", 128);
   mongoc_client_t *mongodb_client = mongoc_client_pool_pop(mongodb_client_pool);
   if (!mongodb_client) {
-    std::cout << "Failed to pop friend recommendation mongoc client";
+    std::cout << "Failed to pop user mongoc client";
     return EXIT_FAILURE;
   }
   bool r = false;

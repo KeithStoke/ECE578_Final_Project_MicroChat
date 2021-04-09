@@ -21,6 +21,8 @@
 #include "../logger.h"
 #include "../utils_mongodb.h"
 
+#define MONGODB_TIMEOUT_MS 5000
+
 namespace microchat
 {
 
@@ -101,8 +103,6 @@ void DatabaseServiceHandler::CheckForUser(std::string& _return, const std::strin
 
 void DatabaseServiceHandler::CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password, const int64_t userID)
 {
-
-  //TODO: EVA ADD USERID to this method!!!!!
 
 std::cout << "CreateUser in Database Service Handler..." << std::endl;
 
