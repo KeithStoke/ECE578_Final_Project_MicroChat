@@ -12,7 +12,7 @@
     "port": 9092
     },
     "database-service": {
-    "addr": "friend-recommendation-service",
+    "addr": "database-service",
     "port": 9093
     },
     "user-mongodb": {

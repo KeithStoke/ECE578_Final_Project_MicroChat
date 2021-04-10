@@ -6,10 +6,19 @@
 --
 
 
-require 'Thrift'
-require 'microchat_ttypes'
+local microchat__ttype = require 'microchat_ttypes'
+local Thrift = require 'Thrift'
+local TType = Thrift.TType
+local TMessageType = Thrift.TMessageType
+local __TObject = Thrift.__TObject
+local TApplicationException = Thrift.TApplicationException
+local __TClient = Thrift.__TClient
+local __TProcessor = Thrift.__TProcessor
+local ttype = Thrift.ttype
+local ttable_size = Thrift.ttable_size
+local TException = Thrift.TException
 
-DatabaseServiceClient = __TObject.new(__TClient, {
+local DatabaseServiceClient = __TObject.new(__TClient, {
   __type = 'DatabaseServiceClient'
 })
 
@@ -109,12 +118,12 @@ function DatabaseServiceClient:recv_ReadFromDatabase(query)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
-DatabaseServiceIface = __TObject:new{
+local DatabaseServiceIface = __TObject:new{
   __type = 'DatabaseServiceIface'
 }
 
 
-DatabaseServiceProcessor = __TObject.new(__TProcessor
+local DatabaseServiceProcessor = __TObject.new(__TProcessor
 , {
  __type = 'DatabaseServiceProcessor'
 })
@@ -200,7 +209,7 @@ end
 
 -- HELPER FUNCTIONS AND STRUCTURES
 
-ping_args = __TObject:new{
+local ping_args = __TObject:new{
   text
 }
 
@@ -270,7 +279,7 @@ function ping_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-WriteToDatabase_args = __TObject:new{
+local WriteToDatabase_args = __TObject:new{
   query
 }
 
@@ -353,7 +362,7 @@ function WriteToDatabase_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-ReadFromDatabase_args = __TObject:new{
+local ReadFromDatabase_args = __TObject:new{
   query
 }
 
@@ -435,3 +444,5 @@ function ReadFromDatabase_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
+return DatabaseServiceClient
