@@ -45,6 +45,11 @@ class DatabaseServiceHandler : virtual public DatabaseServiceIf {
     printf("CheckForUser\n");
   }
 
+  void Login(std::string& _return, const std::string& username, const std::string& password) {
+    // Your implementation goes here
+    printf("Login\n");
+  }
+
 };
 
 int main(int argc, char **argv) {

@@ -82,17 +82,16 @@ namespace microchat
   {
   public:
     UserServiceHandler(
-      std::mutex*,
-      const std::string &,
-      ClientPool<ThriftClient<DatabaseServiceClient>> *
-    );
+        std::mutex *,
+        const std::string &,
+        ClientPool<ThriftClient<DatabaseServiceClient>> *);
     ~UserServiceHandler() override = default;
 
     void ping(std::string &_return, const int32_t id) override;
     void Login(std::string &_return, const std::string &username, const std::string &password) override;
     void CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password) override;
-    void GetUserID(std::string& _return, const std::string& username) override;
-    void Logout(std::string& _return, const std::string& username) override;
+    void GetUserID(std::string &_return, const std::string &username) override;
+    void Logout(std::string &_return, const std::string &username) override;
 
   private:
     std::string _machine_id;
@@ -101,10 +100,10 @@ namespace microchat
   };
 
   UserServiceHandler::UserServiceHandler(
-    std::mutex *thread_lock,
-    const std::string &machine_id,
-    ClientPool<ThriftClient<DatabaseServiceClient>> *database_client_pool
-  ){
+      std::mutex *thread_lock,
+      const std::string &machine_id,
+      ClientPool<ThriftClient<DatabaseServiceClient>> *database_client_pool)
+  {
     _thread_lock = thread_lock;
     _machine_id = machine_id;
     _database_client_pool = database_client_pool;
@@ -121,13 +120,31 @@ namespace microchat
   {
     std::cout << "Login UserService Method" << std::endl;
 
-    //1. connect with mongoDB
-    //2. check username/password combo
-    // -if WRONG COMBO, throw SE
-    // -if NOT FOUND, throw SE
-    // -if RIGHT, set userstatus ONLINE and return userID
+    auto database_client_wrapper = _database_client_pool->Pop();
+    if (!database_client_wrapper)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_THRIFT_CONN_ERROR;
+      se.message = "Failed to connect to database-service";
+      throw se;
+    }
+    auto database_client = database_client_wrapper->GetClient();
 
-    _return = "this will use USERID";
+    std::string user_id = "00000";
+    try
+    {
+      //should return userID
+      database_client->Login(user_id, username, password);
+    }
+    catch (...)
+    {
+      _database_client_pool->Push(database_client_wrapper);
+      LOG(error) << "Failed to send call to database-service ";
+      throw;
+    }
+
+    _database_client_pool->Push(database_client_wrapper);
+    _return = user_id;
   }
 
   void UserServiceHandler::CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password)
@@ -135,17 +152,17 @@ namespace microchat
     std::cout << "CreateUser UserService Method" << std::endl;
 
     //create userID
-    // _thread_lock->lock();
+    _thread_lock->lock();
     int64_t timestamp = duration_cast<milliseconds>(
                             system_clock::now().time_since_epoch())
                             .count() -
                         CUSTOM_EPOCH;
     int idx = GetCounter(timestamp);
-    // _thread_lock->unlock();
+    _thread_lock->unlock();
 
     std::cout << "timestamp is " << timestamp << std::endl;
 
-   std::stringstream sstream;
+    std::stringstream sstream;
     sstream << std::hex << timestamp;
     std::string timestamp_hex(sstream.str());
     if (timestamp_hex.size() > 10)
@@ -178,15 +195,37 @@ namespace microchat
     LOG(debug) << "The user_id of the this request is " << user_id;
     std::cout << "The user_id of this request is... " << user_id << std::endl;
 
-    //check if usename already exists in mongoDB
+    auto database_client_wrapper = _database_client_pool->Pop();
+    if (!database_client_wrapper)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_THRIFT_CONN_ERROR;
+      se.message = "Failed to connect to database-service";
+      throw se;
+    }
+    auto database_client = database_client_wrapper->GetClient();
 
-    //if username is unique, store in mongoDB
+    std::string result = "DEFAULT";
+    try
+    {
+      database_client->CreateUser(result, username, name, password, user_id);
+    }
+    catch (...)
+    {
+      _database_client_pool->Push(database_client_wrapper);
+      LOG(error) << "Failed to send call to database-service ";
+      throw;
+    }
 
-    //return and "redirect" user to login
-    _return = "User successfully created. Please login.";
+    _database_client_pool->Push(database_client_wrapper);
+    if(result.compare("SUCCESS") == 0){
+      _return = "Registration for user " + username + " was successful. Please login";
+    }else{
+    _return = "Failed to register user " + username;
+    }
   }
 
-  void UserServiceHandler::GetUserID(std::string& _return, const std::string& username)
+  void UserServiceHandler::GetUserID(std::string &_return, const std::string &username)
   {
 
     std::cout << "GetUserID UserService method" << std::endl;
@@ -195,84 +234,97 @@ namespace microchat
     //find username
     // -if WRONG/not found, throw SE
     // -if RIGHT, grab userID and return
-    
+
     _return = "422445416448000";
   }
 
-  void UserServiceHandler::Logout(std::string& _return, const std::string& username){
+  void UserServiceHandler::Logout(std::string &_return, const std::string &username)
+  {
     //set user status to OFFLINE
     std::cout << "Logout UserService method" << std::endl;
 
-
     _return = "Logout for user " + username + " was successful";
   }
-  
+
   /*
  * The following code which obtaines machine ID from machine's MAC address was
  * inspired from https://stackoverflow.com/a/16859693.
  */
-u_int16_t HashMacAddressPid(const std::string &mac)
-{
-  u_int16_t hash = 0;
-  std::string mac_pid = mac + std::to_string(getpid());
-  for ( unsigned int i = 0; i < mac_pid.size(); i++ ) {
-    hash += ( mac[i] << (( i & 1 ) * 8 ));
-  }
-  return hash;
-}
-
-int GetMachineId (std::string *mac_hash) {
-  std::string mac;
-  int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP );
-  if ( sock < 0 ) {
-    LOG(error) << "Unable to obtain MAC address";
-    return -1;
-  }
-
-  struct ifconf conf{};
-  char ifconfbuf[ 128 * sizeof(struct ifreq)  ];
-  memset( ifconfbuf, 0, sizeof( ifconfbuf ));
-  conf.ifc_buf = ifconfbuf;
-  conf.ifc_len = sizeof( ifconfbuf );
-  if ( ioctl( sock, SIOCGIFCONF, &conf ))
+  u_int16_t HashMacAddressPid(const std::string &mac)
   {
-    LOG(error) << "Unable to obtain MAC address";
-    return -1;
+    u_int16_t hash = 0;
+    std::string mac_pid = mac + std::to_string(getpid());
+    for (unsigned int i = 0; i < mac_pid.size(); i++)
+    {
+      hash += (mac[i] << ((i & 1) * 8));
+    }
+    return hash;
   }
 
-  struct ifreq* ifr;
-  for (
-      ifr = conf.ifc_req;
-      reinterpret_cast<char *>(ifr) <
-          reinterpret_cast<char *>(conf.ifc_req) + conf.ifc_len;
-      ifr++) {
-    if ( ifr->ifr_addr.sa_data == (ifr+1)->ifr_addr.sa_data ) {
-      continue;  // duplicate, skip it
+  int GetMachineId(std::string *mac_hash)
+  {
+    std::string mac;
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+    if (sock < 0)
+    {
+      LOG(error) << "Unable to obtain MAC address";
+      return -1;
     }
 
-    if ( ioctl( sock, SIOCGIFFLAGS, ifr )) {
-      continue;  // failed to get flags, skip it
+    struct ifconf conf
+    {
+    };
+    char ifconfbuf[128 * sizeof(struct ifreq)];
+    memset(ifconfbuf, 0, sizeof(ifconfbuf));
+    conf.ifc_buf = ifconfbuf;
+    conf.ifc_len = sizeof(ifconfbuf);
+    if (ioctl(sock, SIOCGIFCONF, &conf))
+    {
+      LOG(error) << "Unable to obtain MAC address";
+      return -1;
     }
-    if ( ioctl( sock, SIOCGIFHWADDR, ifr ) == 0 ) {
-      mac = std::string(ifr->ifr_addr.sa_data);
-      if (!mac.empty()) {
-        break;
+
+    struct ifreq *ifr;
+    for (
+        ifr = conf.ifc_req;
+        reinterpret_cast<char *>(ifr) <
+        reinterpret_cast<char *>(conf.ifc_req) + conf.ifc_len;
+        ifr++)
+    {
+      if (ifr->ifr_addr.sa_data == (ifr + 1)->ifr_addr.sa_data)
+      {
+        continue; // duplicate, skip it
+      }
+
+      if (ioctl(sock, SIOCGIFFLAGS, ifr))
+      {
+        continue; // failed to get flags, skip it
+      }
+      if (ioctl(sock, SIOCGIFHWADDR, ifr) == 0)
+      {
+        mac = std::string(ifr->ifr_addr.sa_data);
+        if (!mac.empty())
+        {
+          break;
+        }
       }
     }
-  }
-  close(sock);
+    close(sock);
 
-  std::stringstream stream;
-  stream << std::hex << HashMacAddressPid(mac);
-  *mac_hash = stream.str();
+    std::stringstream stream;
+    stream << std::hex << HashMacAddressPid(mac);
+    *mac_hash = stream.str();
 
-  if (mac_hash->size() > 3) {
-    mac_hash->erase(0, mac_hash->size() - 3);
-  } else if (mac_hash->size() < 3) {
-    *mac_hash = std::string(3 - mac_hash->size(), '0') + *mac_hash;
+    if (mac_hash->size() > 3)
+    {
+      mac_hash->erase(0, mac_hash->size() - 3);
+    }
+    else if (mac_hash->size() < 3)
+    {
+      *mac_hash = std::string(3 - mac_hash->size(), '0') + *mac_hash;
+    }
+    return 0;
   }
-  return 0;
-}
 
 } //namespace microchat
 
