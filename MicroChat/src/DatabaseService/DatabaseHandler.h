@@ -178,6 +178,7 @@ namespace microchat
     if (!found) //username does not exists in database
     {
       LOG(warning) << "User: " << username << " doesn't exist in MongoDB";
+      std::cout << "User: " << username << " doesn't exist in MongoDB";
       bson_destroy(query);
       mongoc_cursor_destroy(cursor);
       mongoc_collection_destroy(collection);
@@ -190,6 +191,7 @@ namespace microchat
     else //we found username!
     {
       LOG(debug) << "Username: " << username << " found in MongoDB";
+      std::cout << "Username: " << username << " found in MongoDB" << std::endl;
       bson_iter_t iter_password;
       bson_iter_t iter_user_id;
       //grab password and userid
@@ -202,6 +204,7 @@ namespace microchat
       else //some reason password and/or userid were not stored
       {
         LOG(error) << "user: " << username << " entry is NOT complete";
+        std::cout << "user: " << username << " entry is NOT complete";
         bson_destroy(query);
         mongoc_cursor_destroy(cursor);
         mongoc_collection_destroy(collection);
@@ -219,7 +222,8 @@ namespace microchat
       if (!password_stored.empty() && (password.compare(password_stored) == 0))
       {
         //if passwords match, return SUCCESS
-        _return = user_id_stored;
+        std::cout << "Password and username were a match" << std::endl;
+        _return = std::to_string(user_id_stored);
       }
       else
       {

@@ -144,7 +144,7 @@ namespace microchat
     }
 
     _database_client_pool->Push(database_client_wrapper);
-    _return = user_id;
+    _return = "Login successful. Your userID is: " + user_id;
   }
 
   void UserServiceHandler::CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password)
