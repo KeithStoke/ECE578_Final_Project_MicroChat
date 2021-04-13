@@ -39,6 +39,20 @@ namespace microchat{
     std::mutex *_thread_lock;
     ClientPool<ThriftClient<DatabaseServiceClient>> *_database_client_pool;
 };
+  /*
+ * The following code which obtaines machine ID from machine's MAC address was
+ * inspired from https://stackoverflow.com/a/16859693.
+ */
+  u_int16_t HashMacAddressPid(const std::string &mac)
+  {
+    u_int16_t hash = 0;
+    std::string mac_pid = mac + std::to_string(getpid());
+    for (unsigned int i = 0; i < mac_pid.size(); i++)
+    {
+      hash += (mac[i] << ((i & 1) * 8));
+    }
+    return hash;
+  }
 int GetMachineId(std::string *mac_hash)
   {
     std::string mac;
@@ -106,7 +120,7 @@ int GetMachineId(std::string *mac_hash)
 FriendRecommendationServiceHandler::FriendRecommendationServiceHandler(
      std::mutex *thread_lock,
       const std::string &machine_id,
-      ClientPool<ThriftClient<DatabaseServiceClient>> *database_client_pool)) 
+      ClientPool<ThriftClient<DatabaseServiceClient>> *database_client_pool) 
 {
     _thread_lock = thread_lock;
     _machine_id = machine_id;
