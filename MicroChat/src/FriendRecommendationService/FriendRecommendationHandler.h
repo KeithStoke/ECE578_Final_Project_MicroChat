@@ -6,7 +6,14 @@
 #include <regex>
 #include <future>
 #include <vector>
-
+#include <iomanip>
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <nlohmann/json.hpp>
+#include <jwt/jwt.hpp>
+#include <random>
 #include "../../gen-cpp/FriendRecommendationService.h"
 #include "../../gen-cpp/DatabaseService.h"
 
@@ -32,12 +39,74 @@ namespace microchat{
     std::mutex *_thread_lock;
     ClientPool<ThriftClient<DatabaseServiceClient>> *_database_client_pool;
 };
+int GetMachineId(std::string *mac_hash)
+  {
+    std::string mac;
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+    if (sock < 0)
+    {
+      LOG(error) << "Unable to obtain MAC address";
+      return -1;
+    }
 
+    struct ifconf conf
+    {
+    };
+    char ifconfbuf[128 * sizeof(struct ifreq)];
+    memset(ifconfbuf, 0, sizeof(ifconfbuf));
+    conf.ifc_buf = ifconfbuf;
+    conf.ifc_len = sizeof(ifconfbuf);
+    if (ioctl(sock, SIOCGIFCONF, &conf))
+    {
+      LOG(error) << "Unable to obtain MAC address";
+      return -1;
+    }
+
+    struct ifreq *ifr;
+    for (
+        ifr = conf.ifc_req;
+        reinterpret_cast<char *>(ifr) <
+        reinterpret_cast<char *>(conf.ifc_req) + conf.ifc_len;
+        ifr++)
+    {
+      if (ifr->ifr_addr.sa_data == (ifr + 1)->ifr_addr.sa_data)
+      {
+        continue; // duplicate, skip it
+      }
+
+      if (ioctl(sock, SIOCGIFFLAGS, ifr))
+      {
+        continue; // failed to get flags, skip it
+      }
+      if (ioctl(sock, SIOCGIFHWADDR, ifr) == 0)
+      {
+        mac = std::string(ifr->ifr_addr.sa_data);
+        if (!mac.empty())
+        {
+          break;
+        }
+      }
+    }
+    close(sock);
+
+    std::stringstream stream;
+    stream << std::hex << HashMacAddressPid(mac);
+    *mac_hash = stream.str();
+
+    if (mac_hash->size() > 3)
+    {
+      mac_hash->erase(0, mac_hash->size() - 3);
+    }
+    else if (mac_hash->size() < 3)
+    {
+      *mac_hash = std::string(3 - mac_hash->size(), '0') + *mac_hash;
+    }
+    return 0;
+  }
 FriendRecommendationServiceHandler::FriendRecommendationServiceHandler(
      std::mutex *thread_lock,
       const std::string &machine_id,
-      ClientPool<ThriftClient<DatabaseServiceClient>> *database_client_pool)
-) 
+      ClientPool<ThriftClient<DatabaseServiceClient>> *database_client_pool)) 
 {
     _thread_lock = thread_lock;
     _machine_id = machine_id;
@@ -56,7 +125,7 @@ void FriendRecommendationServiceHandler::GetFriendRecommendations(std::vector<st
 void FriendRecommendationServiceHandler::onLogin(std::string & _return, const std::string& username)
 {
     std::cout << "On Login from Friend recommendation" <<std::endl;
-    
+
     auto database_client_wrapper = _database_client_pool->Pop();
     if (!database_client_wrapper)
     {
