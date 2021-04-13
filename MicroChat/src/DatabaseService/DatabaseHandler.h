@@ -38,7 +38,7 @@ namespace microchat
     void CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password, const int64_t userID) override;
     void CheckForUser(std::string &_return, const std::string &username) override;
     void Login(std::string& _return, const std::string& username, const std::string& password) override;
-
+    void UserStatus(std::string& _return, const std::string& username, const int64_t status) override;
   private:
     mongoc_client_pool_t *_mongodb_client_pool;
   };
@@ -234,6 +234,12 @@ namespace microchat
         throw se;
       }
     }
+  }
+
+
+  void DatabaseServiceHandler::UserStatus(std::string &_return, const std::string &username,  const int64_t status)
+  {
+    std::cout << "Setting User Status in Database" <<std::endl;
   }
 
   void DatabaseServiceHandler::CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password, const int64_t userID)

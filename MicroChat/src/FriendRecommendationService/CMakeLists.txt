@@ -2,6 +2,7 @@ add_executable(
     FriendRecommendationService
     FriendRecommendationService.cpp
     ${THRIFT_GEN_CPP_DIR}/FriendRecommendationService.cpp
+    ${THRIFT_GEN_CPP_DIR}/DatabaseService.cpp
     ${THRIFT_GEN_CPP_DIR}/microchat_types.cpp
 )
 

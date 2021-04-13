@@ -18,6 +18,7 @@
 
 #include "../../gen-cpp/UserService.h"
 #include "../../gen-cpp/DatabaseService.h"
+#include "../../gen-cpp/FriendRecommendationService.h"
 
 #include "../ClientPool.h"
 #include "../ThriftClient.h"
@@ -84,7 +85,7 @@ namespace microchat
     UserServiceHandler(
         std::mutex *,
         const std::string &,
-        ClientPool<ThriftClient<DatabaseServiceClient>> *);
+        ClientPool<ThriftClient<FriendRecommendationServiceClient>> *);
     ~UserServiceHandler() override = default;
 
     void ping(std::string &_return, const int32_t id) override;
@@ -97,16 +98,19 @@ namespace microchat
     std::string _machine_id;
     std::mutex *_thread_lock;
     ClientPool<ThriftClient<DatabaseServiceClient>> *_database_client_pool;
+    ClientPool<ThriftClient<FriendRecommendationServiceClient>> *_friend_client_pool;
   };
 
   UserServiceHandler::UserServiceHandler(
       std::mutex *thread_lock,
       const std::string &machine_id,
-      ClientPool<ThriftClient<DatabaseServiceClient>> *database_client_pool)
+      ClientPool<ThriftClient<DatabaseServiceClient>> *database_client_pool,
+      ClientPool<ThriftClient<FriendRecommendationServiceClient>> *friend_client_pool)
   {
     _thread_lock = thread_lock;
     _machine_id = machine_id;
     _database_client_pool = database_client_pool;
+    _friend_client_pool = friend_client_pool;
   };
 
   void UserServiceHandler::ping(std::string &_return, const int32_t id)
@@ -129,7 +133,6 @@ namespace microchat
       throw se;
     }
     auto database_client = database_client_wrapper->GetClient();
-
     std::string user_id = "00000";
     try
     {
@@ -142,9 +145,23 @@ namespace microchat
       LOG(error) << "Failed to send call to database-service ";
       throw;
     }
-
     _database_client_pool->Push(database_client_wrapper);
     _return = "Login successful. Your userID is: " + user_id;
+
+
+
+    auto friend_client_wrapper = _friend_client_pool->Pop();
+    if (!friend_client_wrapper)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_THRIFT_CONN_ERROR;
+      se.message = "Failed to connect to friend-recommendation-service";
+      throw se;
+    }
+    auto friend_client = friend_client_wrapper->GetClient();
+    friend_client->onLogin(user_id, username, 1)
+    _friend_client_pool->Push(database_client_wrapper);
+    
   }
 
   void UserServiceHandler::CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password)

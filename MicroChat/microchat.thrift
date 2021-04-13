@@ -60,6 +60,7 @@ service MessageService{
 service FriendRecommendationService{
 
   string ping(1:string text),
+  string onLogin(1:string username) throws (1: ServiceException se),
   list<string> GetFriendRecommendations(1:string username) throws (1: ServiceException se),
 
 }
@@ -70,6 +71,7 @@ service DatabaseService{
   string ReadFromDatabase(1:string query) throws (1: ServiceException se),
   string CreateUser(1:string username, 2:string name, 3:string password, 4:i64 userID) throws(1:ServiceException se),
   string CheckForUser(1:string username) throws(1:ServiceException se),
-  string Login(1:string username, 2:string password) throws(1:ServiceException se)
+  string Login(1:string username, 2:string password) throws(1:ServiceException se),
+  string UserStatus(1:string username, 2:i64 status) throws(1:ServiceException se)
 }
 

@@ -54,14 +54,28 @@ int main(int argc, char **argv)
   ClientPool<ThriftClient<DatabaseServiceClient>> database_client_pool(
       "database-service", database_service_addr, database_service_port, 0, 128, 1000);
 
+  //Get friend service port
+  int friend_service_port = config_json["friend-recommendation-service"]["port"];
+  std::string friend_service_addr = config_json["friend-recommendation-service"]["addr"];
 
+  std::string machine_id;
+  if (GetMachineId(&machine_id) != 0)
+  {
+    exit(EXIT_FAILURE);
+  }
+
+  std::mutex thread_lock;
+
+  ClientPool<ThriftClient<FriendRecommendationServiceClient>> friend_client_pool(
+      "friend-recommendation-service", friend_service_addr, friend_service_port, 0, 128, 1000);
 
   TThreadedServer server(
       std::make_shared<UserServiceProcessor>(
           std::make_shared<UserServiceHandler>(
             &thread_lock,
             machine_id,
-            &database_client_pool
+            &database_client_pool,
+            &friend_client_pool
           )),
       std::make_shared<TServerSocket>("0.0.0.0", my_port),
       std::make_shared<TFramedTransportFactory>(),
