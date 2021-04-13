@@ -85,7 +85,7 @@ namespace microchat
     UserServiceHandler(
         std::mutex *,
         const std::string &,
-        ClientPool<ThriftClient<DatabaseServiceClient>> *
+        ClientPool<ThriftClient<DatabaseServiceClient>> *,
         ClientPool<ThriftClient<FriendRecommendationServiceClient>> *);
     ~UserServiceHandler() override = default;
 
@@ -161,7 +161,7 @@ namespace microchat
     }
     auto friend_client = friend_client_wrapper->GetClient();
     friend_client->onLogin(user_id, username);
-    _friend_client_pool->Push(database_client_wrapper);
+    _friend_client_pool->Push(friend_client_wrapper);
     
   }
 
