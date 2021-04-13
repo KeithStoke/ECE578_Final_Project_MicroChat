@@ -160,7 +160,7 @@ namespace microchat
       throw se;
     }
     auto friend_client = friend_client_wrapper->GetClient();
-    friend_client->onLogin(user_id, username, 1)
+    friend_client->onLogin(user_id, username);
     _friend_client_pool->Push(database_client_wrapper);
     
   }
