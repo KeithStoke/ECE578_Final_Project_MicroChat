@@ -85,6 +85,7 @@ namespace microchat
     UserServiceHandler(
         std::mutex *,
         const std::string &,
+        ClientPool<ThriftClient<DatabaseServiceClient>> *
         ClientPool<ThriftClient<FriendRecommendationServiceClient>> *);
     ~UserServiceHandler() override = default;
 
