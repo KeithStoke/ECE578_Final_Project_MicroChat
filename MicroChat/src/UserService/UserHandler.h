@@ -218,10 +218,13 @@ namespace microchat
     }
 
     _database_client_pool->Push(database_client_wrapper);
-    if(result.compare("SUCCESS") == 0){
+    if (result.compare("SUCCESS") == 0)
+    {
       _return = "Registration for user " + username + " was successful. Please login";
-    }else{
-    _return = "Failed to register user " + username;
+    }
+    else
+    {
+      _return = "Failed to register user " + username;
     }
   }
 
@@ -243,7 +246,31 @@ namespace microchat
     //set user status to OFFLINE
     std::cout << "Logout UserService method" << std::endl;
 
-    _return = "Logout for user " + username + " was successful";
+    auto database_client_wrapper = _database_client_pool->Pop();
+    if (!database_client_wrapper)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_THRIFT_CONN_ERROR;
+      se.message = "Failed to connect to database-service";
+      throw se;
+    }
+    auto database_client = database_client_wrapper->GetClient();
+
+    std::string result = "00000";
+    try
+    {
+      database_client->Logout(result, username);
+    }
+    catch (...)
+    {
+      _database_client_pool->Push(database_client_wrapper);
+      LOG(error) << "Failed to send call to database-service ";
+      throw;
+    }
+
+    _database_client_pool->Push(database_client_wrapper);
+
+    _return = "Logout for user " + username + " was successful " + result;
   }
 
   /*
