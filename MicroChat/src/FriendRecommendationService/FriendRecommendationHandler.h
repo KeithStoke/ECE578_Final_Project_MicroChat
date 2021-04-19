@@ -58,6 +58,10 @@ void FriendRecommendationServiceHandler::GetFriendRecommendations(std::vector<st
 void FriendRecommendationServiceHandler::onLogin(std::string & _return, const std::string& username)
 {
     std::cout << "On Login from Friend recommendation" <<std::endl;
+    std::string test;
+    std::cout << "Please Enter a message"<<std::endl;
+    std::cin >> test;
+    std::cout<< "Message was: " << test << std::endl;
 
     auto database_client_wrapper = _database_client_pool->Pop();
     if (!database_client_wrapper)
@@ -67,6 +71,9 @@ void FriendRecommendationServiceHandler::onLogin(std::string & _return, const st
       se.message = "Failed to connect to database-service";
       throw se;
     }
+
+
+
     auto database_client = database_client_wrapper->GetClient();
 }
 
