@@ -59,8 +59,6 @@ int main(int argc, char **argv) {
   TThreadedServer server(
       std::make_shared<FriendRecommendationServiceProcessor>(
           std::make_shared<FriendRecommendationServiceHandler>(
-            &thread_lock,
-            machine_id,
             &database_client_pool
           )),
       std::make_shared<TServerSocket>("0.0.0.0", my_port),
