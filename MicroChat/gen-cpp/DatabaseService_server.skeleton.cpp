@@ -25,16 +25,6 @@ class DatabaseServiceHandler : virtual public DatabaseServiceIf {
     printf("ping\n");
   }
 
-  void WriteToDatabase(std::string& _return, const std::string& query) {
-    // Your implementation goes here
-    printf("WriteToDatabase\n");
-  }
-
-  void ReadFromDatabase(std::string& _return, const std::string& query) {
-    // Your implementation goes here
-    printf("ReadFromDatabase\n");
-  }
-
   void CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password, const int64_t userID) {
     // Your implementation goes here
     printf("CreateUser\n");
@@ -48,6 +38,11 @@ class DatabaseServiceHandler : virtual public DatabaseServiceIf {
   void Login(std::string& _return, const std::string& username, const std::string& password) {
     // Your implementation goes here
     printf("Login\n");
+  }
+
+  void Logout(std::string& _return, const std::string& username) {
+    // Your implementation goes here
+    printf("Logout\n");
   }
 
 };
