@@ -43,13 +43,6 @@ int main(int argc, char **argv) {
   int database_service_port = config_json["database-service"]["port"];
   std::string database_service_addr = config_json["database-service"]["addr"];
 
-  std::string machine_id;
-  if (GetMachineId(&machine_id) != 0)
-  {
-    exit(EXIT_FAILURE);
-  }
-
-  std::mutex thread_lock;
 
   ClientPool<ThriftClient<DatabaseServiceClient>> database_client_pool(
       "database-service", database_service_addr, database_service_port, 0, 128, 1000);
