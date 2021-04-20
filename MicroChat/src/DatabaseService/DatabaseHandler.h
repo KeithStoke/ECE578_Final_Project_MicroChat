@@ -87,6 +87,9 @@ namespace microchat
     while (mongoc_cursor_next (cursor, &doc)) {
       //grab password and userid
        std::cout<< "Users found were:"<<std::endl;
+      str = bson_as_canonical_extended_json (doc, NULL);
+      printf ("%s\n", str);
+      bson_free (str);
       if (bson_iter_init_find(&iter_username, doc, "username"))     
       {
         username_stored = bson_iter_value(&iter_username)->value.v_utf8.str;
