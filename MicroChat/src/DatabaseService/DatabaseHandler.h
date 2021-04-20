@@ -120,7 +120,7 @@ namespace microchat
     
   }
 
-  void DatabaseServiceHandler::Login(std::string& _return, const std::string& username, const std::string& password)
+   void DatabaseServiceHandler::Login(std::string &_return, const std::string &username, const std::string &password)
   {
 
     std::string password_stored;
@@ -206,8 +206,30 @@ namespace microchat
         se.message = "user: " + username + " entry is NOT complete";
         throw se;
       }
+
+      bson_t *update_query = bson_new();
+      BSON_APPEND_UTF8(update_query, "username", username.c_str());
+      bson_t *update = bson_new();
+      bson_error_t update_error;
+      BSON_APPEND_INT64(update, "user_status", UserStatus::type::ONLINE); //ONLINE = 0
+
+      if (!mongoc_collection_update(collection, MONGOC_UPDATE_NONE, update_query, update, NULL, &error))
+      {
+        std::cout << "Failed to update user status of " << username
+                  << " in MongoDB: " << error.message;
+        ServiceException se;
+        se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
+        se.message = "Failed to update user status of " + username + " in MongoDB: " + update_error.message;
+        bson_destroy(update_query);
+        bson_destroy(update);
+        mongoc_collection_destroy(collection);
+        mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+        throw se;
+      }
       bson_destroy(query);
       mongoc_cursor_destroy(cursor);
+      bson_destroy(update_query);
+      bson_destroy(update);
       mongoc_collection_destroy(collection);
       mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
 
