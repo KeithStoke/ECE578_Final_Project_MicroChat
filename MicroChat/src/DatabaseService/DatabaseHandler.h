@@ -79,14 +79,18 @@ namespace microchat
     mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
         collection, query, nullptr, nullptr);
     const bson_t *doc;
-
+    std::string username_stored;
     //Print off all users
     char* str;
+    bson_iter_t iter_username;
     std::cout<< "Users found were:"<<std::endl;
     while (mongoc_cursor_next (cursor, &doc)) {
-      str = bson_as_canonical_extended_json (doc, NULL);
-      printf ("User found in query: %s\n", str);
-      bson_free (str);
+      //grab password and userid
+      if (bson_iter_init_find(&iter_username, doc, "username")     
+      {
+        username_stored = bson_iter_value(&iter_username)->value.v_utf8.str;
+        std::cout<< "User Found in Databse is: "<< username_stored<< std::endl;
+      }
    }
    std::cout<< "End of Query"<< std::endl;
     bson_error_t error;
