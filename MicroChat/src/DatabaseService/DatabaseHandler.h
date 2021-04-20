@@ -91,6 +91,15 @@ namespace microchat
         username_stored = bson_iter_value(&iter_username)->value.v_utf8.str;
         std::cout<< "User Found in Databse is: "<< username_stored<< std::endl;
       }
+
+       bson_iter_t iter_user_id;
+       int64_t user_id_stored;
+      //grab password and userid
+      if (bson_iter_init_find(&iter_user_id, doc, "user_id"))
+      {
+        user_id_stored = bson_iter_value(&iter_user_id)->value.v_int64;
+        std::cout<< "User ID Found in Databse is: "<< user_id_stored<< std::endl;
+      }
    }
    std::cout<< "End of Query"<< std::endl;
     bson_error_t error;
