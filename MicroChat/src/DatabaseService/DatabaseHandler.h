@@ -33,8 +33,7 @@ namespace microchat
     ~DatabaseServiceHandler() override = default;
 
     void ping(std::string &_return, const std::string &text) override;
-    void WriteToDatabase(std::string &_return, const std::string &query) override;
-    void ReadFromDatabase(std::string &_return, const std::string &query) override;
+   
     void CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password, const int64_t userID) override;
     void CheckForUser(std::string &_return, const std::string &username) override;
     void Login(std::string &_return, const std::string &username, const std::string &password) override;
@@ -83,7 +82,7 @@ namespace microchat
 
     //Print off all users
     char* str;
-    cout<< "Users found were:"<<std::endl;
+    std::cout<< "Users found were:"<<std::endl;
     while (mongoc_cursor_next (cursor, &doc)) {
       str = bson_as_canonical_extended_json (doc, NULL);
       printf ("%s\n", str);
@@ -104,38 +103,14 @@ namespace microchat
       throw se;
     }
 
-    if (!found) //username does not exists in database
-    {
-      LOG(warning) << "No online users found"<<std::endl;
-      bson_destroy(query);
-      mongoc_cursor_destroy(cursor);
-      mongoc_collection_destroy(collection);
-      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
-      ServiceException se;
-      se.errorCode = ErrorCode::SE_UNAUTHORIZED;
-
-      throw se;
-    }else{
-      _return = "Users are online ";
-    }
+    _return = "Users are online ";
+    
   }
 
   void DatabaseServiceHandler::ping(std::string &_return, const std::string &text)
   {
     std::cout << "Ping from DatabaseServiceHandler... " << std::endl;
     _return = "Pong from DatabaseServiceHandler!";
-  }
-
-  void DatabaseServiceHandler::WriteToDatabase(std::string &_return, const std::string &query)
-  {
-    // Your implementation goes here
-    printf("WriteToDatabase\n");
-  }
-
-  void DatabaseServiceHandler::ReadFromDatabase(std::string &_return, const std::string &query)
-  {
-    // Your implementation goes here
-    printf("ReadFromDatabase\n");
   }
 
   void DatabaseServiceHandler::CheckForUser(std::string &_return, const std::string &username)
