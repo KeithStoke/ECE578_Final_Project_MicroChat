@@ -83,15 +83,18 @@ namespace microchat
     //Print off all users
     char* str;
     bson_iter_t iter_username;
-    std::cout<< "Users found were:"<<std::endl;
+   
     while (mongoc_cursor_next (cursor, &doc)) {
       //grab password and userid
+       std::cout<< "Users found were:"<<std::endl;
       if (bson_iter_init_find(&iter_username, doc, "username"))     
       {
         username_stored = bson_iter_value(&iter_username)->value.v_utf8.str;
         std::cout<< "User Found in Databse is: "<< username_stored<< std::endl;
       }
-
+      else{
+        std::cout<<"Users not found in database"<<std::endl;
+      }
        bson_iter_t iter_user_id;
        int64_t user_id_stored;
       //grab password and userid
