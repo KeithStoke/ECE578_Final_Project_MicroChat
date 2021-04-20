@@ -74,8 +74,8 @@ namespace microchat
     }
 
     bson_t *query = bson_new();
-    BSON_APPEND_UTF8(query, "user_status", UserStatus::type::ONLINE);
-
+    BSON_APPEND_INT64(query, "user_status", UserStatus::type::ONLINE);
+  
     mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
         collection, query, nullptr, nullptr);
     const bson_t *doc;
