@@ -71,6 +71,7 @@ service DatabaseService{
   string CheckForUser(1:string username) throws(1:ServiceException se),
   string Login(1:string username, 2:string password) throws(1:ServiceException se),
   string UserStatus(1:string username, 2:i64 status) throws(1:ServiceException se)
-  string Logout(1:string username) throws(1:ServiceException se)
+  string Logout(1:string username) throws(1:ServiceException se),
+  string OnlineUsers() throws(1:ServiceException se)
 }
 

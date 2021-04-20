@@ -33,8 +33,7 @@ namespace microchat
     ~DatabaseServiceHandler() override = default;
 
     void ping(std::string &_return, const std::string &text) override;
-    void WriteToDatabase(std::string &_return, const std::string &query) override;
-    void ReadFromDatabase(std::string &_return, const std::string &query) override;
+
     void CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password, const int64_t userID) override;
     void CheckForUser(std::string &_return, const std::string &username) override;
     void Login(std::string &_return, const std::string &username, const std::string &password) override;
@@ -64,17 +63,6 @@ namespace microchat
     _return = "Pong from DatabaseServiceHandler!";
   }
 
-  void DatabaseServiceHandler::WriteToDatabase(std::string &_return, const std::string &query)
-  {
-    // Your implementation goes here
-    printf("WriteToDatabase\n");
-  }
-
-  void DatabaseServiceHandler::ReadFromDatabase(std::string &_return, const std::string &query)
-  {
-    // Your implementation goes here
-    printf("ReadFromDatabase\n");
-  }
 
   void DatabaseServiceHandler::CheckForUser(std::string &_return, const std::string &username)
   {
@@ -243,39 +231,7 @@ namespace microchat
       }
     }
   }
-      ServiceException se;
-      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
-      se.message = "Failed to pop a client from MongoDB pool";
-      throw se;
-    }
-    auto collection = mongoc_client_get_collection(
-        mongodb_client, "user", "user");
-    if (!collection)
-    {
-      ServiceException se;
-      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
-      se.message = "Failed to create collection user from DB user";
-      throw se;
-    }
-    bson_error_t error;
-    bson_t *query = bson_new();
-    BSON_APPEND_UTF8(query, "username", username.c_str());
-    bson_t *update = bson_new();
-    BSON_APPEND_INT64(update, "user_status", UserStatus::type::OFFLINE); //OFFLINE = 1
-    if (!mongoc_collection_update(collection, MONGOC_UPDATE_NONE, query, update, NULL, &error))
-    {
-      std::cout << "Failed to logout " << username
-                << " off MongoDB: " << error.message;
-      ServiceException se;
-      se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
-      se.message = "Failed to logout " + username + " of MongoDB: " + error.message;
-      bson_destroy(query);
-      bson_destroy(update);
-      mongoc_collection_destroy(collection);
-      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
-      throw se;
-    }
-    _return = "Successful logout of user " + username;
+   
 
   void DatabaseServiceHandler::UserStatus(std::string &_return, const std::string &username,  const int64_t status)
   {
