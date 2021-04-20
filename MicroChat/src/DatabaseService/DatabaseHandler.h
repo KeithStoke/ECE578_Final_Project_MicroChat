@@ -86,7 +86,7 @@ namespace microchat
     std::cout<< "Users found were:"<<std::endl;
     while (mongoc_cursor_next (cursor, &doc)) {
       //grab password and userid
-      if (bson_iter_init_find(&iter_username, doc, "username")     
+      if (bson_iter_init_find(&iter_username, doc, "username"))     
       {
         username_stored = bson_iter_value(&iter_username)->value.v_utf8.str;
         std::cout<< "User Found in Databse is: "<< username_stored<< std::endl;
