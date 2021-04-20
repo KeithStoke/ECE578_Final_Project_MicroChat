@@ -85,9 +85,10 @@ namespace microchat
     std::cout<< "Users found were:"<<std::endl;
     while (mongoc_cursor_next (cursor, &doc)) {
       str = bson_as_canonical_extended_json (doc, NULL);
-      printf ("%s\n", str);
+      printf ("User found in query: %s\n", str);
       bson_free (str);
    }
+   std::cout<< "End of Query"<< std::endl;
     bson_error_t error;
     
     if (mongoc_cursor_error(cursor, &error))
