@@ -33,7 +33,8 @@ namespace microchat
     ~DatabaseServiceHandler() override = default;
 
     void ping(std::string &_return, const std::string &text) override;
-
+    void WriteToDatabase(std::string &_return, const std::string &query) override;
+    void ReadFromDatabase(std::string &_return, const std::string &query) override;
     void CreateUser(std::string &_return, const std::string &username, const std::string &name, const std::string &password, const int64_t userID) override;
     void CheckForUser(std::string &_return, const std::string &username) override;
     void Login(std::string &_return, const std::string &username, const std::string &password) override;
@@ -54,20 +55,7 @@ namespace microchat
 
   void DatabaseServiceHandler::OnlineUsers(std::string& _return)
   {
-
-  }
-
-  void DatabaseServiceHandler::ping(std::string &_return, const std::string &text)
-  {
-    std::cout << "Ping from DatabaseServiceHandler... " << std::endl;
-    _return = "Pong from DatabaseServiceHandler!";
-  }
-
-
-  void DatabaseServiceHandler::CheckForUser(std::string &_return, const std::string &username)
-  {
-
-    mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
+  mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
         _mongodb_client_pool);
     if (!mongodb_client)
     {
@@ -87,14 +75,22 @@ namespace microchat
     }
 
     bson_t *query = bson_new();
-    BSON_APPEND_UTF8(query, "username", username.c_str());
+    BSON_APPEND_UTF8(query, "user_status", UserStatus::type::ONLINE);
 
     mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
         collection, query, nullptr, nullptr);
     const bson_t *doc;
-    bool found = mongoc_cursor_next(cursor, &doc);
 
+    //Print off all users
+    char* str;
+    cout<< "Users found were:"<<std::endl;
+    while (mongoc_cursor_next (cursor, &doc)) {
+      str = bson_as_canonical_extended_json (doc, NULL);
+      printf ("%s\n", str);
+      bson_free (str);
+   }
     bson_error_t error;
+    
     if (mongoc_cursor_error(cursor, &error))
     {
       LOG(error) << error.message;
@@ -110,18 +106,42 @@ namespace microchat
 
     if (!found) //username does not exists in database
     {
-      LOG(warning) << "User: " << username << " doesn't exist in MongoDB";
+      LOG(warning) << "No online users found"<<std::endl;
       bson_destroy(query);
       mongoc_cursor_destroy(cursor);
       mongoc_collection_destroy(collection);
       mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
       ServiceException se;
       se.errorCode = ErrorCode::SE_UNAUTHORIZED;
-      se.message = "User: " + username + " is not registered";
+
       throw se;
     }else{
-      _return = "User: " + username + " is registered";
+      _return = "Users are online ";
     }
+  }
+
+  void DatabaseServiceHandler::ping(std::string &_return, const std::string &text)
+  {
+    std::cout << "Ping from DatabaseServiceHandler... " << std::endl;
+    _return = "Pong from DatabaseServiceHandler!";
+  }
+
+  void DatabaseServiceHandler::WriteToDatabase(std::string &_return, const std::string &query)
+  {
+    // Your implementation goes here
+    printf("WriteToDatabase\n");
+  }
+
+  void DatabaseServiceHandler::ReadFromDatabase(std::string &_return, const std::string &query)
+  {
+    // Your implementation goes here
+    printf("ReadFromDatabase\n");
+  }
+
+  void DatabaseServiceHandler::CheckForUser(std::string &_return, const std::string &username)
+  {
+      _return = "Users are online ";
+    
   }
 
   void DatabaseServiceHandler::Login(std::string& _return, const std::string& username, const std::string& password)
@@ -230,9 +250,53 @@ namespace microchat
         throw se;
       }
     }
+    OnlineUsers(_return);
   }
-   
+ 
+ void DatabaseServiceHandler::Logout(std::string &_return, const std::string &username)
+  {
+    mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
+        _mongodb_client_pool);
+    if (!mongodb_client)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = "Failed to pop a client from MongoDB pool";
+      throw se;
+    }
+    auto collection = mongoc_client_get_collection(
+        mongodb_client, "user", "user");
+    if (!collection)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = "Failed to create collection user from DB user";
+      throw se;
+    }
 
+    bson_error_t error;
+    bson_t *query = bson_new();
+    BSON_APPEND_UTF8(query, "username", username.c_str());
+
+    bson_t *update = bson_new();
+    BSON_APPEND_INT64(update, "user_status", UserStatus::type::OFFLINE); //OFFLINE = 1
+
+    if (!mongoc_collection_update(collection, MONGOC_UPDATE_NONE, query, update, NULL, &error))
+    {
+      std::cout << "Failed to logout " << username
+                << " off MongoDB: " << error.message;
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
+      se.message = "Failed to logout " + username + " of MongoDB: " + error.message;
+      bson_destroy(query);
+      bson_destroy(update);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+      throw se;
+    }
+
+    _return = "Successful logout of user " + username;
+  }
   void DatabaseServiceHandler::UserStatus(std::string &_return, const std::string &username,  const int64_t status)
   {
     std::cout << "Setting User Status in Database" <<std::endl;
