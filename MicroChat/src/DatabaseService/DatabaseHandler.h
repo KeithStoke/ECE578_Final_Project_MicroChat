@@ -119,6 +119,10 @@ namespace microchat
       se.message = error.message;
       throw se;
     }
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
 
     _return = "Users are online ";
     
