@@ -45,6 +45,26 @@ class DatabaseServiceHandler : virtual public DatabaseServiceIf {
     printf("Logout\n");
   }
 
+  void ComposeMessage(std::string& _return, const Message& message) {
+    // Your implementation goes here
+    printf("ComposeMessage\n");
+  }
+
+  void GetMessages(std::vector<Message> & _return, const std::string& username) {
+    // Your implementation goes here
+    printf("GetMessages\n");
+  }
+
+  void GetUnreadMessages(std::vector<Message> & _return, const std::string& username) {
+    // Your implementation goes here
+    printf("GetUnreadMessages\n");
+  }
+
+  void GetReadMessages(std::vector<Message> & _return, const std::string& username) {
+    // Your implementation goes here
+    printf("GetReadMessages\n");
+  }
+
 };
 
 int main(int argc, char **argv) {

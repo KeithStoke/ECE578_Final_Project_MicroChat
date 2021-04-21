@@ -6,19 +6,10 @@
 --
 
 
-local microchat__ttype = require 'microchat_ttypes'
-local Thrift = require 'Thrift'
-local TType = Thrift.TType
-local TMessageType = Thrift.TMessageType
-local __TObject = Thrift.__TObject
-local TApplicationException = Thrift.TApplicationException
-local __TClient = Thrift.__TClient
-local __TProcessor = Thrift.__TProcessor
-local ttype = Thrift.ttype
-local ttable_size = Thrift.ttable_size
-local TException = Thrift.TException
+require 'Thrift'
+require 'microchat_ttypes'
 
-local DatabaseServiceClient = __TObject.new(__TClient, {
+DatabaseServiceClient = __TObject.new(__TClient, {
   __type = 'DatabaseServiceClient'
 })
 
@@ -53,21 +44,24 @@ function DatabaseServiceClient:recv_ping(text)
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
-function DatabaseServiceClient:WriteToDatabase(query)
-  self:send_WriteToDatabase(query)
-  return self:recv_WriteToDatabase(query)
+function DatabaseServiceClient:CreateUser(username, name, password, userID)
+  self:send_CreateUser(username, name, password, userID)
+  return self:recv_CreateUser(username, name, password, userID)
 end
 
-function DatabaseServiceClient:send_WriteToDatabase(query)
-  self.oprot:writeMessageBegin('WriteToDatabase', TMessageType.CALL, self._seqid)
-  local args = WriteToDatabase_args:new{}
-  args.query = query
+function DatabaseServiceClient:send_CreateUser(username, name, password, userID)
+  self.oprot:writeMessageBegin('CreateUser', TMessageType.CALL, self._seqid)
+  local args = CreateUser_args:new{}
+  args.username = username
+  args.name = name
+  args.password = password
+  args.userID = userID
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function DatabaseServiceClient:recv_WriteToDatabase(query)
+function DatabaseServiceClient:recv_CreateUser(username, name, password, userID)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -75,7 +69,7 @@ function DatabaseServiceClient:recv_WriteToDatabase(query)
     self.iprot:readMessageEnd()
     error(x)
   end
-  local result = WriteToDatabase_result:new{}
+  local result = CreateUser_result:new{}
   result:read(self.iprot)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
@@ -86,21 +80,21 @@ function DatabaseServiceClient:recv_WriteToDatabase(query)
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
-function DatabaseServiceClient:ReadFromDatabase(query)
-  self:send_ReadFromDatabase(query)
-  return self:recv_ReadFromDatabase(query)
+function DatabaseServiceClient:CheckForUser(username)
+  self:send_CheckForUser(username)
+  return self:recv_CheckForUser(username)
 end
 
-function DatabaseServiceClient:send_ReadFromDatabase(query)
-  self.oprot:writeMessageBegin('ReadFromDatabase', TMessageType.CALL, self._seqid)
-  local args = ReadFromDatabase_args:new{}
-  args.query = query
+function DatabaseServiceClient:send_CheckForUser(username)
+  self.oprot:writeMessageBegin('CheckForUser', TMessageType.CALL, self._seqid)
+  local args = CheckForUser_args:new{}
+  args.username = username
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function DatabaseServiceClient:recv_ReadFromDatabase(query)
+function DatabaseServiceClient:recv_CheckForUser(username)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -108,7 +102,7 @@ function DatabaseServiceClient:recv_ReadFromDatabase(query)
     self.iprot:readMessageEnd()
     error(x)
   end
-  local result = ReadFromDatabase_result:new{}
+  local result = CheckForUser_result:new{}
   result:read(self.iprot)
   self.iprot:readMessageEnd()
   if result.success ~= nil then
@@ -118,12 +112,211 @@ function DatabaseServiceClient:recv_ReadFromDatabase(query)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
-local DatabaseServiceIface = __TObject:new{
+
+function DatabaseServiceClient:Login(username, password)
+  self:send_Login(username, password)
+  return self:recv_Login(username, password)
+end
+
+function DatabaseServiceClient:send_Login(username, password)
+  self.oprot:writeMessageBegin('Login', TMessageType.CALL, self._seqid)
+  local args = Login_args:new{}
+  args.username = username
+  args.password = password
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function DatabaseServiceClient:recv_Login(username, password)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = Login_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  elseif result.se then
+    error(result.se)
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
+end
+
+function DatabaseServiceClient:Logout(username)
+  self:send_Logout(username)
+  return self:recv_Logout(username)
+end
+
+function DatabaseServiceClient:send_Logout(username)
+  self.oprot:writeMessageBegin('Logout', TMessageType.CALL, self._seqid)
+  local args = Logout_args:new{}
+  args.username = username
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function DatabaseServiceClient:recv_Logout(username)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = Logout_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  elseif result.se then
+    error(result.se)
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
+end
+
+function DatabaseServiceClient:ComposeMessage(message)
+  self:send_ComposeMessage(message)
+  return self:recv_ComposeMessage(message)
+end
+
+function DatabaseServiceClient:send_ComposeMessage(message)
+  self.oprot:writeMessageBegin('ComposeMessage', TMessageType.CALL, self._seqid)
+  local args = ComposeMessage_args:new{}
+  args.message = message
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function DatabaseServiceClient:recv_ComposeMessage(message)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = ComposeMessage_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  elseif result.se then
+    error(result.se)
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
+end
+
+function DatabaseServiceClient:GetMessages(username)
+  self:send_GetMessages(username)
+  return self:recv_GetMessages(username)
+end
+
+function DatabaseServiceClient:send_GetMessages(username)
+  self.oprot:writeMessageBegin('GetMessages', TMessageType.CALL, self._seqid)
+  local args = GetMessages_args:new{}
+  args.username = username
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function DatabaseServiceClient:recv_GetMessages(username)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = GetMessages_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  elseif result.se then
+    error(result.se)
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
+end
+
+function DatabaseServiceClient:GetUnreadMessages(username)
+  self:send_GetUnreadMessages(username)
+  return self:recv_GetUnreadMessages(username)
+end
+
+function DatabaseServiceClient:send_GetUnreadMessages(username)
+  self.oprot:writeMessageBegin('GetUnreadMessages', TMessageType.CALL, self._seqid)
+  local args = GetUnreadMessages_args:new{}
+  args.username = username
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function DatabaseServiceClient:recv_GetUnreadMessages(username)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = GetUnreadMessages_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  elseif result.se then
+    error(result.se)
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
+end
+
+function DatabaseServiceClient:GetReadMessages(username)
+  self:send_GetReadMessages(username)
+  return self:recv_GetReadMessages(username)
+end
+
+function DatabaseServiceClient:send_GetReadMessages(username)
+  self.oprot:writeMessageBegin('GetReadMessages', TMessageType.CALL, self._seqid)
+  local args = GetReadMessages_args:new{}
+  args.username = username
+  args:write(self.oprot)
+  self.oprot:writeMessageEnd()
+  self.oprot.trans:flush()
+end
+
+function DatabaseServiceClient:recv_GetReadMessages(username)
+  local fname, mtype, rseqid = self.iprot:readMessageBegin()
+  if mtype == TMessageType.EXCEPTION then
+    local x = TApplicationException:new{}
+    x:read(self.iprot)
+    self.iprot:readMessageEnd()
+    error(x)
+  end
+  local result = GetReadMessages_result:new{}
+  result:read(self.iprot)
+  self.iprot:readMessageEnd()
+  if result.success ~= nil then
+    return result.success
+  elseif result.se then
+    error(result.se)
+  end
+  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
+end
+DatabaseServiceIface = __TObject:new{
   __type = 'DatabaseServiceIface'
 }
 
 
-local DatabaseServiceProcessor = __TObject.new(__TProcessor
+DatabaseServiceProcessor = __TObject.new(__TProcessor
 , {
  __type = 'DatabaseServiceProcessor'
 })
@@ -165,13 +358,13 @@ function DatabaseServiceProcessor:process_ping(seqid, iprot, oprot, server_ctx)
   oprot.trans:flush()
 end
 
-function DatabaseServiceProcessor:process_WriteToDatabase(seqid, iprot, oprot, server_ctx)
-  local args = WriteToDatabase_args:new{}
+function DatabaseServiceProcessor:process_CreateUser(seqid, iprot, oprot, server_ctx)
+  local args = CreateUser_args:new{}
   local reply_type = TMessageType.REPLY
   args:read(iprot)
   iprot:readMessageEnd()
-  local result = WriteToDatabase_result:new{}
-  local status, res = pcall(self.handler.WriteToDatabase, self.handler, args.query)
+  local result = CreateUser_result:new{}
+  local status, res = pcall(self.handler.CreateUser, self.handler, args.username, args.name, args.password, args.userID)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
@@ -180,19 +373,19 @@ function DatabaseServiceProcessor:process_WriteToDatabase(seqid, iprot, oprot, s
   else
     result.success = res
   end
-  oprot:writeMessageBegin('WriteToDatabase', reply_type, seqid)
+  oprot:writeMessageBegin('CreateUser', reply_type, seqid)
   result:write(oprot)
   oprot:writeMessageEnd()
   oprot.trans:flush()
 end
 
-function DatabaseServiceProcessor:process_ReadFromDatabase(seqid, iprot, oprot, server_ctx)
-  local args = ReadFromDatabase_args:new{}
+function DatabaseServiceProcessor:process_CheckForUser(seqid, iprot, oprot, server_ctx)
+  local args = CheckForUser_args:new{}
   local reply_type = TMessageType.REPLY
   args:read(iprot)
   iprot:readMessageEnd()
-  local result = ReadFromDatabase_result:new{}
-  local status, res = pcall(self.handler.ReadFromDatabase, self.handler, args.query)
+  local result = CheckForUser_result:new{}
+  local status, res = pcall(self.handler.CheckForUser, self.handler, args.username)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
@@ -201,7 +394,133 @@ function DatabaseServiceProcessor:process_ReadFromDatabase(seqid, iprot, oprot, 
   else
     result.success = res
   end
-  oprot:writeMessageBegin('ReadFromDatabase', reply_type, seqid)
+  oprot:writeMessageBegin('CheckForUser', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
+
+function DatabaseServiceProcessor:process_Login(seqid, iprot, oprot, server_ctx)
+  local args = Login_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = Login_result:new{}
+  local status, res = pcall(self.handler.Login, self.handler, args.username, args.password)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('Login', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
+
+function DatabaseServiceProcessor:process_Logout(seqid, iprot, oprot, server_ctx)
+  local args = Logout_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = Logout_result:new{}
+  local status, res = pcall(self.handler.Logout, self.handler, args.username)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('Logout', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
+
+function DatabaseServiceProcessor:process_ComposeMessage(seqid, iprot, oprot, server_ctx)
+  local args = ComposeMessage_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = ComposeMessage_result:new{}
+  local status, res = pcall(self.handler.ComposeMessage, self.handler, args.message)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('ComposeMessage', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
+
+function DatabaseServiceProcessor:process_GetMessages(seqid, iprot, oprot, server_ctx)
+  local args = GetMessages_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = GetMessages_result:new{}
+  local status, res = pcall(self.handler.GetMessages, self.handler, args.username)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('GetMessages', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
+
+function DatabaseServiceProcessor:process_GetUnreadMessages(seqid, iprot, oprot, server_ctx)
+  local args = GetUnreadMessages_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = GetUnreadMessages_result:new{}
+  local status, res = pcall(self.handler.GetUnreadMessages, self.handler, args.username)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('GetUnreadMessages', reply_type, seqid)
+  result:write(oprot)
+  oprot:writeMessageEnd()
+  oprot.trans:flush()
+end
+
+function DatabaseServiceProcessor:process_GetReadMessages(seqid, iprot, oprot, server_ctx)
+  local args = GetReadMessages_args:new{}
+  local reply_type = TMessageType.REPLY
+  args:read(iprot)
+  iprot:readMessageEnd()
+  local result = GetReadMessages_result:new{}
+  local status, res = pcall(self.handler.GetReadMessages, self.handler, args.username)
+  if not status then
+    reply_type = TMessageType.EXCEPTION
+    result = TApplicationException:new{message = res}
+  elseif ttype(res) == 'ServiceException' then
+    result.se = res
+  else
+    result.success = res
+  end
+  oprot:writeMessageBegin('GetReadMessages', reply_type, seqid)
   result:write(oprot)
   oprot:writeMessageEnd()
   oprot.trans:flush()
@@ -209,7 +528,7 @@ end
 
 -- HELPER FUNCTIONS AND STRUCTURES
 
-local ping_args = __TObject:new{
+ping_args = __TObject:new{
   text
 }
 
@@ -279,11 +598,14 @@ function ping_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-local WriteToDatabase_args = __TObject:new{
-  query
+CreateUser_args = __TObject:new{
+  username,
+  name,
+  password,
+  userID
 }
 
-function WriteToDatabase_args:read(iprot)
+function CreateUser_args:read(iprot)
   iprot:readStructBegin()
   while true do
     local fname, ftype, fid = iprot:readFieldBegin()
@@ -291,7 +613,25 @@ function WriteToDatabase_args:read(iprot)
       break
     elseif fid == 1 then
       if ftype == TType.STRING then
-        self.query = iprot:readString()
+        self.username = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 2 then
+      if ftype == TType.STRING then
+        self.name = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 3 then
+      if ftype == TType.STRING then
+        self.password = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 4 then
+      if ftype == TType.I64 then
+        self.userID = iprot:readI64()
       else
         iprot:skip(ftype)
       end
@@ -303,23 +643,38 @@ function WriteToDatabase_args:read(iprot)
   iprot:readStructEnd()
 end
 
-function WriteToDatabase_args:write(oprot)
-  oprot:writeStructBegin('WriteToDatabase_args')
-  if self.query ~= nil then
-    oprot:writeFieldBegin('query', TType.STRING, 1)
-    oprot:writeString(self.query)
+function CreateUser_args:write(oprot)
+  oprot:writeStructBegin('CreateUser_args')
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
+    oprot:writeFieldEnd()
+  end
+  if self.name ~= nil then
+    oprot:writeFieldBegin('name', TType.STRING, 2)
+    oprot:writeString(self.name)
+    oprot:writeFieldEnd()
+  end
+  if self.password ~= nil then
+    oprot:writeFieldBegin('password', TType.STRING, 3)
+    oprot:writeString(self.password)
+    oprot:writeFieldEnd()
+  end
+  if self.userID ~= nil then
+    oprot:writeFieldBegin('userID', TType.I64, 4)
+    oprot:writeI64(self.userID)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
 
-WriteToDatabase_result = __TObject:new{
+CreateUser_result = __TObject:new{
   success,
   se
 }
 
-function WriteToDatabase_result:read(iprot)
+function CreateUser_result:read(iprot)
   iprot:readStructBegin()
   while true do
     local fname, ftype, fid = iprot:readFieldBegin()
@@ -346,8 +701,8 @@ function WriteToDatabase_result:read(iprot)
   iprot:readStructEnd()
 end
 
-function WriteToDatabase_result:write(oprot)
-  oprot:writeStructBegin('WriteToDatabase_result')
+function CreateUser_result:write(oprot)
+  oprot:writeStructBegin('CreateUser_result')
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)
@@ -362,11 +717,11 @@ function WriteToDatabase_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-local ReadFromDatabase_args = __TObject:new{
-  query
+CheckForUser_args = __TObject:new{
+  username
 }
 
-function ReadFromDatabase_args:read(iprot)
+function CheckForUser_args:read(iprot)
   iprot:readStructBegin()
   while true do
     local fname, ftype, fid = iprot:readFieldBegin()
@@ -374,7 +729,7 @@ function ReadFromDatabase_args:read(iprot)
       break
     elseif fid == 1 then
       if ftype == TType.STRING then
-        self.query = iprot:readString()
+        self.username = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -386,23 +741,23 @@ function ReadFromDatabase_args:read(iprot)
   iprot:readStructEnd()
 end
 
-function ReadFromDatabase_args:write(oprot)
-  oprot:writeStructBegin('ReadFromDatabase_args')
-  if self.query ~= nil then
-    oprot:writeFieldBegin('query', TType.STRING, 1)
-    oprot:writeString(self.query)
+function CheckForUser_args:write(oprot)
+  oprot:writeStructBegin('CheckForUser_args')
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
 
-ReadFromDatabase_result = __TObject:new{
+CheckForUser_result = __TObject:new{
   success,
   se
 }
 
-function ReadFromDatabase_result:read(iprot)
+function CheckForUser_result:read(iprot)
   iprot:readStructBegin()
   while true do
     local fname, ftype, fid = iprot:readFieldBegin()
@@ -429,8 +784,8 @@ function ReadFromDatabase_result:read(iprot)
   iprot:readStructEnd()
 end
 
-function ReadFromDatabase_result:write(oprot)
-  oprot:writeStructBegin('ReadFromDatabase_result')
+function CheckForUser_result:write(oprot)
+  oprot:writeStructBegin('CheckForUser_result')
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.STRING, 0)
     oprot:writeString(self.success)
@@ -445,4 +800,546 @@ function ReadFromDatabase_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-return DatabaseServiceClient
+Login_args = __TObject:new{
+  username,
+  password
+}
+
+function Login_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.username = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 2 then
+      if ftype == TType.STRING then
+        self.password = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function Login_args:write(oprot)
+  oprot:writeStructBegin('Login_args')
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
+    oprot:writeFieldEnd()
+  end
+  if self.password ~= nil then
+    oprot:writeFieldBegin('password', TType.STRING, 2)
+    oprot:writeString(self.password)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+Login_result = __TObject:new{
+  success,
+  se
+}
+
+function Login_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function Login_result:write(oprot)
+  oprot:writeStructBegin('Login_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+Logout_args = __TObject:new{
+  username
+}
+
+function Logout_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.username = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function Logout_args:write(oprot)
+  oprot:writeStructBegin('Logout_args')
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+Logout_result = __TObject:new{
+  success,
+  se
+}
+
+function Logout_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function Logout_result:write(oprot)
+  oprot:writeStructBegin('Logout_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+ComposeMessage_args = __TObject:new{
+  message
+}
+
+function ComposeMessage_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.message = Message:new{}
+        self.message:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function ComposeMessage_args:write(oprot)
+  oprot:writeStructBegin('ComposeMessage_args')
+  if self.message ~= nil then
+    oprot:writeFieldBegin('message', TType.STRUCT, 1)
+    self.message:write(oprot)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+ComposeMessage_result = __TObject:new{
+  success,
+  se
+}
+
+function ComposeMessage_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 0 then
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function ComposeMessage_result:write(oprot)
+  oprot:writeStructBegin('ComposeMessage_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+GetMessages_args = __TObject:new{
+  username
+}
+
+function GetMessages_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.username = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function GetMessages_args:write(oprot)
+  oprot:writeStructBegin('GetMessages_args')
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+GetMessages_result = __TObject:new{
+  success,
+  se
+}
+
+function GetMessages_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 0 then
+      if ftype == TType.LIST then
+        self.success = {}
+        local _etype27, _size24 = iprot:readListBegin()
+        for _i=1,_size24 do
+          local _elem28 = Message:new{}
+          _elem28:read(iprot)
+          table.insert(self.success, _elem28)
+        end
+        iprot:readListEnd()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function GetMessages_result:write(oprot)
+  oprot:writeStructBegin('GetMessages_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.LIST, 0)
+    oprot:writeListBegin(TType.STRUCT, #self.success)
+    for _,iter29 in ipairs(self.success) do
+      iter29:write(oprot)
+    end
+    oprot:writeListEnd()
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+GetUnreadMessages_args = __TObject:new{
+  username
+}
+
+function GetUnreadMessages_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.username = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function GetUnreadMessages_args:write(oprot)
+  oprot:writeStructBegin('GetUnreadMessages_args')
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+GetUnreadMessages_result = __TObject:new{
+  success,
+  se
+}
+
+function GetUnreadMessages_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 0 then
+      if ftype == TType.LIST then
+        self.success = {}
+        local _etype33, _size30 = iprot:readListBegin()
+        for _i=1,_size30 do
+          local _elem34 = Message:new{}
+          _elem34:read(iprot)
+          table.insert(self.success, _elem34)
+        end
+        iprot:readListEnd()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function GetUnreadMessages_result:write(oprot)
+  oprot:writeStructBegin('GetUnreadMessages_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.LIST, 0)
+    oprot:writeListBegin(TType.STRUCT, #self.success)
+    for _,iter35 in ipairs(self.success) do
+      iter35:write(oprot)
+    end
+    oprot:writeListEnd()
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+GetReadMessages_args = __TObject:new{
+  username
+}
+
+function GetReadMessages_args:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 1 then
+      if ftype == TType.STRING then
+        self.username = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function GetReadMessages_args:write(oprot)
+  oprot:writeStructBegin('GetReadMessages_args')
+  if self.username ~= nil then
+    oprot:writeFieldBegin('username', TType.STRING, 1)
+    oprot:writeString(self.username)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end
+
+GetReadMessages_result = __TObject:new{
+  success,
+  se
+}
+
+function GetReadMessages_result:read(iprot)
+  iprot:readStructBegin()
+  while true do
+    local fname, ftype, fid = iprot:readFieldBegin()
+    if ftype == TType.STOP then
+      break
+    elseif fid == 0 then
+      if ftype == TType.LIST then
+        self.success = {}
+        local _etype39, _size36 = iprot:readListBegin()
+        for _i=1,_size36 do
+          local _elem40 = Message:new{}
+          _elem40:read(iprot)
+          table.insert(self.success, _elem40)
+        end
+        iprot:readListEnd()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 1 then
+      if ftype == TType.STRUCT then
+        self.se = ServiceException:new{}
+        self.se:read(iprot)
+      else
+        iprot:skip(ftype)
+      end
+    else
+      iprot:skip(ftype)
+    end
+    iprot:readFieldEnd()
+  end
+  iprot:readStructEnd()
+end
+
+function GetReadMessages_result:write(oprot)
+  oprot:writeStructBegin('GetReadMessages_result')
+  if self.success ~= nil then
+    oprot:writeFieldBegin('success', TType.LIST, 0)
+    oprot:writeListBegin(TType.STRUCT, #self.success)
+    for _,iter41 in ipairs(self.success) do
+      iter41:write(oprot)
+    end
+    oprot:writeListEnd()
+    oprot:writeFieldEnd()
+  end
+  if self.se ~= nil then
+    oprot:writeFieldBegin('se', TType.STRUCT, 1)
+    self.se:write(oprot)
+    oprot:writeFieldEnd()
+  end
+  oprot:writeFieldStop()
+  oprot:writeStructEnd()
+end

@@ -265,10 +265,10 @@ function GetFriendRecommendations_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.LIST then
         self.success = {}
-        local _etype33, _size30 = iprot:readListBegin()
-        for _i=1,_size30 do
-          local _elem34 = iprot:readString()
-          table.insert(self.success, _elem34)
+        local _etype21, _size18 = iprot:readListBegin()
+        for _i=1,_size18 do
+          local _elem22 = iprot:readString()
+          table.insert(self.success, _elem22)
         end
         iprot:readListEnd()
       else
@@ -294,8 +294,8 @@ function GetFriendRecommendations_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.LIST, 0)
     oprot:writeListBegin(TType.STRING, #self.success)
-    for _,iter35 in ipairs(self.success) do
-      oprot:writeString(iter35)
+    for _,iter23 in ipairs(self.success) do
+      oprot:writeString(iter23)
     end
     oprot:writeListEnd()
     oprot:writeFieldEnd()

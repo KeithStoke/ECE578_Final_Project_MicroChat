@@ -37,6 +37,10 @@ namespace microchat
     void CheckForUser(std::string &_return, const std::string &username) override;
     void Login(std::string &_return, const std::string &username, const std::string &password) override;
     void Logout(std::string &_return, const std::string &username) override;
+    void ComposeMessage(std::string &_return, const Message &message) override;
+    void GetMessages(std::vector<Message> &_return, const std::string &username) override;
+    void GetUnreadMessages(std::vector<Message> &_return, const std::string &username) override;
+    void GetReadMessages(std::vector<Message> &_return, const std::string &username) override;
 
   private:
     mongoc_client_pool_t *_mongodb_client_pool;
@@ -387,6 +391,17 @@ namespace microchat
 
     _return = "SUCCESS";
   }
+
+  void DatabaseServiceHandler::ComposeMessage(std::string &_return, const Message &message)
+  {
+  }
+
+  void DatabaseServiceHandler::GetMessages(std::vector<Message> &_return, const std::string &username)
+  {
+  }
+  
+  void DatabaseServiceHandler::GetUnreadMessages(std::vector<Message> &_return, const std::string &username) {}
+  void DatabaseServiceHandler::GetReadMessages(std::vector<Message> &_return, const std::string &username) {}
 
 } //namespace microchat
 

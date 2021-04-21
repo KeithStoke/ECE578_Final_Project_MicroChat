@@ -84,12 +84,12 @@ std::string to_string(const UserStatus::type& val) {
 }
 
 int _kMessageStatusValues[] = {
-  MessageStatus::READ,
-  MessageStatus::UNREAD
+  MessageStatus::UNREAD,
+  MessageStatus::READ
 };
 const char* _kMessageStatusNames[] = {
-  "READ",
-  "UNREAD"
+  "UNREAD",
+  "READ"
 };
 const std::map<int, const char*> _MessageStatus_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(2, _kMessageStatusValues, _kMessageStatusNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
 

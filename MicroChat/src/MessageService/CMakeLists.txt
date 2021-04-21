@@ -23,6 +23,7 @@ target_link_libraries(
     Boost::log_setup
     jaegertracing
     OpenSSL::SSL
+    ${MONGOC_LIBRARIES}
 )
 
 install(TARGETS MessageService DESTINATION ./)

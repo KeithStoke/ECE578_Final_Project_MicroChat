@@ -18,8 +18,8 @@ enum UserStatus{
 }
 
 enum MessageStatus{
-  READ,
-  UNREAD
+  UNREAD,
+  READ
 }
 
 exception ServiceException {
@@ -75,6 +75,10 @@ service DatabaseService{
   string CreateUser(1:string username, 2:string name, 3:string password, 4:i64 userID) throws(1:ServiceException se),
   string CheckForUser(1:string username) throws(1:ServiceException se),
   string Login(1:string username, 2:string password) throws(1:ServiceException se),
-  string Logout(1:string username) throws(1:ServiceException se)
+  string Logout(1:string username) throws(1:ServiceException se),
+  string ComposeMessage(1:Message message) throws (1: ServiceException se),
+  list<Message> GetMessages(1:string username) throws (1: ServiceException se),
+  list<Message> GetUnreadMessages(1:string username) throws(1:ServiceException se),
+  list<Message> GetReadMessages(1:string username) throws(1:ServiceException se)
 }
 

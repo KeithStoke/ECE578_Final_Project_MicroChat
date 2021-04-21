@@ -25,6 +25,6 @@
     },
     "message-mongodb": {
       "addr": "message-mongodb",
-      "port": 27019
+      "port": 27017
     }
   }

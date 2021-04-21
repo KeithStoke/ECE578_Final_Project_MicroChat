@@ -27,6 +27,10 @@ class DatabaseServiceIf {
   virtual void CheckForUser(std::string& _return, const std::string& username) = 0;
   virtual void Login(std::string& _return, const std::string& username, const std::string& password) = 0;
   virtual void Logout(std::string& _return, const std::string& username) = 0;
+  virtual void ComposeMessage(std::string& _return, const Message& message) = 0;
+  virtual void GetMessages(std::vector<Message> & _return, const std::string& username) = 0;
+  virtual void GetUnreadMessages(std::vector<Message> & _return, const std::string& username) = 0;
+  virtual void GetReadMessages(std::vector<Message> & _return, const std::string& username) = 0;
 };
 
 class DatabaseServiceIfFactory {
@@ -69,6 +73,18 @@ class DatabaseServiceNull : virtual public DatabaseServiceIf {
     return;
   }
   void Logout(std::string& /* _return */, const std::string& /* username */) {
+    return;
+  }
+  void ComposeMessage(std::string& /* _return */, const Message& /* message */) {
+    return;
+  }
+  void GetMessages(std::vector<Message> & /* _return */, const std::string& /* username */) {
+    return;
+  }
+  void GetUnreadMessages(std::vector<Message> & /* _return */, const std::string& /* username */) {
+    return;
+  }
+  void GetReadMessages(std::vector<Message> & /* _return */, const std::string& /* username */) {
     return;
   }
 };
@@ -653,6 +669,454 @@ class DatabaseService_Logout_presult {
 
 };
 
+typedef struct _DatabaseService_ComposeMessage_args__isset {
+  _DatabaseService_ComposeMessage_args__isset() : message(false) {}
+  bool message :1;
+} _DatabaseService_ComposeMessage_args__isset;
+
+class DatabaseService_ComposeMessage_args {
+ public:
+
+  DatabaseService_ComposeMessage_args(const DatabaseService_ComposeMessage_args&);
+  DatabaseService_ComposeMessage_args& operator=(const DatabaseService_ComposeMessage_args&);
+  DatabaseService_ComposeMessage_args() {
+  }
+
+  virtual ~DatabaseService_ComposeMessage_args() noexcept;
+  Message message;
+
+  _DatabaseService_ComposeMessage_args__isset __isset;
+
+  void __set_message(const Message& val);
+
+  bool operator == (const DatabaseService_ComposeMessage_args & rhs) const
+  {
+    if (!(message == rhs.message))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_ComposeMessage_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_ComposeMessage_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class DatabaseService_ComposeMessage_pargs {
+ public:
+
+
+  virtual ~DatabaseService_ComposeMessage_pargs() noexcept;
+  const Message* message;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_ComposeMessage_result__isset {
+  _DatabaseService_ComposeMessage_result__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_ComposeMessage_result__isset;
+
+class DatabaseService_ComposeMessage_result {
+ public:
+
+  DatabaseService_ComposeMessage_result(const DatabaseService_ComposeMessage_result&);
+  DatabaseService_ComposeMessage_result& operator=(const DatabaseService_ComposeMessage_result&);
+  DatabaseService_ComposeMessage_result() : success() {
+  }
+
+  virtual ~DatabaseService_ComposeMessage_result() noexcept;
+  std::string success;
+  ServiceException se;
+
+  _DatabaseService_ComposeMessage_result__isset __isset;
+
+  void __set_success(const std::string& val);
+
+  void __set_se(const ServiceException& val);
+
+  bool operator == (const DatabaseService_ComposeMessage_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_ComposeMessage_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_ComposeMessage_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_ComposeMessage_presult__isset {
+  _DatabaseService_ComposeMessage_presult__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_ComposeMessage_presult__isset;
+
+class DatabaseService_ComposeMessage_presult {
+ public:
+
+
+  virtual ~DatabaseService_ComposeMessage_presult() noexcept;
+  std::string* success;
+  ServiceException se;
+
+  _DatabaseService_ComposeMessage_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
+typedef struct _DatabaseService_GetMessages_args__isset {
+  _DatabaseService_GetMessages_args__isset() : username(false) {}
+  bool username :1;
+} _DatabaseService_GetMessages_args__isset;
+
+class DatabaseService_GetMessages_args {
+ public:
+
+  DatabaseService_GetMessages_args(const DatabaseService_GetMessages_args&);
+  DatabaseService_GetMessages_args& operator=(const DatabaseService_GetMessages_args&);
+  DatabaseService_GetMessages_args() : username() {
+  }
+
+  virtual ~DatabaseService_GetMessages_args() noexcept;
+  std::string username;
+
+  _DatabaseService_GetMessages_args__isset __isset;
+
+  void __set_username(const std::string& val);
+
+  bool operator == (const DatabaseService_GetMessages_args & rhs) const
+  {
+    if (!(username == rhs.username))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_GetMessages_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_GetMessages_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class DatabaseService_GetMessages_pargs {
+ public:
+
+
+  virtual ~DatabaseService_GetMessages_pargs() noexcept;
+  const std::string* username;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_GetMessages_result__isset {
+  _DatabaseService_GetMessages_result__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_GetMessages_result__isset;
+
+class DatabaseService_GetMessages_result {
+ public:
+
+  DatabaseService_GetMessages_result(const DatabaseService_GetMessages_result&);
+  DatabaseService_GetMessages_result& operator=(const DatabaseService_GetMessages_result&);
+  DatabaseService_GetMessages_result() {
+  }
+
+  virtual ~DatabaseService_GetMessages_result() noexcept;
+  std::vector<Message>  success;
+  ServiceException se;
+
+  _DatabaseService_GetMessages_result__isset __isset;
+
+  void __set_success(const std::vector<Message> & val);
+
+  void __set_se(const ServiceException& val);
+
+  bool operator == (const DatabaseService_GetMessages_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_GetMessages_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_GetMessages_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_GetMessages_presult__isset {
+  _DatabaseService_GetMessages_presult__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_GetMessages_presult__isset;
+
+class DatabaseService_GetMessages_presult {
+ public:
+
+
+  virtual ~DatabaseService_GetMessages_presult() noexcept;
+  std::vector<Message> * success;
+  ServiceException se;
+
+  _DatabaseService_GetMessages_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
+typedef struct _DatabaseService_GetUnreadMessages_args__isset {
+  _DatabaseService_GetUnreadMessages_args__isset() : username(false) {}
+  bool username :1;
+} _DatabaseService_GetUnreadMessages_args__isset;
+
+class DatabaseService_GetUnreadMessages_args {
+ public:
+
+  DatabaseService_GetUnreadMessages_args(const DatabaseService_GetUnreadMessages_args&);
+  DatabaseService_GetUnreadMessages_args& operator=(const DatabaseService_GetUnreadMessages_args&);
+  DatabaseService_GetUnreadMessages_args() : username() {
+  }
+
+  virtual ~DatabaseService_GetUnreadMessages_args() noexcept;
+  std::string username;
+
+  _DatabaseService_GetUnreadMessages_args__isset __isset;
+
+  void __set_username(const std::string& val);
+
+  bool operator == (const DatabaseService_GetUnreadMessages_args & rhs) const
+  {
+    if (!(username == rhs.username))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_GetUnreadMessages_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_GetUnreadMessages_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class DatabaseService_GetUnreadMessages_pargs {
+ public:
+
+
+  virtual ~DatabaseService_GetUnreadMessages_pargs() noexcept;
+  const std::string* username;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_GetUnreadMessages_result__isset {
+  _DatabaseService_GetUnreadMessages_result__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_GetUnreadMessages_result__isset;
+
+class DatabaseService_GetUnreadMessages_result {
+ public:
+
+  DatabaseService_GetUnreadMessages_result(const DatabaseService_GetUnreadMessages_result&);
+  DatabaseService_GetUnreadMessages_result& operator=(const DatabaseService_GetUnreadMessages_result&);
+  DatabaseService_GetUnreadMessages_result() {
+  }
+
+  virtual ~DatabaseService_GetUnreadMessages_result() noexcept;
+  std::vector<Message>  success;
+  ServiceException se;
+
+  _DatabaseService_GetUnreadMessages_result__isset __isset;
+
+  void __set_success(const std::vector<Message> & val);
+
+  void __set_se(const ServiceException& val);
+
+  bool operator == (const DatabaseService_GetUnreadMessages_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_GetUnreadMessages_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_GetUnreadMessages_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_GetUnreadMessages_presult__isset {
+  _DatabaseService_GetUnreadMessages_presult__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_GetUnreadMessages_presult__isset;
+
+class DatabaseService_GetUnreadMessages_presult {
+ public:
+
+
+  virtual ~DatabaseService_GetUnreadMessages_presult() noexcept;
+  std::vector<Message> * success;
+  ServiceException se;
+
+  _DatabaseService_GetUnreadMessages_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
+typedef struct _DatabaseService_GetReadMessages_args__isset {
+  _DatabaseService_GetReadMessages_args__isset() : username(false) {}
+  bool username :1;
+} _DatabaseService_GetReadMessages_args__isset;
+
+class DatabaseService_GetReadMessages_args {
+ public:
+
+  DatabaseService_GetReadMessages_args(const DatabaseService_GetReadMessages_args&);
+  DatabaseService_GetReadMessages_args& operator=(const DatabaseService_GetReadMessages_args&);
+  DatabaseService_GetReadMessages_args() : username() {
+  }
+
+  virtual ~DatabaseService_GetReadMessages_args() noexcept;
+  std::string username;
+
+  _DatabaseService_GetReadMessages_args__isset __isset;
+
+  void __set_username(const std::string& val);
+
+  bool operator == (const DatabaseService_GetReadMessages_args & rhs) const
+  {
+    if (!(username == rhs.username))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_GetReadMessages_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_GetReadMessages_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class DatabaseService_GetReadMessages_pargs {
+ public:
+
+
+  virtual ~DatabaseService_GetReadMessages_pargs() noexcept;
+  const std::string* username;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_GetReadMessages_result__isset {
+  _DatabaseService_GetReadMessages_result__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_GetReadMessages_result__isset;
+
+class DatabaseService_GetReadMessages_result {
+ public:
+
+  DatabaseService_GetReadMessages_result(const DatabaseService_GetReadMessages_result&);
+  DatabaseService_GetReadMessages_result& operator=(const DatabaseService_GetReadMessages_result&);
+  DatabaseService_GetReadMessages_result() {
+  }
+
+  virtual ~DatabaseService_GetReadMessages_result() noexcept;
+  std::vector<Message>  success;
+  ServiceException se;
+
+  _DatabaseService_GetReadMessages_result__isset __isset;
+
+  void __set_success(const std::vector<Message> & val);
+
+  void __set_se(const ServiceException& val);
+
+  bool operator == (const DatabaseService_GetReadMessages_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(se == rhs.se))
+      return false;
+    return true;
+  }
+  bool operator != (const DatabaseService_GetReadMessages_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const DatabaseService_GetReadMessages_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _DatabaseService_GetReadMessages_presult__isset {
+  _DatabaseService_GetReadMessages_presult__isset() : success(false), se(false) {}
+  bool success :1;
+  bool se :1;
+} _DatabaseService_GetReadMessages_presult__isset;
+
+class DatabaseService_GetReadMessages_presult {
+ public:
+
+
+  virtual ~DatabaseService_GetReadMessages_presult() noexcept;
+  std::vector<Message> * success;
+  ServiceException se;
+
+  _DatabaseService_GetReadMessages_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
 class DatabaseServiceClient : virtual public DatabaseServiceIf {
  public:
   DatabaseServiceClient(std::shared_ptr< ::apache::thrift::protocol::TProtocol> prot) {
@@ -693,6 +1157,18 @@ class DatabaseServiceClient : virtual public DatabaseServiceIf {
   void Logout(std::string& _return, const std::string& username);
   void send_Logout(const std::string& username);
   void recv_Logout(std::string& _return);
+  void ComposeMessage(std::string& _return, const Message& message);
+  void send_ComposeMessage(const Message& message);
+  void recv_ComposeMessage(std::string& _return);
+  void GetMessages(std::vector<Message> & _return, const std::string& username);
+  void send_GetMessages(const std::string& username);
+  void recv_GetMessages(std::vector<Message> & _return);
+  void GetUnreadMessages(std::vector<Message> & _return, const std::string& username);
+  void send_GetUnreadMessages(const std::string& username);
+  void recv_GetUnreadMessages(std::vector<Message> & _return);
+  void GetReadMessages(std::vector<Message> & _return, const std::string& username);
+  void send_GetReadMessages(const std::string& username);
+  void recv_GetReadMessages(std::vector<Message> & _return);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -713,6 +1189,10 @@ class DatabaseServiceProcessor : public ::apache::thrift::TDispatchProcessor {
   void process_CheckForUser(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_Login(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_Logout(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_ComposeMessage(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_GetMessages(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_GetUnreadMessages(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_GetReadMessages(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   DatabaseServiceProcessor(::std::shared_ptr<DatabaseServiceIf> iface) :
     iface_(iface) {
@@ -721,6 +1201,10 @@ class DatabaseServiceProcessor : public ::apache::thrift::TDispatchProcessor {
     processMap_["CheckForUser"] = &DatabaseServiceProcessor::process_CheckForUser;
     processMap_["Login"] = &DatabaseServiceProcessor::process_Login;
     processMap_["Logout"] = &DatabaseServiceProcessor::process_Logout;
+    processMap_["ComposeMessage"] = &DatabaseServiceProcessor::process_ComposeMessage;
+    processMap_["GetMessages"] = &DatabaseServiceProcessor::process_GetMessages;
+    processMap_["GetUnreadMessages"] = &DatabaseServiceProcessor::process_GetUnreadMessages;
+    processMap_["GetReadMessages"] = &DatabaseServiceProcessor::process_GetReadMessages;
   }
 
   virtual ~DatabaseServiceProcessor() {}
@@ -799,6 +1283,46 @@ class DatabaseServiceMultiface : virtual public DatabaseServiceIf {
     return;
   }
 
+  void ComposeMessage(std::string& _return, const Message& message) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->ComposeMessage(_return, message);
+    }
+    ifaces_[i]->ComposeMessage(_return, message);
+    return;
+  }
+
+  void GetMessages(std::vector<Message> & _return, const std::string& username) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->GetMessages(_return, username);
+    }
+    ifaces_[i]->GetMessages(_return, username);
+    return;
+  }
+
+  void GetUnreadMessages(std::vector<Message> & _return, const std::string& username) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->GetUnreadMessages(_return, username);
+    }
+    ifaces_[i]->GetUnreadMessages(_return, username);
+    return;
+  }
+
+  void GetReadMessages(std::vector<Message> & _return, const std::string& username) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->GetReadMessages(_return, username);
+    }
+    ifaces_[i]->GetReadMessages(_return, username);
+    return;
+  }
+
 };
 
 // The 'concurrent' client is a thread safe client that correctly handles
@@ -846,6 +1370,18 @@ class DatabaseServiceConcurrentClient : virtual public DatabaseServiceIf {
   void Logout(std::string& _return, const std::string& username);
   int32_t send_Logout(const std::string& username);
   void recv_Logout(std::string& _return, const int32_t seqid);
+  void ComposeMessage(std::string& _return, const Message& message);
+  int32_t send_ComposeMessage(const Message& message);
+  void recv_ComposeMessage(std::string& _return, const int32_t seqid);
+  void GetMessages(std::vector<Message> & _return, const std::string& username);
+  int32_t send_GetMessages(const std::string& username);
+  void recv_GetMessages(std::vector<Message> & _return, const int32_t seqid);
+  void GetUnreadMessages(std::vector<Message> & _return, const std::string& username);
+  int32_t send_GetUnreadMessages(const std::string& username);
+  void recv_GetUnreadMessages(std::vector<Message> & _return, const int32_t seqid);
+  void GetReadMessages(std::vector<Message> & _return, const std::string& username);
+  int32_t send_GetReadMessages(const std::string& username);
+  void recv_GetReadMessages(std::vector<Message> & _return, const int32_t seqid);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;

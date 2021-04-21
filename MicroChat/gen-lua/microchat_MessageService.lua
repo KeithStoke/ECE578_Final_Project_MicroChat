@@ -44,22 +44,23 @@ function MessageServiceClient:recv_ping(text)
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
 
-function MessageServiceClient:ComposeMessage(text, users)
-  self:send_ComposeMessage(text, users)
-  return self:recv_ComposeMessage(text, users)
+function MessageServiceClient:ComposeMessage(text, sender, user)
+  self:send_ComposeMessage(text, sender, user)
+  return self:recv_ComposeMessage(text, sender, user)
 end
 
-function MessageServiceClient:send_ComposeMessage(text, users)
+function MessageServiceClient:send_ComposeMessage(text, sender, user)
   self.oprot:writeMessageBegin('ComposeMessage', TMessageType.CALL, self._seqid)
   local args = ComposeMessage_args:new{}
   args.text = text
-  args.users = users
+  args.sender = sender
+  args.user = user
   args:write(self.oprot)
   self.oprot:writeMessageEnd()
   self.oprot.trans:flush()
 end
 
-function MessageServiceClient:recv_ComposeMessage(text, users)
+function MessageServiceClient:recv_ComposeMessage(text, sender, user)
   local fname, mtype, rseqid = self.iprot:readMessageBegin()
   if mtype == TMessageType.EXCEPTION then
     local x = TApplicationException:new{}
@@ -263,7 +264,7 @@ function MessageServiceProcessor:process_ComposeMessage(seqid, iprot, oprot, ser
   args:read(iprot)
   iprot:readMessageEnd()
   local result = ComposeMessage_result:new{}
-  local status, res = pcall(self.handler.ComposeMessage, self.handler, args.text, args.users)
+  local status, res = pcall(self.handler.ComposeMessage, self.handler, args.text, args.sender, args.user)
   if not status then
     reply_type = TMessageType.EXCEPTION
     result = TApplicationException:new{message = res}
@@ -436,7 +437,8 @@ end
 
 ComposeMessage_args = __TObject:new{
   text,
-  users
+  sender,
+  user
 }
 
 function ComposeMessage_args:read(iprot)
@@ -452,14 +454,14 @@ function ComposeMessage_args:read(iprot)
         iprot:skip(ftype)
       end
     elseif fid == 2 then
-      if ftype == TType.LIST then
-        self.users = {}
-        local _etype9, _size6 = iprot:readListBegin()
-        for _i=1,_size6 do
-          local _elem10 = iprot:readString()
-          table.insert(self.users, _elem10)
-        end
-        iprot:readListEnd()
+      if ftype == TType.STRING then
+        self.sender = iprot:readString()
+      else
+        iprot:skip(ftype)
+      end
+    elseif fid == 3 then
+      if ftype == TType.STRING then
+        self.user = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -478,13 +480,14 @@ function ComposeMessage_args:write(oprot)
     oprot:writeString(self.text)
     oprot:writeFieldEnd()
   end
-  if self.users ~= nil then
-    oprot:writeFieldBegin('users', TType.LIST, 2)
-    oprot:writeListBegin(TType.STRING, #self.users)
-    for _,iter11 in ipairs(self.users) do
-      oprot:writeString(iter11)
-    end
-    oprot:writeListEnd()
+  if self.sender ~= nil then
+    oprot:writeFieldBegin('sender', TType.STRING, 2)
+    oprot:writeString(self.sender)
+    oprot:writeFieldEnd()
+  end
+  if self.user ~= nil then
+    oprot:writeFieldBegin('user', TType.STRING, 3)
+    oprot:writeString(self.user)
     oprot:writeFieldEnd()
   end
   oprot:writeFieldStop()
@@ -683,11 +686,11 @@ function GetMessages_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.LIST then
         self.success = {}
-        local _etype15, _size12 = iprot:readListBegin()
-        for _i=1,_size12 do
-          local _elem16 = Message:new{}
-          _elem16:read(iprot)
-          table.insert(self.success, _elem16)
+        local _etype3, _size0 = iprot:readListBegin()
+        for _i=1,_size0 do
+          local _elem4 = Message:new{}
+          _elem4:read(iprot)
+          table.insert(self.success, _elem4)
         end
         iprot:readListEnd()
       else
@@ -713,8 +716,8 @@ function GetMessages_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.LIST, 0)
     oprot:writeListBegin(TType.STRUCT, #self.success)
-    for _,iter17 in ipairs(self.success) do
-      iter17:write(oprot)
+    for _,iter5 in ipairs(self.success) do
+      iter5:write(oprot)
     end
     oprot:writeListEnd()
     oprot:writeFieldEnd()
@@ -777,11 +780,11 @@ function GetUnreadMessages_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.LIST then
         self.success = {}
-        local _etype21, _size18 = iprot:readListBegin()
-        for _i=1,_size18 do
-          local _elem22 = Message:new{}
-          _elem22:read(iprot)
-          table.insert(self.success, _elem22)
+        local _etype9, _size6 = iprot:readListBegin()
+        for _i=1,_size6 do
+          local _elem10 = Message:new{}
+          _elem10:read(iprot)
+          table.insert(self.success, _elem10)
         end
         iprot:readListEnd()
       else
@@ -807,8 +810,8 @@ function GetUnreadMessages_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.LIST, 0)
     oprot:writeListBegin(TType.STRUCT, #self.success)
-    for _,iter23 in ipairs(self.success) do
-      iter23:write(oprot)
+    for _,iter11 in ipairs(self.success) do
+      iter11:write(oprot)
     end
     oprot:writeListEnd()
     oprot:writeFieldEnd()
@@ -871,11 +874,11 @@ function GetReadMessages_result:read(iprot)
     elseif fid == 0 then
       if ftype == TType.LIST then
         self.success = {}
-        local _etype27, _size24 = iprot:readListBegin()
-        for _i=1,_size24 do
-          local _elem28 = Message:new{}
-          _elem28:read(iprot)
-          table.insert(self.success, _elem28)
+        local _etype15, _size12 = iprot:readListBegin()
+        for _i=1,_size12 do
+          local _elem16 = Message:new{}
+          _elem16:read(iprot)
+          table.insert(self.success, _elem16)
         end
         iprot:readListEnd()
       else
@@ -901,8 +904,8 @@ function GetReadMessages_result:write(oprot)
   if self.success ~= nil then
     oprot:writeFieldBegin('success', TType.LIST, 0)
     oprot:writeListBegin(TType.STRUCT, #self.success)
-    for _,iter29 in ipairs(self.success) do
-      iter29:write(oprot)
+    for _,iter17 in ipairs(self.success) do
+      iter17:write(oprot)
     end
     oprot:writeListEnd()
     oprot:writeFieldEnd()

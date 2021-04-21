@@ -55,8 +55,8 @@ std::string to_string(const UserStatus::type& val);
 
 struct MessageStatus {
   enum type {
-    READ = 0,
-    UNREAD = 1
+    UNREAD = 0,
+    READ = 1
   };
 };
 
