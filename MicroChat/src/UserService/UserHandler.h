@@ -273,7 +273,7 @@ namespace microchat
     _return = "Logout for user " + username + " was successful " + result;
   }
 
-  /*
+/*
  * The following code which obtaines machine ID from machine's MAC address was
  * inspired from https://stackoverflow.com/a/16859693.
  */
@@ -351,7 +351,7 @@ namespace microchat
       *mac_hash = std::string(3 - mac_hash->size(), '0') + *mac_hash;
     }
     return 0;
-  }
+  } 
 
 } //namespace microchat
 

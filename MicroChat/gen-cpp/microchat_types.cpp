@@ -56,15 +56,13 @@ std::string to_string(const ErrorCode::type& val) {
 
 int _kUserStatusValues[] = {
   UserStatus::ONLINE,
-  UserStatus::OFFLINE,
-  UserStatus::AWAY
+  UserStatus::OFFLINE
 };
 const char* _kUserStatusNames[] = {
   "ONLINE",
-  "OFFLINE",
-  "AWAY"
+  "OFFLINE"
 };
-const std::map<int, const char*> _UserStatus_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(3, _kUserStatusValues, _kUserStatusNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
+const std::map<int, const char*> _UserStatus_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(2, _kUserStatusValues, _kUserStatusNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
 
 std::ostream& operator<<(std::ostream& out, const UserStatus::type& val) {
   std::map<int, const char*>::const_iterator it = _UserStatus_VALUES_TO_NAMES.find(val);
@@ -79,6 +77,35 @@ std::ostream& operator<<(std::ostream& out, const UserStatus::type& val) {
 std::string to_string(const UserStatus::type& val) {
   std::map<int, const char*>::const_iterator it = _UserStatus_VALUES_TO_NAMES.find(val);
   if (it != _UserStatus_VALUES_TO_NAMES.end()) {
+    return std::string(it->second);
+  } else {
+    return std::to_string(static_cast<int>(val));
+  }
+}
+
+int _kMessageStatusValues[] = {
+  MessageStatus::READ,
+  MessageStatus::UNREAD
+};
+const char* _kMessageStatusNames[] = {
+  "READ",
+  "UNREAD"
+};
+const std::map<int, const char*> _MessageStatus_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(2, _kMessageStatusValues, _kMessageStatusNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
+
+std::ostream& operator<<(std::ostream& out, const MessageStatus::type& val) {
+  std::map<int, const char*>::const_iterator it = _MessageStatus_VALUES_TO_NAMES.find(val);
+  if (it != _MessageStatus_VALUES_TO_NAMES.end()) {
+    out << it->second;
+  } else {
+    out << static_cast<int>(val);
+  }
+  return out;
+}
+
+std::string to_string(const MessageStatus::type& val) {
+  std::map<int, const char*>::const_iterator it = _MessageStatus_VALUES_TO_NAMES.find(val);
+  if (it != _MessageStatus_VALUES_TO_NAMES.end()) {
     return std::string(it->second);
   } else {
     return std::to_string(static_cast<int>(val));
@@ -381,12 +408,16 @@ void Message::__set_sender(const std::string& val) {
   this->sender = val;
 }
 
-void Message::__set_recipients(const std::vector<std::string> & val) {
-  this->recipients = val;
+void Message::__set_recipient(const std::string& val) {
+  this->recipient = val;
 }
 
 void Message::__set_timestamp(const int64_t val) {
   this->timestamp = val;
+}
+
+void Message::__set_messageStatus(const MessageStatus::type val) {
+  this->messageStatus = val;
 }
 std::ostream& operator<<(std::ostream& out, const Message& obj)
 {
@@ -441,21 +472,9 @@ uint32_t Message::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 4:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            this->recipients.clear();
-            uint32_t _size6;
-            ::apache::thrift::protocol::TType _etype9;
-            xfer += iprot->readListBegin(_etype9, _size6);
-            this->recipients.resize(_size6);
-            uint32_t _i10;
-            for (_i10 = 0; _i10 < _size6; ++_i10)
-            {
-              xfer += iprot->readString(this->recipients[_i10]);
-            }
-            xfer += iprot->readListEnd();
-          }
-          this->__isset.recipients = true;
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->recipient);
+          this->__isset.recipient = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -464,6 +483,16 @@ uint32_t Message::read(::apache::thrift::protocol::TProtocol* iprot) {
         if (ftype == ::apache::thrift::protocol::T_I64) {
           xfer += iprot->readI64(this->timestamp);
           this->__isset.timestamp = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 7:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          int32_t ecast6;
+          xfer += iprot->readI32(ecast6);
+          this->messageStatus = (MessageStatus::type)ecast6;
+          this->__isset.messageStatus = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -497,20 +526,16 @@ uint32_t Message::write(::apache::thrift::protocol::TProtocol* oprot) const {
   xfer += oprot->writeString(this->sender);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("recipients", ::apache::thrift::protocol::T_LIST, 4);
-  {
-    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, static_cast<uint32_t>(this->recipients.size()));
-    std::vector<std::string> ::const_iterator _iter11;
-    for (_iter11 = this->recipients.begin(); _iter11 != this->recipients.end(); ++_iter11)
-    {
-      xfer += oprot->writeString((*_iter11));
-    }
-    xfer += oprot->writeListEnd();
-  }
+  xfer += oprot->writeFieldBegin("recipient", ::apache::thrift::protocol::T_STRING, 4);
+  xfer += oprot->writeString(this->recipient);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("timestamp", ::apache::thrift::protocol::T_I64, 6);
   xfer += oprot->writeI64(this->timestamp);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("messageStatus", ::apache::thrift::protocol::T_I32, 7);
+  xfer += oprot->writeI32((int32_t)this->messageStatus);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -523,26 +548,29 @@ void swap(Message &a, Message &b) {
   swap(a.messageID, b.messageID);
   swap(a.text, b.text);
   swap(a.sender, b.sender);
-  swap(a.recipients, b.recipients);
+  swap(a.recipient, b.recipient);
   swap(a.timestamp, b.timestamp);
+  swap(a.messageStatus, b.messageStatus);
   swap(a.__isset, b.__isset);
 }
 
-Message::Message(const Message& other12) {
-  messageID = other12.messageID;
-  text = other12.text;
-  sender = other12.sender;
-  recipients = other12.recipients;
-  timestamp = other12.timestamp;
-  __isset = other12.__isset;
+Message::Message(const Message& other7) {
+  messageID = other7.messageID;
+  text = other7.text;
+  sender = other7.sender;
+  recipient = other7.recipient;
+  timestamp = other7.timestamp;
+  messageStatus = other7.messageStatus;
+  __isset = other7.__isset;
 }
-Message& Message::operator=(const Message& other13) {
-  messageID = other13.messageID;
-  text = other13.text;
-  sender = other13.sender;
-  recipients = other13.recipients;
-  timestamp = other13.timestamp;
-  __isset = other13.__isset;
+Message& Message::operator=(const Message& other8) {
+  messageID = other8.messageID;
+  text = other8.text;
+  sender = other8.sender;
+  recipient = other8.recipient;
+  timestamp = other8.timestamp;
+  messageStatus = other8.messageStatus;
+  __isset = other8.__isset;
   return *this;
 }
 void Message::printTo(std::ostream& out) const {
@@ -551,8 +579,9 @@ void Message::printTo(std::ostream& out) const {
   out << "messageID=" << to_string(messageID);
   out << ", " << "text=" << to_string(text);
   out << ", " << "sender=" << to_string(sender);
-  out << ", " << "recipients=" << to_string(recipients);
+  out << ", " << "recipient=" << to_string(recipient);
   out << ", " << "timestamp=" << to_string(timestamp);
+  out << ", " << "messageStatus=" << to_string(messageStatus);
   out << ")";
 }
 

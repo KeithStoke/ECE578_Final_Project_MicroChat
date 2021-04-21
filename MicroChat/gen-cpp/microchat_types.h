@@ -43,8 +43,7 @@ std::string to_string(const ErrorCode::type& val);
 struct UserStatus {
   enum type {
     ONLINE = 0,
-    OFFLINE = 1,
-    AWAY = 2
+    OFFLINE = 1
   };
 };
 
@@ -53,6 +52,19 @@ extern const std::map<int, const char*> _UserStatus_VALUES_TO_NAMES;
 std::ostream& operator<<(std::ostream& out, const UserStatus::type& val);
 
 std::string to_string(const UserStatus::type& val);
+
+struct MessageStatus {
+  enum type {
+    READ = 0,
+    UNREAD = 1
+  };
+};
+
+extern const std::map<int, const char*> _MessageStatus_VALUES_TO_NAMES;
+
+std::ostream& operator<<(std::ostream& out, const MessageStatus::type& val);
+
+std::string to_string(const MessageStatus::type& val);
 
 class ServiceException;
 
@@ -171,12 +183,13 @@ void swap(User &a, User &b);
 std::ostream& operator<<(std::ostream& out, const User& obj);
 
 typedef struct _Message__isset {
-  _Message__isset() : messageID(false), text(false), sender(false), recipients(false), timestamp(false) {}
+  _Message__isset() : messageID(false), text(false), sender(false), recipient(false), timestamp(false), messageStatus(false) {}
   bool messageID :1;
   bool text :1;
   bool sender :1;
-  bool recipients :1;
+  bool recipient :1;
   bool timestamp :1;
+  bool messageStatus :1;
 } _Message__isset;
 
 class Message : public virtual ::apache::thrift::TBase {
@@ -184,15 +197,16 @@ class Message : public virtual ::apache::thrift::TBase {
 
   Message(const Message&);
   Message& operator=(const Message&);
-  Message() : messageID(0), text(), sender(), timestamp(0) {
+  Message() : messageID(0), text(), sender(), recipient(), timestamp(0), messageStatus((MessageStatus::type)0) {
   }
 
   virtual ~Message() noexcept;
   int64_t messageID;
   std::string text;
   std::string sender;
-  std::vector<std::string>  recipients;
+  std::string recipient;
   int64_t timestamp;
+  MessageStatus::type messageStatus;
 
   _Message__isset __isset;
 
@@ -202,9 +216,11 @@ class Message : public virtual ::apache::thrift::TBase {
 
   void __set_sender(const std::string& val);
 
-  void __set_recipients(const std::vector<std::string> & val);
+  void __set_recipient(const std::string& val);
 
   void __set_timestamp(const int64_t val);
+
+  void __set_messageStatus(const MessageStatus::type val);
 
   bool operator == (const Message & rhs) const
   {
@@ -214,9 +230,11 @@ class Message : public virtual ::apache::thrift::TBase {
       return false;
     if (!(sender == rhs.sender))
       return false;
-    if (!(recipients == rhs.recipients))
+    if (!(recipient == rhs.recipient))
       return false;
     if (!(timestamp == rhs.timestamp))
+      return false;
+    if (!(messageStatus == rhs.messageStatus))
       return false;
     return true;
   }

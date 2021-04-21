@@ -208,7 +208,10 @@ namespace microchat
       BSON_APPEND_UTF8(update_query, "username", username.c_str());
       bson_t *update = bson_new();
       bson_error_t update_error;
-      BSON_APPEND_INT64(update, "user_status", UserStatus::type::ONLINE); //ONLINE = 0
+      //ONLINE = 0
+      update = BCON_NEW("$set", "{",
+                        "user_status", BCON_INT64(UserStatus::type::ONLINE), BCON_BOOL(true),
+                        "}");
 
       if (!mongoc_collection_update(collection, MONGOC_UPDATE_NONE, update_query, update, NULL, &error))
       {
@@ -273,7 +276,10 @@ namespace microchat
     BSON_APPEND_UTF8(query, "username", username.c_str());
 
     bson_t *update = bson_new();
-    BSON_APPEND_INT64(update, "user_status", UserStatus::type::OFFLINE); //OFFLINE = 1
+    //OFFLINE = 1
+    update = BCON_NEW("$set", "{",
+                      "user_status", BCON_INT64(UserStatus::type::OFFLINE), BCON_BOOL(true),
+                      "}");
 
     if (!mongoc_collection_update(collection, MONGOC_UPDATE_NONE, query, update, NULL, &error))
     {
