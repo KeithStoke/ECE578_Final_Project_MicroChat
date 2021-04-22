@@ -6,12 +6,45 @@
 --
 
 
-require 'Thrift'
-require 'microchat_ttypes'
+local microchat__ttype = require 'microchat_ttypes'
+local Thrift = require 'Thrift'
+local TType = Thrift.TType
+local TMessageType = Thrift.TMessageType
+local __TObject = Thrift.__TObject
+local TApplicationException = Thrift.TApplicationException
+local __TClient = Thrift.__TClient
+local __TProcessor = Thrift.__TProcessor
+local ttype = Thrift.ttype
+local ttable_size = Thrift.ttable_size
+local TException = Thrift.TException
 
-MessageServiceClient = __TObject.new(__TClient, {
+local MessageServiceClient = __TObject.new(__TClient, {
   __type = 'MessageServiceClient'
 })
+
+local ComposeMessage_args = __TObject:new{
+  text,
+  sender,
+  user
+}
+
+local ReadMessage_args = __TObject:new{
+  messageID,
+  username
+}
+
+local GetMessages_args = __TObject:new{
+  username
+}
+
+
+local GetUnreadMessages_args = __TObject:new{
+  username
+}
+
+local GetReadMessages_args = __TObject:new{
+  username
+}
 
 function MessageServiceClient:ping(text)
   self:send_ping(text)
@@ -211,12 +244,12 @@ function MessageServiceClient:recv_GetReadMessages(username)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
-MessageServiceIface = __TObject:new{
+local MessageServiceIface = __TObject:new{
   __type = 'MessageServiceIface'
 }
 
 
-MessageServiceProcessor = __TObject.new(__TProcessor
+local MessageServiceProcessor = __TObject.new(__TProcessor
 , {
  __type = 'MessageServiceProcessor'
 })
@@ -365,7 +398,7 @@ end
 
 -- HELPER FUNCTIONS AND STRUCTURES
 
-ping_args = __TObject:new{
+local ping_args = __TObject:new{
   text
 }
 
@@ -434,12 +467,6 @@ function ping_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
-
-ComposeMessage_args = __TObject:new{
-  text,
-  sender,
-  user
-}
 
 function ComposeMessage_args:read(iprot)
   iprot:readStructBegin()
@@ -542,7 +569,7 @@ function ComposeMessage_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-ReadMessage_args = __TObject:new{
+local ReadMessage_args = __TObject:new{
   messageID,
   username
 }
@@ -637,9 +664,6 @@ function ReadMessage_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-GetMessages_args = __TObject:new{
-  username
-}
 
 function GetMessages_args:read(iprot)
   iprot:readStructBegin()
@@ -731,9 +755,6 @@ function GetMessages_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-GetUnreadMessages_args = __TObject:new{
-  username
-}
 
 function GetUnreadMessages_args:read(iprot)
   iprot:readStructBegin()
@@ -825,10 +846,6 @@ function GetUnreadMessages_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-GetReadMessages_args = __TObject:new{
-  username
-}
-
 function GetReadMessages_args:read(iprot)
   iprot:readStructBegin()
   while true do
@@ -918,3 +935,5 @@ function GetReadMessages_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
+return MessageServiceClient

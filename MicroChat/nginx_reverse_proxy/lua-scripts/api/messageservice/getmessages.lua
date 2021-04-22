@@ -4,26 +4,29 @@ local function _StrIsEmpty(s)
 	return s == nil or s == ''
 end
 
-function _M.GetUserID()
-	local UserServiceClient = require "microchat_UserService"
+function _M.GetMessages()
+	local MessageServiceClient = require "microchat_MessageService"
 	local GenericObjectPool = require "GenericObjectPool"
 	local ngx = ngx
+	local cjson = require "cjson"
+  	local jwt = require "resty.jwt"
+  	local liblualongnumber = require "liblualongnumber"
 	-- Read the parameters sent by the end user client
 	
 	ngx.req.read_body()
         local post = ngx.req.get_post_args()
 
-        if (_StrIsEmpty(post.username) ) then
+        if (_StrIsEmpty(post.username)) then
            ngx.status = ngx.HTTP_BAD_REQUEST
            ngx.say("Incomplete arguments")
            ngx.log(ngx.ERR, "Incomplete arguments")
            ngx.exit(ngx.HTTP_BAD_REQUEST)
         end
 
-	ngx.say("Inside Nginx Lua script: Getting userID...", post.username)
+	ngx.say("Inside Nginx Lua script: Getting all messages for ", post.username)
 	
-	local client = GenericObjectPool:connection(UserServiceClient, "user-service", 9090)
-	local status, ret = pcall(client.GetUserID, client, post.username)
+	local client = GenericObjectPool:connection(MessageServiceClient, "message-service", 9091)
+	local status, ret = pcall(client.GetMessages, client, post.username)
 
 	GenericObjectPool:returnConnection(client)
 	ngx.say("Status: ", status)
@@ -43,7 +46,8 @@ function _M.GetUserID()
     		ngx.exit(ngx.HTTP_OK)
   	else
     		ngx.header.content_type = "text/plain"
-		ngx.say("UserID for given username is: ", ret)
+			ngx.say("Messages successfully retrieved: ", ret)
+			ngx.say(cjson.encode(ret))
     		ngx.exit(ngx.HTTP_OK)
   	end
 

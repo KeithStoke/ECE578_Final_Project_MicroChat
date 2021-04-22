@@ -191,54 +191,42 @@ namespace microchat
       if (bson_iter_init_find(&iter_password, doc, "password") &&
           bson_iter_init_find(&iter_user_id, doc, "user_id"))
       {
+
+        std::cout << "grabbing userID and password" << std::endl;
         password_stored = bson_iter_value(&iter_password)->value.v_utf8.str;
         user_id_stored = bson_iter_value(&iter_user_id)->value.v_int64;
       }
-      else //some reason password and/or userid were not stored
-      {
-        LOG(error) << "user: " << username << " entry is NOT complete";
-        std::cout << "user: " << username << " entry is NOT complete";
-        bson_destroy(query);
-        mongoc_cursor_destroy(cursor);
-        mongoc_collection_destroy(collection);
-        mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
-        ServiceException se;
-        se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
-        se.message = "user: " + username + " entry is NOT complete";
-        throw se;
-      }
 
-      bson_t *update_query = bson_new();
-      BSON_APPEND_UTF8(update_query, "username", username.c_str());
-      bson_t *update = bson_new();
-      bson_error_t update_error;
-      //ONLINE = 0
-      update = BCON_NEW("$set", "{",
-                        "user_status", BCON_INT64(UserStatus::type::ONLINE), BCON_BOOL(true),
-                        "}");
-
-      if (!mongoc_collection_update(collection, MONGOC_UPDATE_NONE, update_query, update, NULL, &error))
-      {
-        std::cout << "Failed to update user status of " << username
-                  << " in MongoDB: " << error.message;
-        ServiceException se;
-        se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
-        se.message = "Failed to update user status of " + username + " in MongoDB: " + update_error.message;
-        bson_destroy(update_query);
-        bson_destroy(update);
-        mongoc_collection_destroy(collection);
-        mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
-        throw se;
-      }
-      bson_destroy(query);
       mongoc_cursor_destroy(cursor);
-      bson_destroy(update_query);
-      bson_destroy(update);
-      mongoc_collection_destroy(collection);
-      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
 
       if (!password_stored.empty() && (password.compare(password_stored) == 0))
       {
+        std::cout << "in IF block checking if passwords match" << std::endl;
+
+        //update user status to ONLINE = 0
+        bson_t *update = BCON_NEW("$set", "{","user_status", BCON_INT64(0),"}");
+
+      std::cout << "attempting to insert" << std::endl;
+        if (!mongoc_collection_update(collection, MONGOC_UPDATE_NONE, query, update, NULL, &error))
+        {
+          std::cout << "Failed to update user status of " << username
+                    << " in MongoDB: " << error.message;
+          ServiceException se;
+          se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
+          se.message = "Failed to update user status of " + username + " in MongoDB: " + error.message;
+          std::cout << error.message << std::endl;
+          bson_destroy(query);
+          bson_destroy(update);
+          mongoc_collection_destroy(collection);
+          mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+          throw se;
+        }
+
+        bson_destroy(query);
+        bson_destroy(update);
+        mongoc_collection_destroy(collection);
+        mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+
         //if passwords match, return SUCCESS
         std::cout << "Password and username were a match" << std::endl;
         _return = std::to_string(user_id_stored);
@@ -279,10 +267,10 @@ namespace microchat
     bson_t *query = bson_new();
     BSON_APPEND_UTF8(query, "username", username.c_str());
 
-    bson_t *update = bson_new();
+    bson_t *update = NULL;
     //OFFLINE = 1
     update = BCON_NEW("$set", "{",
-                      "user_status", BCON_INT64(UserStatus::type::OFFLINE), BCON_BOOL(true),
+                      "user_status", BCON_INT64(1),
                       "}");
 
     if (!mongoc_collection_update(collection, MONGOC_UPDATE_NONE, query, update, NULL, &error))
@@ -399,7 +387,7 @@ namespace microchat
   void DatabaseServiceHandler::GetMessages(std::vector<Message> &_return, const std::string &username)
   {
   }
-  
+
   void DatabaseServiceHandler::GetUnreadMessages(std::vector<Message> &_return, const std::string &username) {}
   void DatabaseServiceHandler::GetReadMessages(std::vector<Message> &_return, const std::string &username) {}
 

@@ -123,14 +123,8 @@ namespace microchat
 
   void MessageServiceHandler::ComposeMessage(std::string &_return, const std::string &text, const std::string &sender, const std::string &user)
   {
-
-    //create new Message object w/ list of recipients
-    //create new SimpleMessage object w/ same messageID, username, READ/UNREAD status
-    //store 1 Message and X SimpleMessage objects into mongoDB
-
     std::cout << "Compose new message..." << std::endl;
 
-    std::string result;
     mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
         _mongodb_client_pool);
     if (!mongodb_client)
@@ -222,12 +216,70 @@ namespace microchat
   void MessageServiceHandler::ReadMessage(std::string &_return, const int64_t messageID, const std::string &username)
   {
   }
+
   void MessageServiceHandler::GetMessages(std::vector<Message> &_return, const std::string &username)
   {
-    //FIRST search users to see if username exists
-    // if NOT, throw SE
-    // else, search db for any messages that include 'username' in list of recipients
-    //  grab messages and return to user so they can read them
+    //search db for any messages that include 'username' in list of recipients
+    //  grab messages and return to user
+    std::vector<Message> messages;
+    Message _default_message;
+    _default_message.__set_text("This is default message text");
+    messages.push_back(_default_message);
+
+    bson_error_t error;
+    const bson_t *doc;
+    char *str;
+
+    mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
+        _mongodb_client_pool);
+    if (!mongodb_client)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = "Failed to pop a client from MongoDB pool";
+      throw se;
+    }
+    auto collection = mongoc_client_get_collection(
+        mongodb_client, "message", "message");
+
+// find all messages where recipient is username
+    bson_t *query =  bson_new();
+    BSON_APPEND_UTF8(query, "recipient", username.c_str());
+
+    mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
+        collection, query, nullptr, nullptr);
+
+    if (mongoc_cursor_error(cursor, &error))
+    {
+      LOG(error) << error.message;
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = error.message;
+      throw se;
+    }
+    else
+    {
+      //no errors
+
+      while (mongoc_cursor_next(cursor, &doc))
+      {
+        str = bson_as_json(doc, NULL);
+        std::cout << str << std::endl;
+        bson_free(str);
+      }
+
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+
+      // return messages;
+      _return = messages;
+    }
   }
 
   void MessageServiceHandler::GetUnreadMessages(std::vector<Message> &_return, const std::string &username)
