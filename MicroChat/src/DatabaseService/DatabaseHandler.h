@@ -201,12 +201,9 @@ namespace microchat
 
       if (!password_stored.empty() && (password.compare(password_stored) == 0))
       {
-        std::cout << "in IF block checking if passwords match" << std::endl;
-
         //update user status to ONLINE = 0
         bson_t *update = BCON_NEW("$set", "{","user_status", BCON_INT64(0),"}");
 
-      std::cout << "attempting to insert" << std::endl;
         if (!mongoc_collection_update(collection, MONGOC_UPDATE_NONE, query, update, NULL, &error))
         {
           std::cout << "Failed to update user status of " << username

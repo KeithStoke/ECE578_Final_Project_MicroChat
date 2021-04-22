@@ -219,12 +219,13 @@ namespace microchat
 
   void MessageServiceHandler::GetMessages(std::vector<Message> &_return, const std::string &username)
   {
+
+    std::cout << "In GetMessages in MessageHandler" << std::endl;
     //search db for any messages that include 'username' in list of recipients
     //  grab messages and return to user
+
     std::vector<Message> messages;
-    Message _default_message;
-    _default_message.__set_text("This is default message text");
-    messages.push_back(_default_message);
+   
 
     bson_error_t error;
     const bson_t *doc;
@@ -242,7 +243,7 @@ namespace microchat
     auto collection = mongoc_client_get_collection(
         mongodb_client, "message", "message");
 
-// find all messages where recipient is username
+    // find all messages where recipient is username
     bson_t *query =  bson_new();
     BSON_APPEND_UTF8(query, "recipient", username.c_str());
 
@@ -265,17 +266,36 @@ namespace microchat
     {
       //no errors
 
+      bson_iter_t iter_message_text;
+      bson_iter_t iter_sender;
+      bson_iter_t iter_timestamp;
+
       while (mongoc_cursor_next(cursor, &doc))
       {
         str = bson_as_json(doc, NULL);
         std::cout << str << std::endl;
         bson_free(str);
+
+        bson_iter_init_find(&iter_message_text, doc, "text");
+        bson_iter_init_find(&iter_sender, doc, "sender");
+        bson_iter_init_find(&iter_timestamp, doc, "timestamp");
+
+        Message msg;
+        msg.__set_text(bson_iter_value(&iter_message_text)->value.v_utf8.str);
+        msg.__set_sender(bson_iter_value(&iter_sender)->value.v_utf8.str);
+        msg.__set_timestamp(bson_iter_value(&iter_timestamp)->value.v_int64);
+
+        messages.push_back(msg);
       }
 
       bson_destroy(query);
       mongoc_cursor_destroy(cursor);
       mongoc_collection_destroy(collection);
       mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+
+      for(Message msg : messages){
+        std::cout << "message text: " << msg.text << std::endl;
+      }
 
       // return messages;
       _return = messages;

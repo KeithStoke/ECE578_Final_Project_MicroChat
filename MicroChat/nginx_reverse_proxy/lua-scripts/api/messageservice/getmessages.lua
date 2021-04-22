@@ -4,6 +4,19 @@ local function _StrIsEmpty(s)
 	return s == nil or s == ''
 end
 
+local function _LoadMessages(data)
+	local messages = {}
+	for _, message in ipairs(data) do
+		local new_message = {}
+		new_message["sender"] = message.sender
+		new_message["timestamp"] = tostring(message.timestamp)
+		new_message["text"] = message.text
+		ngx.say("Message text was ", message.text)
+		table.insert(messages, new_message)
+	end
+	return messages
+end
+
 function _M.GetMessages()
 	local MessageServiceClient = require "microchat_MessageService"
 	local GenericObjectPool = require "GenericObjectPool"
@@ -29,7 +42,8 @@ function _M.GetMessages()
 	local status, ret = pcall(client.GetMessages, client, post.username)
 
 	GenericObjectPool:returnConnection(client)
-	ngx.say("Status: ", status)
+
+ngx.say("waiting on response! ", ret)
 
 	if not status then
     
@@ -45,10 +59,9 @@ function _M.GetMessages()
     		end
     		ngx.exit(ngx.HTTP_OK)
   	else
-    		ngx.header.content_type = "text/plain"
-			ngx.say("Messages successfully retrieved: ", ret)
-			ngx.say(cjson.encode(ret))
-    		ngx.exit(ngx.HTTP_OK)
+		local messages = _LoadMessages(ret)
+		ngx.header.content_type = "application/json; charset=utf-8"
+      	ngx.say(cjson.encode(messages) )
   	end
 
 end
