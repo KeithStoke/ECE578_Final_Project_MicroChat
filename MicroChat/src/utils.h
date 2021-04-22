@@ -25,6 +25,7 @@ int load_config_file(const std::string &file_name, json *config_json) {
   }
 };
 
+
 } //namespace microchat
 
 #endif //MICROCHAT_UTILS_H

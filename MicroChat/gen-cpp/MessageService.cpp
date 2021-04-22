@@ -9,193 +9,6 @@
 namespace microchat {
 
 
-MessageService_ping_args::~MessageService_ping_args() noexcept {
-}
-
-
-uint32_t MessageService_ping_args::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  ::apache::thrift::protocol::TInputRecursionTracker tracker(*iprot);
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->text);
-          this->__isset.text = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t MessageService_ping_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
-  xfer += oprot->writeStructBegin("MessageService_ping_args");
-
-  xfer += oprot->writeFieldBegin("text", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString(this->text);
-  xfer += oprot->writeFieldEnd();
-
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-
-MessageService_ping_pargs::~MessageService_ping_pargs() noexcept {
-}
-
-
-uint32_t MessageService_ping_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
-  xfer += oprot->writeStructBegin("MessageService_ping_pargs");
-
-  xfer += oprot->writeFieldBegin("text", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString((*(this->text)));
-  xfer += oprot->writeFieldEnd();
-
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-
-MessageService_ping_result::~MessageService_ping_result() noexcept {
-}
-
-
-uint32_t MessageService_ping_result::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  ::apache::thrift::protocol::TInputRecursionTracker tracker(*iprot);
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 0:
-        if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->success);
-          this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t MessageService_ping_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
-
-  uint32_t xfer = 0;
-
-  xfer += oprot->writeStructBegin("MessageService_ping_result");
-
-  if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
-    xfer += oprot->writeString(this->success);
-    xfer += oprot->writeFieldEnd();
-  }
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-
-MessageService_ping_presult::~MessageService_ping_presult() noexcept {
-}
-
-
-uint32_t MessageService_ping_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  ::apache::thrift::protocol::TInputRecursionTracker tracker(*iprot);
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 0:
-        if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString((*(this->success)));
-          this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-
 MessageService_ComposeMessage_args::~MessageService_ComposeMessage_args() noexcept {
 }
 
@@ -230,21 +43,17 @@ uint32_t MessageService_ComposeMessage_args::read(::apache::thrift::protocol::TP
         }
         break;
       case 2:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            this->users.clear();
-            uint32_t _size14;
-            ::apache::thrift::protocol::TType _etype17;
-            xfer += iprot->readListBegin(_etype17, _size14);
-            this->users.resize(_size14);
-            uint32_t _i18;
-            for (_i18 = 0; _i18 < _size14; ++_i18)
-            {
-              xfer += iprot->readString(this->users[_i18]);
-            }
-            xfer += iprot->readListEnd();
-          }
-          this->__isset.users = true;
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->sender);
+          this->__isset.sender = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->user);
+          this->__isset.user = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -270,16 +79,12 @@ uint32_t MessageService_ComposeMessage_args::write(::apache::thrift::protocol::T
   xfer += oprot->writeString(this->text);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("users", ::apache::thrift::protocol::T_LIST, 2);
-  {
-    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, static_cast<uint32_t>(this->users.size()));
-    std::vector<std::string> ::const_iterator _iter19;
-    for (_iter19 = this->users.begin(); _iter19 != this->users.end(); ++_iter19)
-    {
-      xfer += oprot->writeString((*_iter19));
-    }
-    xfer += oprot->writeListEnd();
-  }
+  xfer += oprot->writeFieldBegin("sender", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->sender);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("user", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString(this->user);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -301,16 +106,12 @@ uint32_t MessageService_ComposeMessage_pargs::write(::apache::thrift::protocol::
   xfer += oprot->writeString((*(this->text)));
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("users", ::apache::thrift::protocol::T_LIST, 2);
-  {
-    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, static_cast<uint32_t>((*(this->users)).size()));
-    std::vector<std::string> ::const_iterator _iter20;
-    for (_iter20 = (*(this->users)).begin(); _iter20 != (*(this->users)).end(); ++_iter20)
-    {
-      xfer += oprot->writeString((*_iter20));
-    }
-    xfer += oprot->writeListEnd();
-  }
+  xfer += oprot->writeFieldBegin("sender", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString((*(this->sender)));
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("user", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString((*(this->user)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -775,20 +576,8 @@ uint32_t MessageService_GetMessages_result::read(::apache::thrift::protocol::TPr
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            this->success.clear();
-            uint32_t _size21;
-            ::apache::thrift::protocol::TType _etype24;
-            xfer += iprot->readListBegin(_etype24, _size21);
-            this->success.resize(_size21);
-            uint32_t _i25;
-            for (_i25 = 0; _i25 < _size21; ++_i25)
-            {
-              xfer += this->success[_i25].read(iprot);
-            }
-            xfer += iprot->readListEnd();
-          }
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -821,16 +610,8 @@ uint32_t MessageService_GetMessages_result::write(::apache::thrift::protocol::TP
   xfer += oprot->writeStructBegin("MessageService_GetMessages_result");
 
   if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
-    {
-      xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->success.size()));
-      std::vector<Message> ::const_iterator _iter26;
-      for (_iter26 = this->success.begin(); _iter26 != this->success.end(); ++_iter26)
-      {
-        xfer += (*_iter26).write(oprot);
-      }
-      xfer += oprot->writeListEnd();
-    }
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
     xfer += oprot->writeFieldEnd();
   } else if (this->__isset.se) {
     xfer += oprot->writeFieldBegin("se", ::apache::thrift::protocol::T_STRUCT, 1);
@@ -869,20 +650,8 @@ uint32_t MessageService_GetMessages_presult::read(::apache::thrift::protocol::TP
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            (*(this->success)).clear();
-            uint32_t _size27;
-            ::apache::thrift::protocol::TType _etype30;
-            xfer += iprot->readListBegin(_etype30, _size27);
-            (*(this->success)).resize(_size27);
-            uint32_t _i31;
-            for (_i31 = 0; _i31 < _size27; ++_i31)
-            {
-              xfer += (*(this->success))[_i31].read(iprot);
-            }
-            xfer += iprot->readListEnd();
-          }
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -1014,20 +783,8 @@ uint32_t MessageService_GetUnreadMessages_result::read(::apache::thrift::protoco
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            this->success.clear();
-            uint32_t _size32;
-            ::apache::thrift::protocol::TType _etype35;
-            xfer += iprot->readListBegin(_etype35, _size32);
-            this->success.resize(_size32);
-            uint32_t _i36;
-            for (_i36 = 0; _i36 < _size32; ++_i36)
-            {
-              xfer += this->success[_i36].read(iprot);
-            }
-            xfer += iprot->readListEnd();
-          }
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -1060,16 +817,8 @@ uint32_t MessageService_GetUnreadMessages_result::write(::apache::thrift::protoc
   xfer += oprot->writeStructBegin("MessageService_GetUnreadMessages_result");
 
   if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
-    {
-      xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->success.size()));
-      std::vector<Message> ::const_iterator _iter37;
-      for (_iter37 = this->success.begin(); _iter37 != this->success.end(); ++_iter37)
-      {
-        xfer += (*_iter37).write(oprot);
-      }
-      xfer += oprot->writeListEnd();
-    }
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
     xfer += oprot->writeFieldEnd();
   } else if (this->__isset.se) {
     xfer += oprot->writeFieldBegin("se", ::apache::thrift::protocol::T_STRUCT, 1);
@@ -1108,20 +857,8 @@ uint32_t MessageService_GetUnreadMessages_presult::read(::apache::thrift::protoc
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            (*(this->success)).clear();
-            uint32_t _size38;
-            ::apache::thrift::protocol::TType _etype41;
-            xfer += iprot->readListBegin(_etype41, _size38);
-            (*(this->success)).resize(_size38);
-            uint32_t _i42;
-            for (_i42 = 0; _i42 < _size38; ++_i42)
-            {
-              xfer += (*(this->success))[_i42].read(iprot);
-            }
-            xfer += iprot->readListEnd();
-          }
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -1253,20 +990,8 @@ uint32_t MessageService_GetReadMessages_result::read(::apache::thrift::protocol:
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            this->success.clear();
-            uint32_t _size43;
-            ::apache::thrift::protocol::TType _etype46;
-            xfer += iprot->readListBegin(_etype46, _size43);
-            this->success.resize(_size43);
-            uint32_t _i47;
-            for (_i47 = 0; _i47 < _size43; ++_i47)
-            {
-              xfer += this->success[_i47].read(iprot);
-            }
-            xfer += iprot->readListEnd();
-          }
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -1299,16 +1024,8 @@ uint32_t MessageService_GetReadMessages_result::write(::apache::thrift::protocol
   xfer += oprot->writeStructBegin("MessageService_GetReadMessages_result");
 
   if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
-    {
-      xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->success.size()));
-      std::vector<Message> ::const_iterator _iter48;
-      for (_iter48 = this->success.begin(); _iter48 != this->success.end(); ++_iter48)
-      {
-        xfer += (*_iter48).write(oprot);
-      }
-      xfer += oprot->writeListEnd();
-    }
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
     xfer += oprot->writeFieldEnd();
   } else if (this->__isset.se) {
     xfer += oprot->writeFieldBegin("se", ::apache::thrift::protocol::T_STRUCT, 1);
@@ -1347,20 +1064,8 @@ uint32_t MessageService_GetReadMessages_presult::read(::apache::thrift::protocol
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            (*(this->success)).clear();
-            uint32_t _size49;
-            ::apache::thrift::protocol::TType _etype52;
-            xfer += iprot->readListBegin(_etype52, _size49);
-            (*(this->success)).resize(_size49);
-            uint32_t _i53;
-            for (_i53 = 0; _i53 < _size49; ++_i53)
-            {
-              xfer += (*(this->success))[_i53].read(iprot);
-            }
-            xfer += iprot->readListEnd();
-          }
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -1386,78 +1091,21 @@ uint32_t MessageService_GetReadMessages_presult::read(::apache::thrift::protocol
   return xfer;
 }
 
-void MessageServiceClient::ping(std::string& _return, const std::string& text)
+void MessageServiceClient::ComposeMessage(std::string& _return, const std::string& text, const std::string& sender, const std::string& user)
 {
-  send_ping(text);
-  recv_ping(_return);
-}
-
-void MessageServiceClient::send_ping(const std::string& text)
-{
-  int32_t cseqid = 0;
-  oprot_->writeMessageBegin("ping", ::apache::thrift::protocol::T_CALL, cseqid);
-
-  MessageService_ping_pargs args;
-  args.text = &text;
-  args.write(oprot_);
-
-  oprot_->writeMessageEnd();
-  oprot_->getTransport()->writeEnd();
-  oprot_->getTransport()->flush();
-}
-
-void MessageServiceClient::recv_ping(std::string& _return)
-{
-
-  int32_t rseqid = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TMessageType mtype;
-
-  iprot_->readMessageBegin(fname, mtype, rseqid);
-  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
-    ::apache::thrift::TApplicationException x;
-    x.read(iprot_);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw x;
-  }
-  if (mtype != ::apache::thrift::protocol::T_REPLY) {
-    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-  }
-  if (fname.compare("ping") != 0) {
-    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-  }
-  MessageService_ping_presult result;
-  result.success = &_return;
-  result.read(iprot_);
-  iprot_->readMessageEnd();
-  iprot_->getTransport()->readEnd();
-
-  if (result.__isset.success) {
-    // _return pointer has now been filled
-    return;
-  }
-  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
-}
-
-void MessageServiceClient::ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users)
-{
-  send_ComposeMessage(text, users);
+  send_ComposeMessage(text, sender, user);
   recv_ComposeMessage(_return);
 }
 
-void MessageServiceClient::send_ComposeMessage(const std::string& text, const std::vector<std::string> & users)
+void MessageServiceClient::send_ComposeMessage(const std::string& text, const std::string& sender, const std::string& user)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("ComposeMessage", ::apache::thrift::protocol::T_CALL, cseqid);
 
   MessageService_ComposeMessage_pargs args;
   args.text = &text;
-  args.users = &users;
+  args.sender = &sender;
+  args.user = &user;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -1568,7 +1216,7 @@ void MessageServiceClient::recv_ReadMessage(std::string& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ReadMessage failed: unknown result");
 }
 
-void MessageServiceClient::GetMessages(std::vector<Message> & _return, const std::string& username)
+void MessageServiceClient::GetMessages(std::string& _return, const std::string& username)
 {
   send_GetMessages(username);
   recv_GetMessages(_return);
@@ -1588,7 +1236,7 @@ void MessageServiceClient::send_GetMessages(const std::string& username)
   oprot_->getTransport()->flush();
 }
 
-void MessageServiceClient::recv_GetMessages(std::vector<Message> & _return)
+void MessageServiceClient::recv_GetMessages(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -1629,7 +1277,7 @@ void MessageServiceClient::recv_GetMessages(std::vector<Message> & _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "GetMessages failed: unknown result");
 }
 
-void MessageServiceClient::GetUnreadMessages(std::vector<Message> & _return, const std::string& username)
+void MessageServiceClient::GetUnreadMessages(std::string& _return, const std::string& username)
 {
   send_GetUnreadMessages(username);
   recv_GetUnreadMessages(_return);
@@ -1649,7 +1297,7 @@ void MessageServiceClient::send_GetUnreadMessages(const std::string& username)
   oprot_->getTransport()->flush();
 }
 
-void MessageServiceClient::recv_GetUnreadMessages(std::vector<Message> & _return)
+void MessageServiceClient::recv_GetUnreadMessages(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -1690,7 +1338,7 @@ void MessageServiceClient::recv_GetUnreadMessages(std::vector<Message> & _return
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "GetUnreadMessages failed: unknown result");
 }
 
-void MessageServiceClient::GetReadMessages(std::vector<Message> & _return, const std::string& username)
+void MessageServiceClient::GetReadMessages(std::string& _return, const std::string& username)
 {
   send_GetReadMessages(username);
   recv_GetReadMessages(_return);
@@ -1710,7 +1358,7 @@ void MessageServiceClient::send_GetReadMessages(const std::string& username)
   oprot_->getTransport()->flush();
 }
 
-void MessageServiceClient::recv_GetReadMessages(std::vector<Message> & _return)
+void MessageServiceClient::recv_GetReadMessages(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -1770,60 +1418,6 @@ bool MessageServiceProcessor::dispatchCall(::apache::thrift::protocol::TProtocol
   return true;
 }
 
-void MessageServiceProcessor::process_ping(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
-{
-  void* ctx = NULL;
-  if (this->eventHandler_.get() != NULL) {
-    ctx = this->eventHandler_->getContext("MessageService.ping", callContext);
-  }
-  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "MessageService.ping");
-
-  if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preRead(ctx, "MessageService.ping");
-  }
-
-  MessageService_ping_args args;
-  args.read(iprot);
-  iprot->readMessageEnd();
-  uint32_t bytes = iprot->getTransport()->readEnd();
-
-  if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postRead(ctx, "MessageService.ping", bytes);
-  }
-
-  MessageService_ping_result result;
-  try {
-    iface_->ping(result.success, args.text);
-    result.__isset.success = true;
-  } catch (const std::exception& e) {
-    if (this->eventHandler_.get() != NULL) {
-      this->eventHandler_->handlerError(ctx, "MessageService.ping");
-    }
-
-    ::apache::thrift::TApplicationException x(e.what());
-    oprot->writeMessageBegin("ping", ::apache::thrift::protocol::T_EXCEPTION, seqid);
-    x.write(oprot);
-    oprot->writeMessageEnd();
-    oprot->getTransport()->writeEnd();
-    oprot->getTransport()->flush();
-    return;
-  }
-
-  if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preWrite(ctx, "MessageService.ping");
-  }
-
-  oprot->writeMessageBegin("ping", ::apache::thrift::protocol::T_REPLY, seqid);
-  result.write(oprot);
-  oprot->writeMessageEnd();
-  bytes = oprot->getTransport()->writeEnd();
-  oprot->getTransport()->flush();
-
-  if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postWrite(ctx, "MessageService.ping", bytes);
-  }
-}
-
 void MessageServiceProcessor::process_ComposeMessage(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
 {
   void* ctx = NULL;
@@ -1847,7 +1441,7 @@ void MessageServiceProcessor::process_ComposeMessage(int32_t seqid, ::apache::th
 
   MessageService_ComposeMessage_result result;
   try {
-    iface_->ComposeMessage(result.success, args.text, args.users);
+    iface_->ComposeMessage(result.success, args.text, args.sender, args.user);
     result.__isset.success = true;
   } catch (ServiceException &se) {
     result.se = se;
@@ -2116,97 +1710,13 @@ void MessageServiceProcessor::process_GetReadMessages(int32_t seqid, ::apache::t
   return processor;
 }
 
-void MessageServiceConcurrentClient::ping(std::string& _return, const std::string& text)
+void MessageServiceConcurrentClient::ComposeMessage(std::string& _return, const std::string& text, const std::string& sender, const std::string& user)
 {
-  int32_t seqid = send_ping(text);
-  recv_ping(_return, seqid);
-}
-
-int32_t MessageServiceConcurrentClient::send_ping(const std::string& text)
-{
-  int32_t cseqid = this->sync_->generateSeqId();
-  ::apache::thrift::async::TConcurrentSendSentry sentry(this->sync_.get());
-  oprot_->writeMessageBegin("ping", ::apache::thrift::protocol::T_CALL, cseqid);
-
-  MessageService_ping_pargs args;
-  args.text = &text;
-  args.write(oprot_);
-
-  oprot_->writeMessageEnd();
-  oprot_->getTransport()->writeEnd();
-  oprot_->getTransport()->flush();
-
-  sentry.commit();
-  return cseqid;
-}
-
-void MessageServiceConcurrentClient::recv_ping(std::string& _return, const int32_t seqid)
-{
-
-  int32_t rseqid = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TMessageType mtype;
-
-  // the read mutex gets dropped and reacquired as part of waitForWork()
-  // The destructor of this sentry wakes up other clients
-  ::apache::thrift::async::TConcurrentRecvSentry sentry(this->sync_.get(), seqid);
-
-  while(true) {
-    if(!this->sync_->getPending(fname, mtype, rseqid)) {
-      iprot_->readMessageBegin(fname, mtype, rseqid);
-    }
-    if(seqid == rseqid) {
-      if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
-        ::apache::thrift::TApplicationException x;
-        x.read(iprot_);
-        iprot_->readMessageEnd();
-        iprot_->getTransport()->readEnd();
-        sentry.commit();
-        throw x;
-      }
-      if (mtype != ::apache::thrift::protocol::T_REPLY) {
-        iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-        iprot_->readMessageEnd();
-        iprot_->getTransport()->readEnd();
-      }
-      if (fname.compare("ping") != 0) {
-        iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-        iprot_->readMessageEnd();
-        iprot_->getTransport()->readEnd();
-
-        // in a bad state, don't commit
-        using ::apache::thrift::protocol::TProtocolException;
-        throw TProtocolException(TProtocolException::INVALID_DATA);
-      }
-      MessageService_ping_presult result;
-      result.success = &_return;
-      result.read(iprot_);
-      iprot_->readMessageEnd();
-      iprot_->getTransport()->readEnd();
-
-      if (result.__isset.success) {
-        // _return pointer has now been filled
-        sentry.commit();
-        return;
-      }
-      // in a bad state, don't commit
-      throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
-    }
-    // seqid != rseqid
-    this->sync_->updatePending(fname, mtype, rseqid);
-
-    // this will temporarily unlock the readMutex, and let other clients get work done
-    this->sync_->waitForWork(seqid);
-  } // end while(true)
-}
-
-void MessageServiceConcurrentClient::ComposeMessage(std::string& _return, const std::string& text, const std::vector<std::string> & users)
-{
-  int32_t seqid = send_ComposeMessage(text, users);
+  int32_t seqid = send_ComposeMessage(text, sender, user);
   recv_ComposeMessage(_return, seqid);
 }
 
-int32_t MessageServiceConcurrentClient::send_ComposeMessage(const std::string& text, const std::vector<std::string> & users)
+int32_t MessageServiceConcurrentClient::send_ComposeMessage(const std::string& text, const std::string& sender, const std::string& user)
 {
   int32_t cseqid = this->sync_->generateSeqId();
   ::apache::thrift::async::TConcurrentSendSentry sentry(this->sync_.get());
@@ -2214,7 +1724,8 @@ int32_t MessageServiceConcurrentClient::send_ComposeMessage(const std::string& t
 
   MessageService_ComposeMessage_pargs args;
   args.text = &text;
-  args.users = &users;
+  args.sender = &sender;
+  args.user = &user;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -2378,7 +1889,7 @@ void MessageServiceConcurrentClient::recv_ReadMessage(std::string& _return, cons
   } // end while(true)
 }
 
-void MessageServiceConcurrentClient::GetMessages(std::vector<Message> & _return, const std::string& username)
+void MessageServiceConcurrentClient::GetMessages(std::string& _return, const std::string& username)
 {
   int32_t seqid = send_GetMessages(username);
   recv_GetMessages(_return, seqid);
@@ -2402,7 +1913,7 @@ int32_t MessageServiceConcurrentClient::send_GetMessages(const std::string& user
   return cseqid;
 }
 
-void MessageServiceConcurrentClient::recv_GetMessages(std::vector<Message> & _return, const int32_t seqid)
+void MessageServiceConcurrentClient::recv_GetMessages(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -2466,7 +1977,7 @@ void MessageServiceConcurrentClient::recv_GetMessages(std::vector<Message> & _re
   } // end while(true)
 }
 
-void MessageServiceConcurrentClient::GetUnreadMessages(std::vector<Message> & _return, const std::string& username)
+void MessageServiceConcurrentClient::GetUnreadMessages(std::string& _return, const std::string& username)
 {
   int32_t seqid = send_GetUnreadMessages(username);
   recv_GetUnreadMessages(_return, seqid);
@@ -2490,7 +2001,7 @@ int32_t MessageServiceConcurrentClient::send_GetUnreadMessages(const std::string
   return cseqid;
 }
 
-void MessageServiceConcurrentClient::recv_GetUnreadMessages(std::vector<Message> & _return, const int32_t seqid)
+void MessageServiceConcurrentClient::recv_GetUnreadMessages(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -2554,7 +2065,7 @@ void MessageServiceConcurrentClient::recv_GetUnreadMessages(std::vector<Message>
   } // end while(true)
 }
 
-void MessageServiceConcurrentClient::GetReadMessages(std::vector<Message> & _return, const std::string& username)
+void MessageServiceConcurrentClient::GetReadMessages(std::string& _return, const std::string& username)
 {
   int32_t seqid = send_GetReadMessages(username);
   recv_GetReadMessages(_return, seqid);
@@ -2578,7 +2089,7 @@ int32_t MessageServiceConcurrentClient::send_GetReadMessages(const std::string& 
   return cseqid;
 }
 
-void MessageServiceConcurrentClient::recv_GetReadMessages(std::vector<Message> & _return, const int32_t seqid)
+void MessageServiceConcurrentClient::recv_GetReadMessages(std::string& _return, const int32_t seqid)
 {
 
   int32_t rseqid = 0;
