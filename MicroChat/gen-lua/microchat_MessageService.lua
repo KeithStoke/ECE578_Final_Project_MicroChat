@@ -5,6 +5,7 @@
 -- @generated
 --
 
+
 local microchat__ttype = require 'microchat_ttypes'
 local Thrift = require 'Thrift'
 local TType = Thrift.TType
@@ -25,6 +26,7 @@ local MessageServiceClient = __TObject.new(__TClient, {
   __type = 'MessageServiceClient'
 })
 
+
 local ComposeMessage_args = __TObject:new{
   text,
   sender,
@@ -36,17 +38,7 @@ local ComposeMessage_result = __TObject:new{
   se
 }
 
-local ReadMessage_args = __TObject:new{
-  messageID,
-  username
-}
-
-
-local GetUnreadMessages_args = __TObject:new{
-  username
-}
-
-local GetReadMessages_args = __TObject:new{
+local GetMessages_args = __TObject:new{
   username
 }
 
@@ -55,36 +47,24 @@ local GetMessages_result = __TObject:new{
   se
 }
 
-function MessageServiceClient:ping(text)
-  self:send_ping(text)
-  return self:recv_ping(text)
-end
 
-function MessageServiceClient:send_ping(text)
-  self.oprot:writeMessageBegin('ping', TMessageType.CALL, self._seqid)
-  local args = ping_args:new{}
-  args.text = text
-  args:write(self.oprot)
-  self.oprot:writeMessageEnd()
-  self.oprot.trans:flush()
-end
+local GetUnreadMessages_args = __TObject:new{
+  username
+}
 
-function MessageServiceClient:recv_ping(text)
-  local fname, mtype, rseqid = self.iprot:readMessageBegin()
-  if mtype == TMessageType.EXCEPTION then
-    local x = TApplicationException:new{}
-    x:read(self.iprot)
-    self.iprot:readMessageEnd()
-    error(x)
-  end
-  local result = ping_result:new{}
-  result:read(self.iprot)
-  self.iprot:readMessageEnd()
-  if result.success ~= nil then
-    return result.success
-  end
-  error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
-end
+local GetUnreadMessages_result = __TObject:new{
+  success,
+  se
+}
+
+local GetReadMessages_args = __TObject:new{
+  username
+}
+
+local GetReadMessages_result = __TObject:new{
+  success,
+  se
+}
 
 function MessageServiceClient:ComposeMessage(text, sender, user)
   self:send_ComposeMessage(text, sender, user)
@@ -154,10 +134,6 @@ function MessageServiceClient:recv_ReadMessage(messageID, username)
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
-
-local GetMessages_args = __TObject:new{
-  username
-}
 
 function MessageServiceClient:GetMessages(username)
   self:send_GetMessages(username)
@@ -285,25 +261,6 @@ function MessageServiceProcessor:process(iprot, oprot, server_ctx)
   end
 end
 
-function MessageServiceProcessor:process_ping(seqid, iprot, oprot, server_ctx)
-  local args = ping_args:new{}
-  local reply_type = TMessageType.REPLY
-  args:read(iprot)
-  iprot:readMessageEnd()
-  local result = ping_result:new{}
-  local status, res = pcall(self.handler.ping, self.handler, args.text)
-  if not status then
-    reply_type = TMessageType.EXCEPTION
-    result = TApplicationException:new{message = res}
-  else
-    result.success = res
-  end
-  oprot:writeMessageBegin('ping', reply_type, seqid)
-  result:write(oprot)
-  oprot:writeMessageEnd()
-  oprot.trans:flush()
-end
-
 function MessageServiceProcessor:process_ComposeMessage(seqid, iprot, oprot, server_ctx)
   local args = ComposeMessage_args:new{}
   local reply_type = TMessageType.REPLY
@@ -410,76 +367,6 @@ function MessageServiceProcessor:process_GetReadMessages(seqid, iprot, oprot, se
 end
 
 -- HELPER FUNCTIONS AND STRUCTURES
-
-local ping_args = __TObject:new{
-  text
-}
-
-function ping_args:read(iprot)
-  iprot:readStructBegin()
-  while true do
-    local fname, ftype, fid = iprot:readFieldBegin()
-    if ftype == TType.STOP then
-      break
-    elseif fid == 1 then
-      if ftype == TType.STRING then
-        self.text = iprot:readString()
-      else
-        iprot:skip(ftype)
-      end
-    else
-      iprot:skip(ftype)
-    end
-    iprot:readFieldEnd()
-  end
-  iprot:readStructEnd()
-end
-
-function ping_args:write(oprot)
-  oprot:writeStructBegin('ping_args')
-  if self.text ~= nil then
-    oprot:writeFieldBegin('text', TType.STRING, 1)
-    oprot:writeString(self.text)
-    oprot:writeFieldEnd()
-  end
-  oprot:writeFieldStop()
-  oprot:writeStructEnd()
-end
-
-local ping_result = __TObject:new{
-  success
-}
-
-function ping_result:read(iprot)
-  iprot:readStructBegin()
-  while true do
-    local fname, ftype, fid = iprot:readFieldBegin()
-    if ftype == TType.STOP then
-      break
-    elseif fid == 0 then
-      if ftype == TType.STRING then
-        self.success = iprot:readString()
-      else
-        iprot:skip(ftype)
-      end
-    else
-      iprot:skip(ftype)
-    end
-    iprot:readFieldEnd()
-  end
-  iprot:readStructEnd()
-end
-
-function ping_result:write(oprot)
-  oprot:writeStructBegin('ping_result')
-  if self.success ~= nil then
-    oprot:writeFieldBegin('success', TType.STRING, 0)
-    oprot:writeString(self.success)
-    oprot:writeFieldEnd()
-  end
-  oprot:writeFieldStop()
-  oprot:writeStructEnd()
-end
 
 function ComposeMessage_args:read(iprot)
   iprot:readStructBegin()
@@ -713,15 +600,8 @@ function GetMessages_result:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 0 then
-      if ftype == TType.LIST then
-        self.success = {}
-        local _etype3, _size0 = iprot:readListBegin()
-        for _i=1,_size0 do
-          local _elem4 = Message:new{}
-          _elem4:read(iprot)
-          table.insert(self.success, _elem4)
-        end
-        iprot:readListEnd()
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -743,12 +623,8 @@ end
 function GetMessages_result:write(oprot)
   oprot:writeStructBegin('GetMessages_result')
   if self.success ~= nil then
-    oprot:writeFieldBegin('success', TType.LIST, 0)
-    oprot:writeListBegin(TType.STRUCT, #self.success)
-    for _,iter5 in ipairs(self.success) do
-      iter5:write(oprot)
-    end
-    oprot:writeListEnd()
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
     oprot:writeFieldEnd()
   end
   if self.se ~= nil then
@@ -759,7 +635,6 @@ function GetMessages_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
-
 
 function GetUnreadMessages_args:read(iprot)
   iprot:readStructBegin()
@@ -792,10 +667,6 @@ function GetUnreadMessages_args:write(oprot)
   oprot:writeStructEnd()
 end
 
-local GetUnreadMessages_result = __TObject:new{
-  success,
-  se
-}
 
 function GetUnreadMessages_result:read(iprot)
   iprot:readStructBegin()
@@ -804,15 +675,8 @@ function GetUnreadMessages_result:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 0 then
-      if ftype == TType.LIST then
-        self.success = {}
-        local _etype9, _size6 = iprot:readListBegin()
-        for _i=1,_size6 do
-          local _elem10 = Message:new{}
-          _elem10:read(iprot)
-          table.insert(self.success, _elem10)
-        end
-        iprot:readListEnd()
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -834,12 +698,8 @@ end
 function GetUnreadMessages_result:write(oprot)
   oprot:writeStructBegin('GetUnreadMessages_result')
   if self.success ~= nil then
-    oprot:writeFieldBegin('success', TType.LIST, 0)
-    oprot:writeListBegin(TType.STRUCT, #self.success)
-    for _,iter11 in ipairs(self.success) do
-      iter11:write(oprot)
-    end
-    oprot:writeListEnd()
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
     oprot:writeFieldEnd()
   end
   if self.se ~= nil then
@@ -850,6 +710,7 @@ function GetUnreadMessages_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
 
 function GetReadMessages_args:read(iprot)
   iprot:readStructBegin()
@@ -882,10 +743,6 @@ function GetReadMessages_args:write(oprot)
   oprot:writeStructEnd()
 end
 
-local GetReadMessages_result = __TObject:new{
-  success,
-  se
-}
 
 function GetReadMessages_result:read(iprot)
   iprot:readStructBegin()
@@ -894,15 +751,8 @@ function GetReadMessages_result:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 0 then
-      if ftype == TType.LIST then
-        self.success = {}
-        local _etype15, _size12 = iprot:readListBegin()
-        for _i=1,_size12 do
-          local _elem16 = Message:new{}
-          _elem16:read(iprot)
-          table.insert(self.success, _elem16)
-        end
-        iprot:readListEnd()
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -924,12 +774,8 @@ end
 function GetReadMessages_result:write(oprot)
   oprot:writeStructBegin('GetReadMessages_result')
   if self.success ~= nil then
-    oprot:writeFieldBegin('success', TType.LIST, 0)
-    oprot:writeListBegin(TType.STRUCT, #self.success)
-    for _,iter17 in ipairs(self.success) do
-      iter17:write(oprot)
-    end
-    oprot:writeListEnd()
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
     oprot:writeFieldEnd()
   end
   if self.se ~= nil then

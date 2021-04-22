@@ -20,11 +20,6 @@ class DatabaseServiceHandler : virtual public DatabaseServiceIf {
     // Your initialization goes here
   }
 
-  void ping(std::string& _return, const std::string& text) {
-    // Your implementation goes here
-    printf("ping\n");
-  }
-
   void CreateUser(std::string& _return, const std::string& username, const std::string& name, const std::string& password, const int64_t userID) {
     // Your implementation goes here
     printf("CreateUser\n");
@@ -43,26 +38,6 @@ class DatabaseServiceHandler : virtual public DatabaseServiceIf {
   void Logout(std::string& _return, const std::string& username) {
     // Your implementation goes here
     printf("Logout\n");
-  }
-
-  void ComposeMessage(std::string& _return, const Message& message) {
-    // Your implementation goes here
-    printf("ComposeMessage\n");
-  }
-
-  void GetMessages(std::vector<Message> & _return, const std::string& username) {
-    // Your implementation goes here
-    printf("GetMessages\n");
-  }
-
-  void GetUnreadMessages(std::vector<Message> & _return, const std::string& username) {
-    // Your implementation goes here
-    printf("GetUnreadMessages\n");
-  }
-
-  void GetReadMessages(std::vector<Message> & _return, const std::string& username) {
-    // Your implementation goes here
-    printf("GetReadMessages\n");
   }
 
 };

@@ -87,12 +87,11 @@ namespace microchat
         ClientPool<ThriftClient<DatabaseServiceClient>> *, mongoc_client_pool_t *);
     ~MessageServiceHandler() override = default;
 
-    void ping(std::string &_return, const std::string &text) override;
     void ComposeMessage(std::string &_return, const std::string &text, const std::string &sender, const std::string &user) override;
     void ReadMessage(std::string &_return, const int64_t messageID, const std::string &username) override;
-    void GetMessages(std::vector<Message> &_return, const std::string &username) override;
-    void GetUnreadMessages(std::vector<Message> &_return, const std::string &username);
-    void GetReadMessages(std::vector<Message> &_return, const std::string &username);
+    void GetMessages(std::string &_return, const std::string &username) override;
+    void GetUnreadMessages(std::string &_return, const std::string &username);
+    void GetReadMessages(std::string &_return, const std::string &username);
 
   private:
     std::string _machine_id;
@@ -114,12 +113,6 @@ namespace microchat
     _mongodb_client_pool = mongo_pool;
     std::cout << "After Mongo Pool" << std::endl;
   };
-
-  void MessageServiceHandler::ping(std::string &_return, const std::string &text)
-  {
-    std::cout << "Ping says " << text << std::endl;
-    _return = "Pong from MessageService";
-  }
 
   void MessageServiceHandler::ComposeMessage(std::string &_return, const std::string &text, const std::string &sender, const std::string &user)
   {
@@ -217,7 +210,7 @@ namespace microchat
   {
   }
 
-  void MessageServiceHandler::GetMessages(std::vector<Message> &_return, const std::string &username)
+  void MessageServiceHandler::GetMessages(std::string &_return, const std::string &username)
   {
 
     std::cout << "In GetMessages in MessageHandler" << std::endl;
@@ -225,7 +218,6 @@ namespace microchat
     //  grab messages and return to user
 
     std::vector<Message> messages;
-   
 
     bson_error_t error;
     const bson_t *doc;
@@ -244,7 +236,7 @@ namespace microchat
         mongodb_client, "message", "message");
 
     // find all messages where recipient is username
-    bson_t *query =  bson_new();
+    bson_t *query = bson_new();
     BSON_APPEND_UTF8(query, "recipient", username.c_str());
 
     mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
@@ -269,6 +261,7 @@ namespace microchat
       bson_iter_t iter_message_text;
       bson_iter_t iter_sender;
       bson_iter_t iter_timestamp;
+      bson_iter_t iter_message_status;
 
       while (mongoc_cursor_next(cursor, &doc))
       {
@@ -279,11 +272,19 @@ namespace microchat
         bson_iter_init_find(&iter_message_text, doc, "text");
         bson_iter_init_find(&iter_sender, doc, "sender");
         bson_iter_init_find(&iter_timestamp, doc, "timestamp");
+        bson_iter_init_find(&iter_message_status, doc, "message_status");
 
         Message msg;
         msg.__set_text(bson_iter_value(&iter_message_text)->value.v_utf8.str);
         msg.__set_sender(bson_iter_value(&iter_sender)->value.v_utf8.str);
         msg.__set_timestamp(bson_iter_value(&iter_timestamp)->value.v_int64);
+        if(bson_iter_value(&iter_message_status)->value.v_int64 == 0){
+          msg.__set_messageStatus(MessageStatus::type::UNREAD);
+        }else{
+          msg.__set_messageStatus(MessageStatus::type::READ);
+        }
+
+       // msg.__set_messageStatus(bson_iter_value(&iter_message_status)->value.v_int64);
 
         messages.push_back(msg);
       }
@@ -293,22 +294,33 @@ namespace microchat
       mongoc_collection_destroy(collection);
       mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
 
-      for(Message msg : messages){
-        std::cout << "message text: " << msg.text << std::endl;
+      std::string result = "Messages\n";
+
+      for (Message msg : messages)
+      {
+       // std::cout << "message text: " << msg.text << std::endl;
+       // std::cout << "message sender: " << msg.sender << std::endl;
+       // std::cout << "message timestamp: " << msg.timestamp << std::endl;
+        std::string message_string = "Sender: " + msg.sender + "\n Timestamp: " + std::to_string(msg.timestamp) + "\n Text: " + msg.text + "\n";
+        result.append(message_string);
+
+        if(msg.messageStatus == MessageStatus::type::UNREAD){
+          result.append(" NEW\n\n");
+        }
       }
 
-      // return messages;
-      _return = messages;
+      std::cout << result << std::endl;
+      _return = result;
     }
   }
 
-  void MessageServiceHandler::GetUnreadMessages(std::vector<Message> &_return, const std::string &username)
+  void MessageServiceHandler::GetUnreadMessages(std::string &_return, const std::string &username)
   {
     // Your implementation goes here
     printf("GetUnreadMessages\n");
   }
 
-  void MessageServiceHandler::GetReadMessages(std::vector<Message> &_return, const std::string &username)
+  void MessageServiceHandler::GetReadMessages(std::string &_return, const std::string &username)
   {
     // Your implementation goes here
     printf("GetReadMessages\n");

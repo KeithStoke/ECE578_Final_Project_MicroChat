@@ -59,9 +59,12 @@ ngx.say("waiting on response! ", ret)
     		end
     		ngx.exit(ngx.HTTP_OK)
   	else
-		local messages = _LoadMessages(ret)
-		ngx.header.content_type = "application/json; charset=utf-8"
-      	ngx.say(cjson.encode(messages) )
+		--local messages = _LoadMessages(ret)
+	--	ngx.header.content_type = "application/json; charset=utf-8"
+		ngx.header.content_type = "text/plain"
+		ngx.say("Messages successfully retrieved: ", ret);
+		ngx.say(cjson.encode(ret))
+      --	ngx.say(cjson.encode(messages) )
   	end
 
 end
