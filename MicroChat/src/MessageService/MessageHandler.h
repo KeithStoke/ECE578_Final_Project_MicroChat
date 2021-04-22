@@ -298,9 +298,6 @@ namespace microchat
 
       for (Message msg : messages)
       {
-       // std::cout << "message text: " << msg.text << std::endl;
-       // std::cout << "message sender: " << msg.sender << std::endl;
-       // std::cout << "message timestamp: " << msg.timestamp << std::endl;
         std::string message_string = "Sender: " + msg.sender + "\n Timestamp: " + std::to_string(msg.timestamp) + "\n Text: " + msg.text + "\n";
         result.append(message_string);
 
@@ -316,14 +313,193 @@ namespace microchat
 
   void MessageServiceHandler::GetUnreadMessages(std::string &_return, const std::string &username)
   {
-    // Your implementation goes here
-    printf("GetUnreadMessages\n");
+ std::cout << "In Get unread messages in MessageHandler" << std::endl;
+    //search db for any messages that include 'username' in list of recipients
+    //  grab messages and return to user
+
+    std::vector<Message> messages;
+
+    bson_error_t error;
+    const bson_t *doc;
+    char *str;
+
+    mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
+        _mongodb_client_pool);
+    if (!mongodb_client)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = "Failed to pop a client from MongoDB pool";
+      throw se;
+    }
+    auto collection = mongoc_client_get_collection(
+        mongodb_client, "message", "message");
+
+    // find all messages where recipient is username AND message status is UNREAD
+    bson_t *query = bson_new();
+    BSON_APPEND_UTF8(query, "recipient", username.c_str());
+    BSON_APPEND_INT64(query, "message_status", MessageStatus::type::UNREAD); //UNREAD = 0
+
+    mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
+        collection, query, nullptr, nullptr);
+
+    if (mongoc_cursor_error(cursor, &error))
+    {
+      LOG(error) << error.message;
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = error.message;
+      throw se;
+    }
+    else
+    {
+      //no errors
+
+      bson_iter_t iter_message_text;
+      bson_iter_t iter_sender;
+      bson_iter_t iter_timestamp;
+      bson_iter_t iter_message_status;
+
+      while (mongoc_cursor_next(cursor, &doc))
+      {
+        str = bson_as_json(doc, NULL);
+        std::cout << str << std::endl;
+        bson_free(str);
+
+        bson_iter_init_find(&iter_message_text, doc, "text");
+        bson_iter_init_find(&iter_sender, doc, "sender");
+        bson_iter_init_find(&iter_timestamp, doc, "timestamp");
+        bson_iter_init_find(&iter_message_status, doc, "message_status");
+
+        Message msg;
+        msg.__set_text(bson_iter_value(&iter_message_text)->value.v_utf8.str);
+        msg.__set_sender(bson_iter_value(&iter_sender)->value.v_utf8.str);
+        msg.__set_timestamp(bson_iter_value(&iter_timestamp)->value.v_int64);
+        if(bson_iter_value(&iter_message_status)->value.v_int64 == 0){
+          msg.__set_messageStatus(MessageStatus::type::UNREAD);
+        }else{
+          msg.__set_messageStatus(MessageStatus::type::READ);
+        }
+
+        messages.push_back(msg);
+      }
+
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+
+      std::string result = "Messages\n";
+
+      for (Message msg : messages)
+      {
+        std::string message_string = "Sender: " + msg.sender + "\n Timestamp: " + std::to_string(msg.timestamp) + "\n Text: " + msg.text + "\n";
+        result.append(message_string);
+
+     }
+
+      std::cout << result << std::endl;
+      _return = result;
+  }
   }
 
   void MessageServiceHandler::GetReadMessages(std::string &_return, const std::string &username)
   {
-    // Your implementation goes here
-    printf("GetReadMessages\n");
+    std::cout << "In Get unread messages in MessageHandler" << std::endl;
+    //search db for any messages that include 'username' in list of recipients
+    //  grab messages and return to user
+
+    std::vector<Message> messages;
+
+    bson_error_t error;
+    const bson_t *doc;
+    char *str;
+
+    mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
+        _mongodb_client_pool);
+    if (!mongodb_client)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = "Failed to pop a client from MongoDB pool";
+      throw se;
+    }
+    auto collection = mongoc_client_get_collection(
+        mongodb_client, "message", "message");
+
+    // find all messages where recipient is username AND message status is READ
+    bson_t *query = bson_new();
+    BSON_APPEND_UTF8(query, "recipient", username.c_str());
+    BSON_APPEND_INT64(query, "message_status", MessageStatus::type::READ); //UNREAD = 1
+
+    mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
+        collection, query, nullptr, nullptr);
+
+    if (mongoc_cursor_error(cursor, &error))
+    {
+      LOG(error) << error.message;
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = error.message;
+      throw se;
+    }
+    else
+    {
+      //no errors
+
+      bson_iter_t iter_message_text;
+      bson_iter_t iter_sender;
+      bson_iter_t iter_timestamp;
+      bson_iter_t iter_message_status;
+
+      while (mongoc_cursor_next(cursor, &doc))
+      {
+        str = bson_as_json(doc, NULL);
+        std::cout << str << std::endl;
+        bson_free(str);
+
+        bson_iter_init_find(&iter_message_text, doc, "text");
+        bson_iter_init_find(&iter_sender, doc, "sender");
+        bson_iter_init_find(&iter_timestamp, doc, "timestamp");
+        bson_iter_init_find(&iter_message_status, doc, "message_status");
+
+        Message msg;
+        msg.__set_text(bson_iter_value(&iter_message_text)->value.v_utf8.str);
+        msg.__set_sender(bson_iter_value(&iter_sender)->value.v_utf8.str);
+        msg.__set_timestamp(bson_iter_value(&iter_timestamp)->value.v_int64);
+        if(bson_iter_value(&iter_message_status)->value.v_int64 == 0){
+          msg.__set_messageStatus(MessageStatus::type::UNREAD);
+        }else{
+          msg.__set_messageStatus(MessageStatus::type::READ);
+        }
+
+        messages.push_back(msg);
+      }
+
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+
+      std::string result = "Messages\n";
+
+      for (Message msg : messages)
+      {
+        std::string message_string = "Sender: " + msg.sender + "\n Timestamp: " + std::to_string(msg.timestamp) + "\n Text: " + msg.text + "\n";
+        result.append(message_string);
+     }
+
+      std::cout << result << std::endl;
+      _return = result;
+    }
   }
 
   /*

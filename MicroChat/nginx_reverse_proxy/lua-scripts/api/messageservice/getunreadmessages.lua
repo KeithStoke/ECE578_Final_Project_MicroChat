@@ -4,20 +4,7 @@ local function _StrIsEmpty(s)
 	return s == nil or s == ''
 end
 
-local function _LoadMessages(data)
-	local messages = {}
-	for _, message in ipairs(data) do
-		local new_message = {}
-		new_message["sender"] = message.sender
-		new_message["timestamp"] = tostring(message.timestamp)
-		new_message["text"] = message.text
-		ngx.say("Message text was ", message.text)
-		table.insert(messages, new_message)
-	end
-	return messages
-end
-
-function _M.GetMessages()
+function _M.GetUnreadMessages()
 	local MessageServiceClient = require "microchat_MessageService"
 	local GenericObjectPool = require "GenericObjectPool"
 	local ngx = ngx
@@ -36,10 +23,10 @@ function _M.GetMessages()
            ngx.exit(ngx.HTTP_BAD_REQUEST)
         end
 
-	ngx.say("Inside Nginx Lua script: Getting all messages for ", post.username)
+	ngx.say("Inside Nginx Lua script: Getting unread messages for ", post.username)
 	
 	local client = GenericObjectPool:connection(MessageServiceClient, "message-service", 9091)
-	local status, ret = pcall(client.GetMessages, client, post.username)
+	local status, ret = pcall(client.GetUnreadMessages, client, post.username)
 
 	GenericObjectPool:returnConnection(client)
 
