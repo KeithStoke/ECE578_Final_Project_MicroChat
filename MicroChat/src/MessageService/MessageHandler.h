@@ -278,13 +278,16 @@ namespace microchat
         msg.__set_text(bson_iter_value(&iter_message_text)->value.v_utf8.str);
         msg.__set_sender(bson_iter_value(&iter_sender)->value.v_utf8.str);
         msg.__set_timestamp(bson_iter_value(&iter_timestamp)->value.v_int64);
-        if(bson_iter_value(&iter_message_status)->value.v_int64 == 0){
+        if (bson_iter_value(&iter_message_status)->value.v_int64 == 0)
+        {
           msg.__set_messageStatus(MessageStatus::type::UNREAD);
-        }else{
+        }
+        else
+        {
           msg.__set_messageStatus(MessageStatus::type::READ);
         }
 
-       // msg.__set_messageStatus(bson_iter_value(&iter_message_status)->value.v_int64);
+        // msg.__set_messageStatus(bson_iter_value(&iter_message_status)->value.v_int64);
 
         messages.push_back(msg);
       }
@@ -301,7 +304,8 @@ namespace microchat
         std::string message_string = "Sender: " + msg.sender + "\n Timestamp: " + std::to_string(msg.timestamp) + "\n Text: " + msg.text + "\n";
         result.append(message_string);
 
-        if(msg.messageStatus == MessageStatus::type::UNREAD){
+        if (msg.messageStatus == MessageStatus::type::UNREAD)
+        {
           result.append(" NEW\n\n");
         }
       }
@@ -313,7 +317,7 @@ namespace microchat
 
   void MessageServiceHandler::GetUnreadMessages(std::string &_return, const std::string &username)
   {
- std::cout << "In Get unread messages in MessageHandler" << std::endl;
+    std::cout << "In Get unread messages in MessageHandler" << std::endl;
     //search db for any messages that include 'username' in list of recipients
     //  grab messages and return to user
 
@@ -379,17 +383,41 @@ namespace microchat
         msg.__set_text(bson_iter_value(&iter_message_text)->value.v_utf8.str);
         msg.__set_sender(bson_iter_value(&iter_sender)->value.v_utf8.str);
         msg.__set_timestamp(bson_iter_value(&iter_timestamp)->value.v_int64);
-        if(bson_iter_value(&iter_message_status)->value.v_int64 == 0){
+        if (bson_iter_value(&iter_message_status)->value.v_int64 == 0)
+        {
           msg.__set_messageStatus(MessageStatus::type::UNREAD);
-        }else{
+        }
+        else
+        {
           msg.__set_messageStatus(MessageStatus::type::READ);
         }
 
         messages.push_back(msg);
       }
 
-      bson_destroy(query);
       mongoc_cursor_destroy(cursor);
+
+//Update message unread status
+      bson_t *update = NULL;
+      update = BCON_NEW("$set", "{",
+                        "message_status", BCON_INT64(1),
+                        "}"); //READ = 1
+
+      if (!mongoc_collection_update_many(collection, query, update, NULL, NULL, &error))
+      {
+        std::cout << "Failed to update message status of MongoDB " << error.message;
+        ServiceException se;
+        se.errorCode = ErrorCode::SE_THRIFT_HANDLER_ERROR;
+        se.message = error.message;
+        bson_destroy(query);
+        bson_destroy(update);
+        mongoc_collection_destroy(collection);
+        mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+        throw se;
+      }
+
+      bson_destroy(query);
+      bson_destroy(update);
       mongoc_collection_destroy(collection);
       mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
 
@@ -399,12 +427,11 @@ namespace microchat
       {
         std::string message_string = "Sender: " + msg.sender + "\n Timestamp: " + std::to_string(msg.timestamp) + "\n Text: " + msg.text + "\n";
         result.append(message_string);
-
-     }
+      }
 
       std::cout << result << std::endl;
       _return = result;
-  }
+    }
   }
 
   void MessageServiceHandler::GetReadMessages(std::string &_return, const std::string &username)
@@ -475,9 +502,12 @@ namespace microchat
         msg.__set_text(bson_iter_value(&iter_message_text)->value.v_utf8.str);
         msg.__set_sender(bson_iter_value(&iter_sender)->value.v_utf8.str);
         msg.__set_timestamp(bson_iter_value(&iter_timestamp)->value.v_int64);
-        if(bson_iter_value(&iter_message_status)->value.v_int64 == 0){
+        if (bson_iter_value(&iter_message_status)->value.v_int64 == 0)
+        {
           msg.__set_messageStatus(MessageStatus::type::UNREAD);
-        }else{
+        }
+        else
+        {
           msg.__set_messageStatus(MessageStatus::type::READ);
         }
 
@@ -495,7 +525,7 @@ namespace microchat
       {
         std::string message_string = "Sender: " + msg.sender + "\n Timestamp: " + std::to_string(msg.timestamp) + "\n Text: " + msg.text + "\n";
         result.append(message_string);
-     }
+      }
 
       std::cout << result << std::endl;
       _return = result;
