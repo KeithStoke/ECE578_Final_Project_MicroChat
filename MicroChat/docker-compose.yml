@@ -1,22 +1,22 @@
 version: "3"
 services:
   user-service:
-    image: ekuntz11/microchat:version_2
+    image: kstokely/microchat:latest
     hostname: user-service
     restart: always
     entrypoint: UserService
   message-service:
-    image: ekuntz11/microchat:version_2
+    image: kstokely/microchat:latest
     hostname: message-service
     restart: always
     entrypoint: MessageService
   friend-recommendation-service:
-    image: ekuntz11/microchat:version_2
+    image: kstokely/microchat:latest
     hostname: friend-recommendation-service
     restart: always
     entrypoint: FriendRecommendationService
   database-service:
-    image: ekuntz11/microchat:version_2
+    image: kstokely/microchat:latest
     hostname: databaes-service
     restart: always
     entrypoint: DatabaseService
