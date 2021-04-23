@@ -23,7 +23,7 @@ class FriendRecommendationServiceIf {
  public:
   virtual ~FriendRecommendationServiceIf() {}
   virtual void ping(std::string& _return, const std::string& text) = 0;
-  virtual void GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username) = 0;
+  virtual void GetFriendRecommendations(std::string& _return, const std::string& username) = 0;
 };
 
 class FriendRecommendationServiceIfFactory {
@@ -56,7 +56,7 @@ class FriendRecommendationServiceNull : virtual public FriendRecommendationServi
   void ping(std::string& /* _return */, const std::string& /* text */) {
     return;
   }
-  void GetFriendRecommendations(std::vector<std::string> & /* _return */, const std::string& /* username */) {
+  void GetFriendRecommendations(std::string& /* _return */, const std::string& /* username */) {
     return;
   }
 };
@@ -225,16 +225,16 @@ class FriendRecommendationService_GetFriendRecommendations_result {
 
   FriendRecommendationService_GetFriendRecommendations_result(const FriendRecommendationService_GetFriendRecommendations_result&);
   FriendRecommendationService_GetFriendRecommendations_result& operator=(const FriendRecommendationService_GetFriendRecommendations_result&);
-  FriendRecommendationService_GetFriendRecommendations_result() {
+  FriendRecommendationService_GetFriendRecommendations_result() : success() {
   }
 
   virtual ~FriendRecommendationService_GetFriendRecommendations_result() noexcept;
-  std::vector<std::string>  success;
+  std::string success;
   ServiceException se;
 
   _FriendRecommendationService_GetFriendRecommendations_result__isset __isset;
 
-  void __set_success(const std::vector<std::string> & val);
+  void __set_success(const std::string& val);
 
   void __set_se(const ServiceException& val);
 
@@ -268,7 +268,7 @@ class FriendRecommendationService_GetFriendRecommendations_presult {
 
 
   virtual ~FriendRecommendationService_GetFriendRecommendations_presult() noexcept;
-  std::vector<std::string> * success;
+  std::string* success;
   ServiceException se;
 
   _FriendRecommendationService_GetFriendRecommendations_presult__isset __isset;
@@ -305,9 +305,9 @@ class FriendRecommendationServiceClient : virtual public FriendRecommendationSer
   void ping(std::string& _return, const std::string& text);
   void send_ping(const std::string& text);
   void recv_ping(std::string& _return);
-  void GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username);
+  void GetFriendRecommendations(std::string& _return, const std::string& username);
   void send_GetFriendRecommendations(const std::string& username);
-  void recv_GetFriendRecommendations(std::vector<std::string> & _return);
+  void recv_GetFriendRecommendations(std::string& _return);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -368,7 +368,7 @@ class FriendRecommendationServiceMultiface : virtual public FriendRecommendation
     return;
   }
 
-  void GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username) {
+  void GetFriendRecommendations(std::string& _return, const std::string& username) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
@@ -413,9 +413,9 @@ class FriendRecommendationServiceConcurrentClient : virtual public FriendRecomme
   void ping(std::string& _return, const std::string& text);
   int32_t send_ping(const std::string& text);
   void recv_ping(std::string& _return, const int32_t seqid);
-  void GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username);
+  void GetFriendRecommendations(std::string& _return, const std::string& username);
   int32_t send_GetFriendRecommendations(const std::string& username);
-  void recv_GetFriendRecommendations(std::vector<std::string> & _return, const int32_t seqid);
+  void recv_GetFriendRecommendations(std::string& _return, const int32_t seqid);
  protected:
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   std::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;

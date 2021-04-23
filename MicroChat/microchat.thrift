@@ -65,7 +65,7 @@ service MessageService{
 service FriendRecommendationService{
 
   string ping(1:string text),
-  list<string> GetFriendRecommendations(1:string username) throws (1: ServiceException se),
+  string GetFriendRecommendations(1:string username) throws (1: ServiceException se),
 
 }
 
