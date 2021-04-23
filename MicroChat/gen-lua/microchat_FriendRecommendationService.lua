@@ -6,12 +6,31 @@
 --
 
 
-require 'Thrift'
-require 'microchat_ttypes'
+local microchat__ttype = require 'microchat_ttypes'
+local Thrift = require 'Thrift'
+local TType = Thrift.TType
+local TMessageType = Thrift.TMessageType
+local __TObject = Thrift.__TObject
+local TApplicationException = Thrift.TApplicationException
+local __TClient = Thrift.__TClient
+local __TProcessor = Thrift.__TProcessor
+local ttype = Thrift.ttype
+local ttable_size = Thrift.ttable_size
+local TException = Thrift.TException
 
-FriendRecommendationServiceClient = __TObject.new(__TClient, {
+local FriendRecommendationServiceClient = __TObject.new(__TClient, {
   __type = 'FriendRecommendationServiceClient'
 })
+
+
+local GetFriendRecommendations_args = __TObject:new{
+  username
+}
+
+local GetFriendRecommendations_result = __TObject:new{
+  success,
+  se
+}
 
 function FriendRecommendationServiceClient:ping(text)
   self:send_ping(text)
@@ -76,12 +95,12 @@ function FriendRecommendationServiceClient:recv_GetFriendRecommendations(usernam
   end
   error(TApplicationException:new{errorCode = TApplicationException.MISSING_RESULT})
 end
-FriendRecommendationServiceIface = __TObject:new{
+local FriendRecommendationServiceIface = __TObject:new{
   __type = 'FriendRecommendationServiceIface'
 }
 
 
-FriendRecommendationServiceProcessor = __TObject.new(__TProcessor
+local FriendRecommendationServiceProcessor = __TObject.new(__TProcessor
 , {
  __type = 'FriendRecommendationServiceProcessor'
 })
@@ -146,7 +165,7 @@ end
 
 -- HELPER FUNCTIONS AND STRUCTURES
 
-ping_args = __TObject:new{
+local ping_args = __TObject:new{
   text
 }
 
@@ -181,7 +200,7 @@ function ping_args:write(oprot)
   oprot:writeStructEnd()
 end
 
-ping_result = __TObject:new{
+local ping_result = __TObject:new{
   success
 }
 
@@ -216,10 +235,6 @@ function ping_result:write(oprot)
   oprot:writeStructEnd()
 end
 
-GetFriendRecommendations_args = __TObject:new{
-  username
-}
-
 function GetFriendRecommendations_args:read(iprot)
   iprot:readStructBegin()
   while true do
@@ -251,10 +266,6 @@ function GetFriendRecommendations_args:write(oprot)
   oprot:writeStructEnd()
 end
 
-GetFriendRecommendations_result = __TObject:new{
-  success,
-  se
-}
 
 function GetFriendRecommendations_result:read(iprot)
   iprot:readStructBegin()
@@ -263,14 +274,8 @@ function GetFriendRecommendations_result:read(iprot)
     if ftype == TType.STOP then
       break
     elseif fid == 0 then
-      if ftype == TType.LIST then
-        self.success = {}
-        local _etype3, _size0 = iprot:readListBegin()
-        for _i=1,_size0 do
-          local _elem4 = iprot:readString()
-          table.insert(self.success, _elem4)
-        end
-        iprot:readListEnd()
+      if ftype == TType.STRING then
+        self.success = iprot:readString()
       else
         iprot:skip(ftype)
       end
@@ -292,12 +297,8 @@ end
 function GetFriendRecommendations_result:write(oprot)
   oprot:writeStructBegin('GetFriendRecommendations_result')
   if self.success ~= nil then
-    oprot:writeFieldBegin('success', TType.LIST, 0)
-    oprot:writeListBegin(TType.STRING, #self.success)
-    for _,iter5 in ipairs(self.success) do
-      oprot:writeString(iter5)
-    end
-    oprot:writeListEnd()
+    oprot:writeFieldBegin('success', TType.STRING, 0)
+    oprot:writeString(self.success)
     oprot:writeFieldEnd()
   end
   if self.se ~= nil then
@@ -308,3 +309,5 @@ function GetFriendRecommendations_result:write(oprot)
   oprot:writeFieldStop()
   oprot:writeStructEnd()
 end
+
+return FriendRecommendationServiceClient
