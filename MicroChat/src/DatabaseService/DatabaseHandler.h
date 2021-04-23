@@ -37,6 +37,8 @@ namespace microchat
     void Login(std::string &_return, const std::string &username, const std::string &password) override;
     void Logout(std::string &_return, const std::string &username) override;
 
+    void OnlineUsers(std::string &_return) override;
+
   private:
     mongoc_client_pool_t *_mongodb_client_pool;
   };
@@ -48,7 +50,84 @@ namespace microchat
     printf("After Mongo Pool\n");
   };
 
+void DatabaseServiceHandler::OnlineUsers(std::string& _return)
+  {
+  mongoc_client_t *mongodb_client = mongoc_client_pool_pop(
+        _mongodb_client_pool);
+    if (!mongodb_client)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = "Failed to pop a client from MongoDB pool";
+      throw se;
+    }
+    auto collection = mongoc_client_get_collection(
+        mongodb_client, "user", "user");
+    if (!collection)
+    {
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = "Failed to create collection user from DB user";
+      throw se;
+    }
 
+    bson_t *query = bson_new();
+    BSON_APPEND_INT64(query, "user_status", UserStatus::type::ONLINE);
+  
+    mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(
+        collection, query, nullptr, nullptr);
+    const bson_t *doc;
+    std::string username_stored;
+    //Print off all users
+    char* str;
+    bson_iter_t iter_username;
+   
+    while (mongoc_cursor_next (cursor, &doc)) {
+      //grab password and userid
+       std::cout<< "Users found were:"<<std::endl;
+      str = bson_as_canonical_extended_json (doc, NULL);
+      printf ("%s\n", str);
+      bson_free (str);
+      if (bson_iter_init_find(&iter_username, doc, "username"))     
+      {
+        username_stored = bson_iter_value(&iter_username)->value.v_utf8.str;
+        std::cout<< "User Found in Databse is: "<< username_stored<< std::endl;
+      }
+      else{
+        std::cout<<"Users not found in database"<<std::endl;
+      }
+       bson_iter_t iter_user_id;
+       int64_t user_id_stored;
+      //grab password and userid
+      if (bson_iter_init_find(&iter_user_id, doc, "user_id"))
+      {
+        user_id_stored = bson_iter_value(&iter_user_id)->value.v_int64;
+        std::cout<< "User ID Found in Databse is: "<< user_id_stored<< std::endl;
+      }
+   }
+   std::cout<< "End of Query"<< std::endl;
+    bson_error_t error;
+    
+    if (mongoc_cursor_error(cursor, &error))
+    {
+      LOG(error) << error.message;
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+      ServiceException se;
+      se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+      se.message = error.message;
+      throw se;
+    }
+      bson_destroy(query);
+      mongoc_cursor_destroy(cursor);
+      mongoc_collection_destroy(collection);
+      mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+
+    _return = "Users are online ";
+    
+  }
   void DatabaseServiceHandler::CheckForUser(std::string &_return, const std::string &username)
   {
 
