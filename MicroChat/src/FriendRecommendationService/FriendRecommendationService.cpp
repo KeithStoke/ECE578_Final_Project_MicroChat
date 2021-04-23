@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   init_logger();
 
 
-  // 2: read the config file for ports and addresses
+ // 2: read the config file for ports and addresses
   json config_json;
   if (load_config_file("config/service-config.json", &config_json) != 0) {
     exit(EXIT_FAILURE);
@@ -38,15 +38,26 @@ int main(int argc, char **argv) {
   // 3: get my port
   int my_port = config_json["friend-recommendation-service"]["port"];
 
+
+ // get database service port
+  int database_service_port = config_json["database-service"]["port"];
+  std::string database_service_addr = config_json["database-service"]["addr"];
+
+
+  ClientPool<ThriftClient<DatabaseServiceClient>> database_client_pool(
+      "database-service", database_service_addr, database_service_port, 0, 128, 1000);
+
+
   // 4: configure this server
   TThreadedServer server(
       std::make_shared<FriendRecommendationServiceProcessor>(
-          std::make_shared<FriendRecommendationServiceHandler>()),
+          std::make_shared<FriendRecommendationServiceHandler>(
+            &database_client_pool
+          )),
       std::make_shared<TServerSocket>("0.0.0.0", my_port),
       std::make_shared<TFramedTransportFactory>(),
       std::make_shared<TBinaryProtocolFactory>()
   );
-  
   // 5: start the server
   std::cout << "Starting the friend recommendation server ..." << std::endl;
   server.serve();
