@@ -30,7 +30,7 @@ namespace microchat{
 
   void ping(std::string &_return, const std::string &text) override;
   void GetFriendRecommendations(std::vector<std::string> & _return, const std::string& username) override;
-  //void onLogin(std::string & _return, const std::string& username) override;
+  void onLogin(std::string & _return, const std::string& username);
    private:
 
     ClientPool<ThriftClient<DatabaseServiceClient>> *_database_client_pool;
